@@ -209,16 +209,10 @@ type TabId = 'featured' | 'bestsellers' | 'new';
         <div class="grid grid-cols-3 gap-3 md:gap-6 mt-8">
           @for (gc of genderCards; track gc.label) {
             <a [routerLink]="gc.link" [queryParams]="gc.params"
-              class="group relative overflow-hidden rounded-lg bg-brown-200">
-              <div class="aspect-[2/3] md:aspect-[3/4] overflow-hidden">
-                <img [src]="gc.image" [alt]="gc.label"
-                  class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" loading="lazy">
-              </div>
-              <!-- Gold accent line reveal -->
+              class="group relative overflow-hidden rounded-lg block">
+              <img [src]="gc.image" [alt]="gc.label"
+                class="w-full h-auto block group-hover:scale-105 transition-transform duration-700" loading="lazy">
               <div class="absolute bottom-0 left-0 right-0 h-[3px] bg-gold-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-center"></div>
-              <div class="absolute bottom-4 left-0 right-0 text-center px-2">
-                <span class="inline-block mt-1 text-gold-300 text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300">Shop Now →</span>
-              </div>
             </a>
           }
         </div>
