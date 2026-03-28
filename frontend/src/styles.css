@@ -697,6 +697,236 @@ img[loading="lazy"]:not([src=""]) {
 /*  HOME PAGE WOW ANIMATIONS — Cinematic Premium Jewellery           */
 /* ══════════════════════════════════════════════════════════════════ */
 
+/* ── Parakkat-Style Split Hero ── */
+@keyframes phFadeUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes phImgReveal {
+  from { opacity: 0; transform: translateX(50px) scale(0.97); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes phBadgePop {
+  0%   { opacity: 0; transform: scale(0.4) rotate(-15deg); }
+  65%  { transform: scale(1.12) rotate(3deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+/* Per-element staggered entrance */
+.ph-anim-1   { animation: phFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.10s both; }
+.ph-anim-2   { animation: phFadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both; }
+.ph-anim-3   { animation: phFadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.44s both; }
+.ph-anim-4   { animation: phFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.62s both; }
+.ph-anim-5   { animation: phFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.80s both; }
+.ph-anim-img { animation: phImgReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both; }
+
+/* Section container */
+.parakkat-hero {
+  background: #faf5ee;
+  min-height: 100svh;
+}
+
+/* Full-width flex layout */
+.parakkat-hero-inner {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+}
+@media (min-width: 768px) {
+  .parakkat-hero-inner { flex-direction: row; }
+}
+
+/* ── Text side ── */
+.parakkat-text-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 110px 28px 40px;
+  order: 2;
+}
+@media (min-width: 768px) {
+  .parakkat-text-side {
+    flex: 0 0 48%;
+    align-items: flex-start;
+    text-align: left;
+    padding: 0 40px 0 clamp(28px, 5vw, 80px);
+    order: 1;
+  }
+}
+
+/* Eyebrow */
+.ph-tag {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  justify-content: center;
+}
+@media (min-width: 768px) {
+  .ph-tag { justify-content: flex-start; }
+}
+.ph-tag-line {
+  height: 1px;
+  width: 40px;
+  background: #c9a96e;
+  flex-shrink: 0;
+}
+.ph-tag-text {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  color: #c9a96e;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Mixed heading */
+.parakkat-heading { margin: 0 0 18px; line-height: 1; }
+.ph-script {
+  display: block;
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(3rem, 6.5vw, 5.5rem);
+  color: #5a3820;
+  line-height: 1.2;
+}
+.ph-bold {
+  display: block;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(4.2rem, 10vw, 9rem);
+  font-weight: 900;
+  color: #2a1710;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+}
+
+/* Subline */
+.ph-sub {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  color: #7a5c40;
+  line-height: 1.75;
+  margin: 0 0 34px;
+  max-width: 380px;
+}
+.ph-sub strong { color: #3d2410; }
+
+/* CTA row */
+.ph-ctas {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+@media (min-width: 768px) {
+  .ph-ctas { justify-content: flex-start; }
+}
+.ph-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  padding: 15px 34px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background: #2a1710;
+  color: #fff;
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  transition: background 0.28s ease, transform 0.2s ease;
+}
+.ph-btn-primary:hover { background: #c9a96e; transform: translateY(-2px); }
+
+.ph-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 32px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: transparent;
+  color: #2a1710;
+  border: 1.5px solid #2a1710;
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.28s ease;
+}
+.ph-btn-secondary:hover { background: #2a1710; color: #fff; }
+
+/* ── Image side ── */
+.parakkat-img-side {
+  flex: 0 0 auto;
+  width: 100%;
+  height: 58vw;
+  max-height: 480px;
+  overflow: hidden;
+  order: 1;
+}
+@media (min-width: 768px) {
+  .parakkat-img-side {
+    flex: 0 0 52%;
+    height: auto;
+    max-height: none;
+    align-self: stretch;
+    order: 2;
+  }
+}
+.ph-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+  display: block;
+}
+@media (min-width: 768px) {
+  .ph-hero-img {
+    object-position: center center;
+    height: 100%;
+  }
+}
+
+/* ── Offer badge ── */
+.hero-offer-badge {
+  position: absolute;
+  top: 80px;
+  right: 16px;
+  z-index: 30;
+  background: #2a1710;
+  color: #fff;
+  padding: 14px 18px;
+  text-align: center;
+  animation: phBadgePop 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.75s both;
+  min-width: 96px;
+}
+@media (min-width: 768px) {
+  .hero-offer-badge { top: 96px; right: 32px; padding: 18px 24px; min-width: 110px; }
+}
+.badge-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-family: 'Poppins', sans-serif;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 4px;
+}
+.badge-label:last-child { margin-bottom: 0; margin-top: 6px; }
+.badge-number {
+  display: block;
+  font-size: 3rem;
+  font-weight: 900;
+  font-family: 'Poppins', sans-serif;
+  line-height: 1;
+  color: #e9bb2c;
+  margin-bottom: 2px;
+}
+/* ── Parakkat-Style Split Hero (end) ── */
+
 /* ── Ken Burns Hero Slider ── */
 @keyframes kenBurns {
   0%   { transform: scale(1)    translateX(0)    translateY(0); }

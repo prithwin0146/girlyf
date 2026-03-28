@@ -20,123 +20,56 @@ type TabId = 'featured' | 'bestsellers' | 'new';
   template: `
 
     <!-- ═══════════════════════════════════════════════════════ -->
-    <!-- 1. KEN BURNS HERO SLIDER — Cinematic image carousel    -->
-    <!--    Each slide: full-viewport image with soft zoom,     -->
-    <!--    staggered text reveal, progress bar, numbered nav   -->
+    <!-- 1. PARAKKAT-STYLE SPLIT HERO                           -->
+    <!--    Left: staggered text reveal  Right: hero image      -->
     <!-- ═══════════════════════════════════════════════════════ -->
-    <section class="relative w-full overflow-hidden bg-black"
-      style="height: 100svh; min-height: 580px; max-height: 980px">
+    <section class="parakkat-hero relative w-full overflow-hidden">
 
-      <!-- Image stack — all loaded, cross-fade via CSS -->
-      @for (slide of heroSlides; track $index) {
-        <picture>
-          <source media="(max-width: 767px)" [srcset]="slide.mobile">
-          <img [src]="slide.desktop" [alt]="slide.alt"
-            class="hero-slide-img"
-            [class.hero-active]="currentBanner() === $index"
-            [class.hero-alt]="$index % 2 === 1"
-            [loading]="$index === 0 ? 'eager' : 'lazy'">
-        </picture>
-      }
-
-      <!-- Directional gradient scrim — rich, cinematic -->
-      <div class="absolute inset-0 pointer-events-none"
-        style="background: linear-gradient(168deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.08) 30%, rgba(0,0,0,0.74) 100%)">
+      <!-- ── Offer Badge (top-right, springs in) ── -->
+      <div class="hero-offer-badge">
+        <span class="badge-label">GET UPTO</span>
+        <span class="badge-number">50%</span>
+        <span class="badge-label">OFF</span>
       </div>
-      <!-- Side vignette -->
-      <div class="absolute inset-0 pointer-events-none hidden md:block"
-        style="background: linear-gradient(90deg, rgba(0,0,0,0.25) 0%, transparent 25%, transparent 75%, rgba(0,0,0,0.2) 100%)">
-      </div>
-      <!-- Film grain -->
-      <div class="film-grain absolute inset-0 pointer-events-none"></div>
 
-      <!-- Per-slide text — recreated on slide change (forces re-animation) -->
-      @for (slide of heroSlides; track $index) {
-        @if (currentBanner() === $index) {
-          <div class="absolute inset-0 flex flex-col items-center justify-end pb-28 md:pb-36 px-4 text-center">
-            <!-- Tag line -->
-            <div class="hero-slide-text hero-text-d1 flex items-center gap-3 mb-4">
-              <div class="h-px w-8 bg-gold-400/60"></div>
-              <span class="text-gold-400 text-[10px] uppercase tracking-[0.35em] font-accent">{{ slide.label }}</span>
-              <div class="h-px w-8 bg-gold-400/60"></div>
-            </div>
-            <!-- Main headline -->
-            <h1 class="hero-slide-text hero-text-d2 font-heading text-white font-bold leading-none mb-5"
-              style="font-size: clamp(2.8rem, 7vw, 6.5rem); text-shadow: 0 4px 50px rgba(0,0,0,0.45); letter-spacing: -0.02em">
-              {{ slide.headline }}
-            </h1>
-            <!-- Sub-line in Cormorant italic -->
-            <p class="hero-slide-text hero-text-d3 text-white/65 max-w-md leading-relaxed mb-9"
-              style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(1rem, 2.2vw, 1.2rem)">
-              {{ slide.subline }}
-            </p>
-            <!-- CTAs -->
-            <div class="hero-slide-text hero-text-d4 flex gap-3 flex-wrap justify-center">
-              <a [routerLink]="slide.ctaLink"
-                class="btn-gold px-8 py-3.5 text-sm font-bold tracking-widest shadow-xl">
-                {{ slide.ctaLabel }}
-              </a>
-              <a routerLink="/products"
-                class="px-8 py-3.5 text-sm font-semibold tracking-widest text-white uppercase"
-                style="backdrop-filter: blur(10px); background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.4); border-radius: 2px; transition: all 0.3s ease">
-                All Jewellery
-              </a>
-            </div>
+      <!-- ── Split layout (flex row on desktop, column on mobile) ── -->
+      <div class="parakkat-hero-inner">
+
+        <!-- LEFT — Text content -->
+        <div class="parakkat-text-side">
+
+          <!-- Eyebrow tag with gold rules -->
+          <div class="ph-tag ph-anim-1">
+            <div class="ph-tag-line"></div>
+            <span class="ph-tag-text">New Collection · 2025</span>
+            <div class="ph-tag-line"></div>
           </div>
-        }
-      }
 
-      <!-- Prev arrow -->
-      <button (click)="prevSlide()" class="hero-arrow" style="left: 16px" aria-label="Previous slide">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-          <path d="M11 14L6 9L11 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-      <!-- Next arrow -->
-      <button (click)="nextSlide()" class="hero-arrow" style="right: 16px" aria-label="Next slide">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-          <path d="M7 4L12 9L7 14" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
+          <!-- Mixed heading: script + heavy display -->
+          <h1 class="parakkat-heading">
+            <span class="ph-script ph-anim-2">Wear Your</span>
+            <span class="ph-bold ph-anim-3">Story.</span>
+          </h1>
 
-      <!-- Bottom bar: dots + slide counter -->
-      <div class="absolute bottom-9 left-0 right-0 px-6 md:px-12 flex items-center justify-between">
-        <!-- Dot navigation -->
-        <div class="flex gap-2">
-          @for (slide of heroSlides; track $index) {
-            <button (click)="goToSlide($index)" [attr.aria-label]="'Go to slide ' + ($index + 1)"
-              class="rounded-full transition-all duration-500"
-              [style.width.px]="currentBanner() === $index ? 28 : 8"
-              [style.height.px]="8"
-              [style.background]="currentBanner() === $index ? '#e9bb2c' : 'rgba(255,255,255,0.35)'">
-            </button>
-          }
+          <!-- Subline -->
+          <p class="ph-sub ph-anim-4">
+            Be the first to own our <strong>newest arrivals</strong>.
+          </p>
+
+          <!-- CTA buttons -->
+          <div class="ph-ctas ph-anim-5">
+            <a routerLink="/products" class="ph-btn-primary">EXPLORE NEW ARRIVALS</a>
+            <a routerLink="/products" class="ph-btn-secondary">All Jewellery</a>
+          </div>
         </div>
 
-        <!-- Slide counter — editorial style -->
-        <div class="hidden md:flex items-baseline gap-1.5"
-          style="font-family: 'Roboto', monospace">
-          <span class="text-white font-bold text-xl leading-none">
-            {{ (currentBanner() + 1).toString().padStart(2, '0') }}
-          </span>
-          <span class="text-white/30 text-sm">/</span>
-          <span class="text-white/40 text-sm">
-            {{ heroSlides.length.toString().padStart(2, '0') }}
-          </span>
+        <!-- RIGHT — Hero image (edge-to-edge on desktop) -->
+        <div class="parakkat-img-side">
+          <img src="/assets/images/hero/Heroimage.webp"
+            alt="Girlyf — Exquisite Jewellery"
+            class="ph-hero-img ph-anim-img"
+            loading="eager">
         </div>
-      </div>
-
-      <!-- Progress bar — gold line, resets each slide -->
-      <div class="absolute bottom-0 left-0 right-0 h-[2px]" style="background: rgba(255,255,255,0.07)">
-        @if (showProgress() && isBrowser) {
-          <div class="hero-progress-fill"></div>
-        }
-      </div>
-
-      <!-- Scroll hint (desktop) -->
-      <div class="hero-scroll-hint absolute bottom-8 left-1/2 pointer-events-none hidden md:flex flex-col items-center gap-1.5">
-        <div class="w-px h-10 bg-gradient-to-b from-white/40 to-transparent"></div>
-        <span class="text-white/35 text-[9px] uppercase tracking-[0.25em]">Scroll</span>
       </div>
     </section>
 
