@@ -744,7 +744,8 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   ];
 
   get displayTestimonials() {
-    return this.testimonials().length ? this.testimonials() : this.staticTestimonials;
+    // Always use curated static testimonials — backend data has no images
+    return this.staticTestimonials;
   }
 
   styleReels = [
