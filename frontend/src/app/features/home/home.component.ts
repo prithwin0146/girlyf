@@ -166,39 +166,6 @@ type TabId = 'featured' | 'bestsellers' | 'new';
     </section>
 
     <!-- ═══════════════════════════════════════════════════════ -->
-    <!-- 9. LUMINA VIDEO (cinematic collection reveal)         -->
-    <!-- ═══════════════════════════════════════════════════════ -->
-    <section class="scroll-reveal">
-      <a routerLink="/collections/lumina" class="block relative group overflow-hidden">
-        <video class="w-full h-auto hidden md:block" style="aspect-ratio: 16/7"
-          autoplay [muted]="true" loop playsinline
-          src="/assets/images/videos/aira-banner.mp4">
-        </video>
-        <video class="w-full h-auto md:hidden" autoplay [muted]="true" loop playsinline
-          src="/assets/images/videos/aira-responsive.mp4">
-        </video>
-        <!-- Elegant overlay -->
-        <div class="absolute inset-0 pointer-events-none"
-          style="background: linear-gradient(135deg, rgba(0,0,0,0.5) 0%, transparent 50%, rgba(0,0,0,0.2) 100%)">
-        </div>
-        <div class="absolute inset-0 flex items-center justify-center">
-          <div class="text-center">
-            <p class="text-gold-400 text-[10px] uppercase tracking-[0.4em] font-accent mb-2">Girlyf Exclusive</p>
-            <h2 class="text-white font-heading text-3xl md:text-6xl font-bold tracking-[0.15em] uppercase"
-              style="text-shadow: 0 2px 30px rgba(0,0,0,0.6)">LUMINA</h2>
-            <div class="mt-3 flex items-center justify-center gap-3">
-              <div class="h-px w-12 bg-gold-400/60"></div>
-              <span class="text-white/70 text-[10px] uppercase tracking-[0.25em]">Explore Collection</span>
-              <div class="h-px w-12 bg-gold-400/60"></div>
-            </div>
-          </div>
-        </div>
-        <!-- Film grain -->
-        <div class="film-grain absolute inset-0 pointer-events-none"></div>
-      </a>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════ -->
     <!-- 10. SHOP FOR ← KEEP (redesigned with stats strip)     -->
     <!-- ═══════════════════════════════════════════════════════ -->
     <section class="py-10 md:py-14 bg-white scroll-reveal">
