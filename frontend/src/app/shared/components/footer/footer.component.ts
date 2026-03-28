@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, MatIconModule],
   template: `
     <!-- NEWSLETTER (JA-style: Subscribe to Girlyf) -->
     <section class="bg-primary-900 text-white py-10">
@@ -15,7 +16,7 @@ import { FormsModule } from '@angular/forms';
         <p class="text-white/60 text-sm mt-2 mb-6">Elevate your loved ones' style with dazzling gold jewellery</p>
         <div class="flex max-w-lg mx-auto">
           <div class="flex-1 relative">
-            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">📧</span>
+            <mat-icon class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg">email</mat-icon>
             <input type="email" [(ngModel)]="email" placeholder="Enter your email address" class="w-full pl-10 pr-4 py-3 text-sm text-gray-900 rounded-l focus:outline-none">
           </div>
           <button (click)="subscribe()" class="btn-gold rounded-none rounded-r text-xs px-6 py-3 whitespace-nowrap">SUBSCRIBE</button>
@@ -29,7 +30,7 @@ import { FormsModule } from '@angular/forms';
         <div class="flex md:grid md:grid-cols-9 gap-3 overflow-x-auto scrollbar-hide text-center">
           @for (item of trustItems; track item.line1) {
             <div class="flex flex-col items-center gap-1.5 py-2 min-w-[80px] shrink-0 md:min-w-0">
-              <span class="text-xl">{{ item.icon }}</span>
+              <img [src]="item.icon" [alt]="item.line1" class="h-8 w-auto">
               <span class="text-[9px] text-gray-700 font-heading uppercase tracking-wide leading-tight">{{ item.line1 }}</span>
               <span class="text-[8px] text-gray-500 leading-tight">{{ item.line2 }}</span>
             </div>
@@ -95,9 +96,9 @@ import { FormsModule } from '@angular/forms';
             <div class="mt-4">
               <h4 class="footer-heading">Get In Touch</h4>
               <div class="space-y-2 text-[11px] text-gray-500">
-                <p class="flex items-start gap-2"><span>📍</span><span>Girlyf Jewellery Pvt Ltd,<br>Chennai, India</span></p>
-                <p class="flex items-center gap-2"><span>📞</span> 1800-123-4567 (Toll Free)</p>
-                <p class="flex items-center gap-2"><span>📧</span> support&#64;girlyf.com</p>
+              <p class="flex items-start gap-2"><mat-icon class="text-sm text-gray-400">location_on</mat-icon><span>Girlyf Jewellery Pvt Ltd,<br>Chennai, India</span></p>
+                <p class="flex items-center gap-2"><mat-icon class="text-sm text-gray-400">phone</mat-icon> 1800-123-4567 (Toll Free)</p>
+                <p class="flex items-center gap-2"><mat-icon class="text-sm text-gray-400">email</mat-icon> support&#64;girlyf.com</p>
               </div>
             </div>
           </div>
@@ -156,15 +157,15 @@ export class FooterComponent {
   currentYear = new Date().getFullYear();
 
   trustItems = [
-    { icon: '🛡️', line1: 'Safe & Secure', line2: 'Delivery' },
-    { icon: '🚚', line1: 'Free', line2: 'Shipping' },
-    { icon: '💎', line1: 'Certified', line2: 'Diamonds' },
-    { icon: '♻️', line1: 'Diamond', line2: 'Exchange' },
-    { icon: '🏅', line1: 'BIS HUID', line2: 'Hallmarked' },
-    { icon: '↩️', line1: '7 Days', line2: 'Return Policy' },
-    { icon: '🔧', line1: 'Lifetime', line2: 'Maintenance' },
-    { icon: '🔍', line1: 'Complete', line2: 'Transparency' },
-    { icon: '💰', line1: 'Guaranteed', line2: 'Buyback' },
+    { icon: '/assets/images/trust-badges/safe.svg', line1: 'Safe & Secure', line2: 'Delivery' },
+    { icon: '/assets/images/trust-badges/shipping.svg', line1: 'Free', line2: 'Shipping' },
+    { icon: '/assets/images/trust-badges/certified.svg', line1: 'Certified', line2: 'Diamonds' },
+    { icon: '/assets/images/trust-badges/diamond.svg', line1: 'Diamond', line2: 'Exchange' },
+    { icon: '/assets/images/trust-badges/huid.svg', line1: 'BIS HUID', line2: 'Hallmarked' },
+    { icon: '/assets/images/trust-badges/return.svg', line1: '7 Days', line2: 'Return Policy' },
+    { icon: '/assets/images/trust-badges/maintenance.svg', line1: 'Lifetime', line2: 'Maintenance' },
+    { icon: '/assets/images/trust-badges/transparency.svg', line1: 'Complete', line2: 'Transparency' },
+    { icon: '/assets/images/trust-badges/buyback.svg', line1: 'Guaranteed', line2: 'Buyback' },
   ];
 
   paymentMethods = [

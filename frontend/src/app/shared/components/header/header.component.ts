@@ -2,6 +2,7 @@ import { Component, signal, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '@core/services/auth.service';
 import { CartService } from '@core/services/cart.service';
 import { WishlistService } from '@core/services/wishlist.service';
@@ -11,14 +12,14 @@ import { Category, GoldRate, Product } from '@core/models';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, FormsModule],
+  imports: [CommonModule, RouterLink, RouterLinkActive, FormsModule, MatIconModule],
   template: `
     <!-- ═══ ROW 1: TOP BAR ═══ -->
     <div class="bg-primary-900 text-white text-[11px] hidden md:block">
       <div class="max-w-[1400px] mx-auto px-4 flex items-center justify-between h-8">
         <div class="flex items-center gap-3">
           <a routerLink="/gold-rate" class="hover:text-gold-400 transition-colors flex items-center gap-1">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+            <mat-icon class="text-[12px] w-3 h-3">trending_up</mat-icon>
             Today's Gold Rate
           </a>
           <span class="text-primary-600">|</span>
@@ -43,13 +44,7 @@ import { Category, GoldRate, Product } from '@core/models';
       <div class="max-w-[1400px] mx-auto px-4">
         <div class="flex items-center justify-between h-14 md:h-16">
           <button (click)="mobileMenuOpen.set(!mobileMenuOpen())" class="lg:hidden text-gray-700 p-1">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              @if (mobileMenuOpen()) {
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-              } @else {
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-              }
-            </svg>
+            <mat-icon>{{ mobileMenuOpen() ? 'close' : 'menu' }}</mat-icon>
           </button>
 
           <a routerLink="/" class="flex flex-col items-center group shrink-0">
@@ -102,16 +97,16 @@ import { Category, GoldRate, Product } from '@core/models';
           <!-- ICONS -->
           <div class="flex items-center gap-0.5 md:gap-1">
             <button (click)="mobileSearchOpen.set(!mobileSearchOpen())" class="lg:hidden text-gray-600 p-2 hover:text-primary-900">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <mat-icon>search</mat-icon>
             </button>
             <a routerLink="/stores" class="hidden md:flex flex-col items-center text-gray-600 hover:text-primary-900 transition-colors p-2">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <mat-icon class="text-xl">location_on</mat-icon>
               <span class="text-[8px] mt-0.5 tracking-wider uppercase">Stores</span>
             </a>
             <!-- Wishlist with hover panel -->
             <div class="relative" (mouseenter)="showWishlistPanel.set(true)" (mouseleave)="showWishlistPanel.set(false)">
               <a routerLink="/wishlist" class="flex flex-col items-center text-gray-600 hover:text-primary-900 transition-colors p-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                <mat-icon class="text-xl">favorite_border</mat-icon>
                 <span class="text-[8px] mt-0.5 hidden md:block tracking-wider uppercase">Wishlist</span>
               </a>
               @if (showWishlistPanel()) {
@@ -127,7 +122,7 @@ import { Category, GoldRate, Product } from '@core/models';
             <!-- User with hover panel -->
             <div class="relative" (mouseenter)="showUserMenu.set(true)" (mouseleave)="showUserMenu.set(false)">
               <button class="flex flex-col items-center text-gray-600 hover:text-primary-900 transition-colors p-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                <mat-icon class="text-xl">person_outline</mat-icon>
                 <span class="text-[8px] mt-0.5 hidden md:block tracking-wider uppercase">{{ auth.isLoggedIn() ? 'Account' : 'Sign In' }}</span>
               </button>
               @if (showUserMenu()) {
@@ -152,7 +147,7 @@ import { Category, GoldRate, Product } from '@core/models';
             <!-- Cart with hover panel -->
             <div class="relative" (mouseenter)="showCartPanel.set(true)" (mouseleave)="showCartPanel.set(false)">
               <a routerLink="/cart" class="flex flex-col items-center text-gray-600 hover:text-primary-900 transition-colors relative p-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                <mat-icon class="text-xl">shopping_bag</mat-icon>
                 @if (cart.itemCount() > 0) {
                   <span class="absolute top-0.5 right-0 min-w-[16px] h-[16px] bg-gold-500 text-primary-900 text-[9px] rounded-full flex items-center justify-center font-bold font-price">{{ cart.itemCount() }}</span>
                 }

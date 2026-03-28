@@ -314,3 +314,47 @@ input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none; margin: 0;
 }
 input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+
+/* ═══ OWL CAROUSEL OVERRIDES (matching JA styling) ═══ */
+.owl-theme .owl-nav {
+  position: absolute; top: 50%; width: 100%;
+  display: flex; justify-content: space-between;
+  transform: translateY(-50%); pointer-events: none;
+  padding: 0 8px;
+}
+.owl-theme .owl-nav [class*='owl-'] {
+  pointer-events: auto;
+  width: 40px; height: 40px;
+  background: rgba(255,255,255,0.9) !important;
+  border-radius: 50% !important;
+  display: flex !important; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+  color: #571613 !important; font-size: 0 !important;
+  margin: 0 !important; padding: 0 !important;
+}
+.owl-theme .owl-nav [class*='owl-'] .material-icons {
+  font-size: 24px; line-height: 1;
+}
+.owl-theme .owl-nav [class*='owl-']:hover {
+  background: #571613 !important; color: #fff !important;
+}
+.owl-theme .owl-nav [class*='owl-']:hover .material-icons { color: #fff; }
+.owl-theme .owl-nav .disabled { opacity: 0.3 !important; cursor: default; }
+.owl-theme .owl-dots { margin-top: 16px !important; }
+.owl-theme .owl-dots .owl-dot span {
+  width: 10px !important; height: 10px !important;
+  background: #ddd !important; border-radius: 50% !important;
+  transition: all 0.3s ease;
+}
+.owl-theme .owl-dots .owl-dot.active span,
+.owl-theme .owl-dots .owl-dot:hover span {
+  background: #e9bb2c !important; transform: scale(1.2);
+}
+
+/* ═══ MATERIAL ICON SIZING FIXES ═══ */
+mat-icon { vertical-align: middle; }
+mat-icon.text-sm { font-size: 16px; width: 16px; height: 16px; }
+mat-icon.text-base { font-size: 18px; width: 18px; height: 18px; }
+mat-icon.text-lg { font-size: 20px; width: 20px; height: 20px; }
+mat-icon.text-xl { font-size: 24px; width: 24px; height: 24px; }
