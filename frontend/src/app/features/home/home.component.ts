@@ -465,13 +465,15 @@ type TabId = 'featured' | 'bestsellers' | 'new';
     <!-- 17. TESTIMONIALS — BlueStone clip-card style         -->
     <!-- ═══════════════════════════════════════════════════════ -->
     <section class="clip-cards-section w-full py-8 md:py-12 relative bg-white">
+      <!-- Heading stays fixed — only cards slide in -->
+      <div class="max-w-7xl mx-auto px-4 mb-6 text-center">
+        <p style="color:#9D7792;font-size:0.75rem;letter-spacing:0.3em;text-transform:uppercase;text-align:center;margin-bottom:4px">Happy Customers</p>
+        <h2 class="section-title">Customer Testimonials</h2>
+        <div class="gold-divider"></div>
+        <p style="color:#9D7792;font-size:0.875rem;text-align:center">#GirlyfAndMe</p>
+      </div>
+      <!-- Cards row slides from right on scroll -->
       <div class="clip-cards-content clip-reveal-right">
-        <div class="max-w-7xl mx-auto px-4 mb-6 text-center">
-          <p style="color:#9D7792;font-size:0.75rem;letter-spacing:0.3em;text-transform:uppercase;text-align:center;margin-bottom:4px">Happy Customers</p>
-          <h2 class="section-title">Customer Testimonials</h2>
-          <div class="gold-divider"></div>
-          <p style="color:#9D7792;font-size:0.875rem;text-align:center">#GirlyfAndMe</p>
-        </div>
         <div class="relative bg-white overflow-visible">
           <div class="clip-cards-scroll overflow-x-auto overflow-y-hidden py-8"
             style="scrollbar-width:thin;scrollbar-color:#FFE5E8 transparent">
@@ -710,7 +712,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   };
 
   // BlueStone clip-card style — per-card rotation & pin config
-  clipCardRots = ['14deg', '-3deg', '-10deg', '7deg', '14deg', '-3deg', '-10deg', '7deg'];
+  clipCardRots = ['14deg', '-3deg', '-10deg', '7deg', '14deg', '-3deg', '-10deg', '7deg', '-3deg', '14deg', '7deg', '-10deg'];
   clipPinConfigs = [
     { pos: '0%',  rot: '-17deg' },
     { pos: '70%', rot: '5deg'   },
@@ -720,6 +722,10 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     { pos: '85%', rot: '10deg'  },
     { pos: '80%', rot: '0deg'   },
     { pos: '0%',  rot: '-15deg' },
+    { pos: '60%', rot: '-5deg'  },
+    { pos: '15%', rot: '8deg'   },
+    { pos: '75%', rot: '-3deg'  },
+    { pos: '5%',  rot: '12deg'  },
   ];
 
   staticTestimonials = [
@@ -731,6 +737,10 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     { id: 106, customerName: 'Priya Singh', location: '34', rating: 5, comment: 'I had trouble finding minimalist jewellery that suited my style, but Girlyf\'s sleek and elegant designs were exactly what I was looking for. Pieces for every style and occasion!', customerImage: '/assets/images/testimonials/t6.jpg' },
     { id: 107, customerName: 'Avni Sharma', location: '27', rating: 5, comment: 'Me and my friends are obsessed with Girlyf\'s unique designs. I love how their jewellery adds a pop of elegance to my outfits. Stylish, modern, and truly a breath of fresh air.', customerImage: '/assets/images/testimonials/t7.jpg' },
     { id: 108, customerName: 'Sonaalee Semwal', location: '28', rating: 5, comment: 'I bought a gold bracelet from Girlyf as a birthday gift to myself. So versatile and beautiful! If you want to treat yourself, Girlyf is absolutely the place to go.', customerImage: '/assets/images/testimonials/t8.jpg' },
+    { id: 109, customerName: 'Meera Krishnan', location: '31', rating: 5, comment: 'The diamond earrings I ordered from Girlyf are absolutely gorgeous. The packaging was so premium and the quality is impeccable. Already planning my next purchase!', customerImage: '/assets/images/testimonials/t9.jpg' },
+    { id: 110, customerName: 'Ritu Agarwal', location: '29', rating: 5, comment: 'I gifted a Girlyf gold mangalsutra to my best friend on her wedding day — she was in tears! The craftsmanship is extraordinary. Will always trust Girlyf for special moments.', customerImage: '/assets/images/testimonials/t10.jpg' },
+    { id: 111, customerName: 'Sneha Pillai', location: '25', rating: 5, comment: 'Girlyf\'s silver anklets are so delicate and beautiful. I wore them on my first date and got so many compliments. I\'m now a customer for life — thank you, Girlyf!', customerImage: '/assets/images/testimonials/t11.jpg' },
+    { id: 112, customerName: 'Tanvi Bose', location: '30', rating: 5, comment: 'Ordered a customised name pendant for my mom\'s birthday from Girlyf. She absolutely loved it. The engraving was perfect and the gold quality is exactly as described.', customerImage: '/assets/images/testimonials/t12.jpg' },
   ];
 
   get displayTestimonials() {
