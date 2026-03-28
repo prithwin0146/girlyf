@@ -30,30 +30,6 @@ type TabId = 'featured' | 'bestsellers' | 'new';
     </section>
 
     <!-- ═══════════════════════════════════════════════════════ -->
-    <!-- 2. PREMIUM GOLD RATE TICKER                            -->
-    <!-- ═══════════════════════════════════════════════════════ -->
-    @if (goldRates().length) {
-      <div class="relative overflow-hidden py-0" style="background: linear-gradient(90deg, #1a0505, #571613, #911b1e, #571613, #1a0505)">
-        <!-- Shine edge overlay -->
-        <div class="absolute left-0 top-0 bottom-0 w-16 z-10 pointer-events-none"
-          style="background: linear-gradient(90deg, #1a0505, transparent)"></div>
-        <div class="absolute right-0 top-0 bottom-0 w-16 z-10 pointer-events-none"
-          style="background: linear-gradient(-90deg, #1a0505, transparent)"></div>
-        <div class="gold-ticker-track py-3">
-          @for (rate of duplicatedGoldRates(); track $index) {
-            <span class="inline-flex items-center gap-3 px-8 text-xs whitespace-nowrap">
-              <span class="w-1.5 h-1.5 rounded-full bg-gold-400 flex-shrink-0"></span>
-              <span class="text-white/60 uppercase tracking-widest text-[10px]">{{ rate.karat }}</span>
-              <span class="text-white font-medium">Gold Rate</span>
-              <span class="font-price font-bold text-gold-400 text-sm">&#8377;{{ rate.ratePerGram | number:'1.0-0' }}/g</span>
-              <span class="text-white/30 text-lg">|</span>
-            </span>
-          }
-        </div>
-      </div>
-    }
-
-    <!-- ═══════════════════════════════════════════════════════ -->
     <!-- 4. SHOP BY CATEGORY ← KEEP                            -->
     <!-- ═══════════════════════════════════════════════════════ -->
     <section class="py-10 md:py-14 bg-white scroll-reveal">
