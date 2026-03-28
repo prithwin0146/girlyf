@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <circle cx="32" cy="32" r="30" stroke="#571613" stroke-width="2" fill="#FFF8F0"/>
+  <path d="M20 20h24v4H20zM20 28h24v4H20zM20 36h24v4H20z" fill="#e9bb2c"/>
+  <path d="M32 16l-8 8h6v16h4V24h6z" fill="#571613" transform="rotate(180 32 32)"/>
+  <text x="32" y="54" text-anchor="middle" font-size="6" fill="#571613" font-weight="bold">CERTIFIED</text>
+</svg>

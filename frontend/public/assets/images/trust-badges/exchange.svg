@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <circle cx="32" cy="32" r="30" stroke="#571613" stroke-width="2" fill="#FFF8F0"/>
+  <path d="M22 20h20l-4 12H26z" fill="#e9bb2c" stroke="#571613" stroke-width="1"/>
+  <path d="M26 32v8a6 6 0 0012 0v-8" fill="none" stroke="#571613" stroke-width="1.5"/>
+  <circle cx="32" cy="36" r="2" fill="#571613"/>
+  <text x="32" y="54" text-anchor="middle" font-size="5.5" fill="#571613" font-weight="bold">EXCHANGE</text>
+</svg>

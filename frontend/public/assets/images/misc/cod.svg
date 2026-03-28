@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 32" fill="none">
+  <rect width="48" height="32" rx="4" fill="#333"/>
+  <text x="24" y="14" text-anchor="middle" font-size="5" fill="#FFF" font-weight="bold" font-family="Arial">CASH ON</text>
+  <text x="24" y="22" text-anchor="middle" font-size="5" fill="#e9bb2c" font-weight="bold" font-family="Arial">DELIVERY</text>
+</svg>

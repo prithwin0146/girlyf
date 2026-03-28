@@ -1,0 +1,6 @@
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:5193/api',
+  appName: 'Girlyf',
+  appTagline: 'Exquisite Jewellery Online',
+};

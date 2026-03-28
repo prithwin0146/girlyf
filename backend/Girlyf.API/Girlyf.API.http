@@ -1,0 +1,6 @@
+@JosAlukkas.API_HostAddress = http://localhost:5193
+
+GET {{JosAlukkas.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

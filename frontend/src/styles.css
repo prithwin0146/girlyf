@@ -1,0 +1,316 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ══════════════════════════════════════════════════════ */
+/*  GIRLYF — Jos Alukkas Exact Replica Design System     */
+/*  Fonts: Century Gothic / Roboto / Poppins             */
+/*  Colors: Gold #e9bb2c / Maroon #571613 / Red #911b1e  */
+/* ══════════════════════════════════════════════════════ */
+
+@layer base {
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Century Gothic', 'Poppins', system-ui, -apple-system, sans-serif;
+    color: #333;
+    background: #fff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 14px;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Century Gothic', 'Poppins', sans-serif;
+    font-weight: 700;
+  }
+  ::selection {
+    background: rgba(233, 187, 44, 0.25);
+    color: #571613;
+  }
+}
+
+@layer components {
+  /* ── JA Button System ── */
+  .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    background: #911b1e; color: #fff;
+    padding: 0.625rem 1.75rem; font-size: 0.8125rem; font-weight: 600;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    border: none; border-radius: 2px; cursor: pointer;
+    font-family: 'Century Gothic', 'Poppins', sans-serif;
+    transition: all 0.25s ease; position: relative; overflow: hidden;
+  }
+  .btn-primary:hover { background: #571613; box-shadow: 0 4px 15px rgba(87,22,19,0.3); }
+
+  .btn-gold {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    background: linear-gradient(135deg, #e9bb2c 0%, #ffc40c 100%); color: #571613;
+    padding: 0.625rem 1.75rem; font-size: 0.8125rem; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    border: none; border-radius: 2px; cursor: pointer;
+    font-family: 'Century Gothic', 'Poppins', sans-serif;
+    transition: all 0.25s ease;
+  }
+  .btn-gold:hover { background: linear-gradient(135deg, #cc9a17 0%, #e9bb2c 100%); box-shadow: 0 4px 15px rgba(233,187,44,0.4); }
+
+  .btn-outline {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    border: 2px solid #911b1e; color: #911b1e;
+    padding: 0.625rem 1.75rem; font-size: 0.8125rem; font-weight: 600;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    background: transparent; border-radius: 2px; cursor: pointer;
+    font-family: 'Century Gothic', 'Poppins', sans-serif;
+    transition: all 0.25s ease;
+  }
+  .btn-outline:hover { background: #911b1e; color: #fff; }
+
+  .btn-brown {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    background: #834e32; color: #fff;
+    padding: 0.625rem 1.75rem; font-size: 0.8125rem; font-weight: 600;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    border: none; border-radius: 2px; cursor: pointer;
+    font-family: 'Century Gothic', 'Poppins', sans-serif;
+    transition: all 0.25s ease;
+  }
+  .btn-brown:hover { background: #6e4330; }
+
+  /* ── Section titles (JA style — centered, uppercase, gold underline) ── */
+  .section-title {
+    font-family: 'Century Gothic', 'Poppins', sans-serif;
+    font-size: 1.5rem; font-weight: 700; color: #333;
+    text-align: center; text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  @media (min-width: 768px) { .section-title { font-size: 1.75rem; } }
+
+  .section-subtitle {
+    color: #666; text-align: center; margin-top: 0.5rem;
+    font-size: 0.875rem; letter-spacing: 0.02em;
+    font-family: 'Century Gothic', 'Poppins', sans-serif;
+  }
+  @media (min-width: 768px) { .section-subtitle { font-size: 0.9375rem; } }
+
+  .gold-divider {
+    width: 60px; height: 3px;
+    background: #e9bb2c;
+    margin: 0.75rem auto 1rem;
+  }
+
+  /* ── Product card (JA style — minimal border, clean) ── */
+  .product-card {
+    background: #fff; border: 1px solid #eee;
+    overflow: hidden; transition: all 0.3s ease; position: relative;
+  }
+  .product-card:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    border-color: #e9bb2c;
+  }
+  .product-card:hover .product-card-image { transform: scale(1.06); }
+  .product-card-image {
+    width: 100%; aspect-ratio: 1; object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  /* ── Input field (JA style) ── */
+  .input-field {
+    width: 100%; padding: 0.75rem 1rem;
+    border: 1px solid #ccc; border-radius: 2px;
+    font-size: 0.875rem; font-family: 'Century Gothic', 'Poppins', sans-serif;
+    outline: none; transition: all 0.2s ease;
+  }
+  .input-field:focus { border-color: #e9bb2c; box-shadow: 0 0 0 2px rgba(233,187,44,0.2); }
+
+  /* ── Badges (JA style — Poppins, sharp) ── */
+  .badge-new {
+    position: absolute; top: 8px; left: 8px;
+    background: #059669; color: #fff;
+    font-size: 10px; padding: 2px 8px; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    font-family: 'Poppins', sans-serif; z-index: 5;
+  }
+  .badge-bestseller {
+    position: absolute; top: 8px; left: 8px;
+    background: #911b1e; color: #fff;
+    font-size: 10px; padding: 2px 8px; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    font-family: 'Poppins', sans-serif; z-index: 5;
+  }
+  .badge-discount {
+    position: absolute; top: 8px; right: 8px;
+    background: #e9bb2c; color: #571613;
+    font-size: 10px; padding: 2px 8px; font-weight: 700;
+    font-family: 'Poppins', sans-serif; z-index: 5;
+  }
+
+  /* ── Mega Menu ── */
+  .mega-menu-link {
+    display: block; padding: 6px 16px;
+    font-size: 13px; color: #555;
+    transition: all 0.15s ease;
+    font-family: 'Century Gothic', 'Poppins', sans-serif;
+  }
+  .mega-menu-link:hover { background: #f4eeeb; color: #911b1e; padding-left: 20px; }
+
+  /* ── Trust strip (JA peach background) ── */
+  .trust-strip {
+    background: #f4eeeb;
+    border-top: 1px solid #e5cfc2;
+    border-bottom: 1px solid #e5cfc2;
+  }
+
+  /* ── Price display (Roboto, JA style) ── */
+  .price-display {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700; color: #333;
+  }
+  .price-original {
+    font-family: 'Roboto', sans-serif;
+    text-decoration: line-through; color: #999;
+  }
+}
+
+/* ── Scrollbar (JA gold/maroon) ── */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #f8f8f8; }
+::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #e9bb2c, #911b1e); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #911b1e; }
+
+/* ── Carousel ── */
+.carousel-container { position: relative; overflow: hidden; }
+.carousel-track { display: flex; transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+.carousel-slide { flex: 0 0 100%; min-width: 100%; }
+
+/* ── Gold Rate Ticker ── */
+.ticker-wrap { overflow: hidden; position: relative; }
+.ticker-content { display: inline-flex; animation: tickerScroll 25s linear infinite; white-space: nowrap; }
+@keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.ticker-content:hover { animation-play-state: paused; }
+
+/* ── Skeleton Loader ── */
+.skeleton {
+  background: linear-gradient(90deg, #f3f3f3 25%, #e8e8e8 50%, #f3f3f3 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s ease-in-out infinite; border-radius: 2px;
+}
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* ── Animations ── */
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+@keyframes borderGlow { 0%, 100% { box-shadow: 0 0 5px rgba(233,187,44,0.3); } 50% { box-shadow: 0 0 20px rgba(233,187,44,0.6); } }
+
+.animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+.animate-slide-in-left { animation: slideInLeft 0.5s ease-out forwards; }
+.animate-scale-in { animation: scaleIn 0.4s ease-out forwards; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+
+@keyframes toastSlideUp { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.animate-slide-up { animation: toastSlideUp 0.3s ease-out forwards; }
+
+@keyframes whatsappPulse { 0% { box-shadow: 0 0 0 0 rgba(37,211,102,0.5); } 70% { box-shadow: 0 0 0 15px rgba(37,211,102,0); } 100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); } }
+
+.overlay-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px); z-index: 100; animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ── Category hover ring (gold glow) ── */
+.category-ring { position: relative; }
+.category-ring::after {
+  content: ''; position: absolute; inset: -3px; border-radius: 50%;
+  border: 2px solid transparent; transition: all 0.3s ease;
+}
+.category-ring:hover::after { border-color: #e9bb2c; box-shadow: 0 0 15px rgba(233,187,44,0.3); }
+
+/* ── Horizontal scrollbar hide ── */
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* ── Step indicator (JA checkout/register) ── */
+.step-dot { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; font-family: 'Roboto', sans-serif; transition: all 0.3s ease; }
+.step-dot.active { background: #911b1e; color: #fff; }
+.step-dot.completed { background: #059669; color: #fff; }
+.step-dot.pending { background: #e5e5e5; color: #999; }
+.step-line { height: 2px; flex: 1; transition: background 0.3s ease; }
+.step-line.completed { background: #059669; }
+.step-line.pending { background: #e5e5e5; }
+
+/* ── Accordion (JA checkout) ── */
+.accordion-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.25rem; cursor: pointer;
+  background: #f9f7f4; border: 1px solid #e5cfc2;
+  font-family: 'Century Gothic', 'Poppins', sans-serif;
+  font-weight: 600; font-size: 0.9375rem; color: #333;
+  transition: all 0.2s ease;
+}
+.accordion-header:hover { background: #f4eeeb; }
+.accordion-header.active { background: #571613; color: #fff; border-color: #571613; }
+.accordion-body {
+  border: 1px solid #e5cfc2; border-top: none;
+  padding: 1.25rem; background: #fff;
+}
+
+/* ── Mobile bottom safe area ── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+}
+
+/* ── Filter chip (JA product listing) ── */
+.filter-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 6px 14px; font-size: 12px; font-weight: 500;
+  border: 1px solid #ddd; border-radius: 20px;
+  cursor: pointer; transition: all 0.2s ease;
+  font-family: 'Century Gothic', 'Poppins', sans-serif;
+}
+.filter-chip:hover { border-color: #e9bb2c; }
+.filter-chip.active { background: #911b1e; color: #fff; border-color: #911b1e; }
+
+/* ── OTP input boxes ── */
+.otp-input {
+  width: 48px; height: 48px; text-align: center;
+  font-size: 1.25rem; font-weight: 700; font-family: 'Roboto', sans-serif;
+  border: 2px solid #ddd; border-radius: 4px;
+  outline: none; transition: border-color 0.2s ease;
+}
+.otp-input:focus { border-color: #e9bb2c; box-shadow: 0 0 0 2px rgba(233,187,44,0.2); }
+
+/* ── Scroll Reveal Animation ── */
+.scroll-reveal {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+.scroll-reveal.revealed {
+  opacity: 1; transform: translateY(0);
+}
+
+/* ── Video Hero ── */
+.hero-video-container video {
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+/* ── Carousel smooth scroll ── */
+.scroll-smooth { scroll-behavior: smooth; }
+
+/* ── Grid cols 5 (Tailwind doesn't have grid-cols-5 by default in some configs) ── */
+@media (min-width: 1024px) {
+  .lg\:grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+@media (min-width: 768px) {
+  .md\:grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+
+/* ── Number input hide spinners ── */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none; margin: 0;
+}
+input[type=number] { -moz-appearance: textfield; appearance: textfield; }

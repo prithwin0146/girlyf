@@ -1,0 +1,27 @@
+# ── Node ──
+node_modules/
+dist/
+.angular/
+.vscode/
+*.tsbuildinfo
+
+# ── .NET ──
+bin/
+obj/
+*.user
+*.suo
+*.vs/
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+
+# ── Env ──
+*.env
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+
+# ── Logs ──
+*.log
+npm-debug.log*

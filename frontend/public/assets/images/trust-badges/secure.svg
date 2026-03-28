@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <circle cx="32" cy="32" r="30" stroke="#571613" stroke-width="2" fill="#FFF8F0"/>
+  <path d="M20 22a12 12 0 0124 0v6H20v-6z" fill="#e9bb2c" stroke="#571613" stroke-width="1"/>
+  <rect x="18" y="28" width="28" height="16" rx="2" fill="#571613"/>
+  <circle cx="32" cy="36" r="3" fill="#e9bb2c"/>
+  <text x="32" y="54" text-anchor="middle" font-size="6" fill="#571613" font-weight="bold">SECURE</text>
+</svg>

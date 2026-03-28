@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <circle cx="32" cy="32" r="30" stroke="#571613" stroke-width="2" fill="#FFF8F0"/>
+  <path d="M32 12l4.5 9.5L47 23l-7.5 7 1.8 10L32 35.5 22.7 40l1.8-10L17 23l10.5-1.5z" fill="#e9bb2c" stroke="#571613" stroke-width="1"/>
+  <text x="32" y="52" text-anchor="middle" font-size="7" fill="#571613" font-weight="bold">BIS 916</text>
+</svg>

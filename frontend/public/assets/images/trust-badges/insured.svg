@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <circle cx="32" cy="32" r="30" stroke="#571613" stroke-width="2" fill="#FFF8F0"/>
+  <path d="M24 18v28l8-6 8 6V18z" fill="#e9bb2c" stroke="#571613" stroke-width="1"/>
+  <path d="M28 26h8M32 22v8" stroke="#571613" stroke-width="1.5" stroke-linecap="round"/>
+  <text x="32" y="54" text-anchor="middle" font-size="5" fill="#571613" font-weight="bold">INSURED</text>
+</svg>
