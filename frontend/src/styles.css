@@ -726,11 +726,78 @@ img[loading="lazy"]:not([src=""]) {
   line-height: 0;
 }
 
-.ph-hero-img {
+/* ── Hero section ── */
+.parakkat-hero {
+  position: relative;
   width: 100%;
-  height: auto;
-  display: block;
+  min-height: 92vw;   /* natural proportion on mobile */
+  background-image: url('/assets/images/hero/Heroimage copy.png');
+  background-size: 100% auto;
+  background-position: center top;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: flex-end;
 }
+@media (min-width: 768px) {
+  .parakkat-hero {
+    min-height: 600px;
+    background-size: cover;
+    background-position: center center;
+  }
+}
+
+/* Text + CTA column — sits over the left portion of the image */
+.ph-content {
+  padding: clamp(24px, 5vw, 60px) clamp(20px, 5vw, 80px) clamp(32px, 5vw, 64px);
+  max-width: 520px;
+}
+
+/* Script line */
+.ph-script {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(2.8rem, 7vw, 5.5rem);
+  color: #3d1f0a;
+  line-height: 1.1;
+  margin-bottom: 0;
+}
+
+/* Bold display line */
+.ph-bold {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3.6rem, 9vw, 8rem);
+  font-weight: 900;
+  color: #2a1710;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  margin-bottom: 16px;
+}
+
+/* Subline */
+.ph-sub {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(0.85rem, 1.8vw, 1rem);
+  color: #3d2410;
+  line-height: 1.7;
+  margin: 0 0 28px;
+}
+.ph-sub strong { font-weight: 700; color: #2a1710; }
+
+/* CTA button */
+.ph-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 30px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background: #2a1710;
+  color: #fff;
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  transition: background 0.28s ease, transform 0.2s ease;
+}
+.ph-btn:hover { background: #c9a96e; transform: translateY(-2px); }
 
 /* ── Offer badge ── */
 .hero-offer-badge {

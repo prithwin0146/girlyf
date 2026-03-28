@@ -22,11 +22,14 @@ type TabId = 'featured' | 'bestsellers' | 'new';
     <!-- ═══════════════════════════════════════════════════════ -->
     <!-- 1. FULL-BLEED HERO IMAGE                               -->
     <!-- ═══════════════════════════════════════════════════════ -->
-    <section class="parakkat-hero relative w-full">
-      <img src="/assets/images/hero/Heroimage.webp"
-        alt="Girlyf — Exquisite Jewellery"
-        class="ph-hero-img ph-anim-img"
-        loading="eager">
+    <section class="parakkat-hero">
+      <!-- Real HTML overlaid on clean background image -->
+      <div class="ph-content">
+        <div class="ph-script ph-anim-2">Freshly</div>
+        <div class="ph-bold ph-anim-3">Layered.</div>
+        <p class="ph-sub ph-anim-4">Be the first to own <strong>our newest arrivals.</strong></p>
+        <a routerLink="/products" class="ph-btn ph-anim-5">EXPLORE NEW ARRIVALS</a>
+      </div>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════ -->
