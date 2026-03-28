@@ -209,7 +209,7 @@ import { Category, GoldRate, Product } from '@core/models';
                   <!-- Wide mega dropdown — fixed to viewport width -->
                   <div class="fixed left-0 right-0 top-auto bg-white shadow-2xl border-t-2 border-gold-500 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100]"
                     style="margin-top: 0;">
-                    <div class="max-w-[1400px] mx-auto px-6 py-5 flex gap-0">
+                    <div class="max-w-[1400px] mx-auto px-6 py-6 flex gap-0 items-stretch">
 
                       <!-- COL 1: SHOP FOR -->
                       <div class="w-[160px] shrink-0 border-r border-gray-100 pr-5">
@@ -257,24 +257,23 @@ import { Category, GoldRate, Product } from '@core/models';
                         }
                       </div>
 
-                      <!-- COL 4: BRANDS + Feature image -->
-                      <div class="w-[220px] shrink-0 pl-5">
-                        <p class="text-[10px] text-primary-900 font-bold uppercase tracking-[0.15em] mb-3 border-b border-gold-300 pb-2">Collections</p>
-                        <div class="grid grid-cols-2 gap-2 mb-3">
-                          @for (col of navItem.megaMenu.collections; track col.name) {
-                            <a [routerLink]="['/collections', col.slug]"
-                              class="text-[10px] text-center py-1.5 px-2 border border-gray-200 hover:border-gold-400 hover:bg-gold-50 transition-all text-gray-600 hover:text-primary-900 rounded">
-                              {{ col.name }}
-                            </a>
-                          }
-                        </div>
-                        @if (navItem.megaMenu.featureImage) {
-                          <div class="overflow-hidden rounded mt-2">
+                      <!-- COL 4: EDITORIAL FEATURE BANNER -->
+                      @if (navItem.megaMenu.featureImage) {
+                        <div class="w-[210px] shrink-0 pl-5 self-stretch flex flex-col">
+                          <p class="text-[10px] text-primary-900 font-bold uppercase tracking-[0.15em] mb-3 border-b border-gold-300 pb-2">Featured</p>
+                          <a [routerLink]="navItem.route" class="relative overflow-hidden flex-1 min-h-[200px] block group/feat">
                             <img [src]="navItem.megaMenu.featureImage" [alt]="navItem.label"
-                              class="w-full h-24 object-cover hover:scale-105 transition-transform duration-500">
-                          </div>
-                        }
-                      </div>
+                              class="w-full h-full object-cover absolute inset-0 group-hover/feat:scale-105 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent"></div>
+                            <div class="absolute bottom-0 left-0 right-0 p-4">
+                              <p class="text-white text-[11px] font-heading font-bold tracking-wide leading-tight mb-2">{{ navItem.label }}</p>
+                              <span class="inline-block text-[9px] bg-gold-500 text-primary-900 font-bold px-3 py-1.5 tracking-[0.15em] uppercase group-hover/feat:bg-gold-400 transition-colors">
+                                SHOP NOW →
+                              </span>
+                            </div>
+                          </a>
+                        </div>
+                      }
 
                     </div>
                   </div>
@@ -451,9 +450,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   buildNavItems(cats: Category[]): void {
     const genders = [
-      { label: 'Women', image: '/assets/images/menu/women.avif' },
-      { label: 'Men',   image: '/assets/images/menu/men.avif' },
-      { label: 'Kids',  image: '/assets/images/menu/kids.avif' },
+      { label: 'Women', image: '/assets/images/navbar/women.avif' },
+      { label: 'Men',   image: '/assets/images/navbar/men.avif' },
+      { label: 'Kids',  image: '/assets/images/navbar/kids.avif' },
     ];
     const occasions = [
       { label: 'Wedding' }, { label: 'Engagement' },
@@ -506,11 +505,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
     };
 
     const featureImages: Record<string, string> = {
-      '/gold-jewellery':      '/assets/images/misc/jewellery-for-her.avif',
-      '/diamond-jewellery':   '/assets/images/menu/diamondring.avif',
-      '/platinum-jewellery':  '/assets/images/menu/rings.avif',
-      '/silver-jewellery':    '/assets/images/menu/necklaces.avif',
-      '/18k-jewellery':       '/assets/images/menu/earrings.avif',
+      '/gold-jewellery':      '/assets/images/navbar/Gold-jewellery-banner.avif',
+      '/diamond-jewellery':   '/assets/images/navbar/Diamond-jewellery-banner.avif',
+      '/platinum-jewellery':  '/assets/images/navbar/Platinum-banner.avif',
+      '/silver-jewellery':    '/assets/images/navbar/Silver-banner.avif',
+      '/18k-jewellery':       '/assets/images/navbar/Daily-wear-banner.avif',
+      '/gold-coin':           '/assets/images/navbar/coin-gift-banner.avif',
     };
 
     const metals = [
@@ -532,9 +532,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
       },
     }));
 
-    this.navItems.push(
-      { label: 'Coins & Gifts', route: '/gold-coin' },
-    );
+    this.navItems.push({
+      label: 'Coins & Gifts', route: '/gold-coin',
+      megaMenu: {
+        genders,
+        categories: [
+          { label: 'Gold Coins',   route: '/gold-coin',   image: '/assets/images/misc/gold-coin.avif' },
+          { label: 'Gift Cards',   route: '/gift-cards',  image: '/assets/images/misc/gift-card.avif' },
+          { label: 'Digi Gold',    route: '/digi-gold',   image: '/assets/images/misc/digi-gold.avif' },
+        ],
+        occasions,
+        collections,
+        featureImage: featureImages['/gold-coin'],
+      },
+    });
   }
 
   onSearch(): void {
