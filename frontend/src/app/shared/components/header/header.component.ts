@@ -35,8 +35,7 @@ import { Category, GoldRate, Product } from '@core/models';
           <a routerLink="/gold-rate" class="hover:text-gold-400 transition-colors">Gold Rate</a>
           <span class="text-primary-700">|</span>
           <a routerLink="/gift-cards" class="hover:text-gold-400 transition-colors">Gift Cards</a>
-          <span class="text-primary-700">|</span>
-          <a href="tel:18001234567" class="hover:text-gold-400 transition-colors">📞 1800-123-4567</a>
+
         </div>
       </div>
     </div>

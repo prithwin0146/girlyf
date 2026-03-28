@@ -359,43 +359,7 @@ type TabId = 'featured' | 'bestsellers' | 'new';
       </div>
     </section>
 
-    <!-- ═══════════════════════════════════════════════════════ -->
-    <!-- 11. BRAND STORY STATS (Kohira-inspired split panel)   -->
-    <!-- ═══════════════════════════════════════════════════════ -->
-    <section class="scroll-reveal overflow-hidden" style="background: linear-gradient(135deg, #0e0305 0%, #2a0a0b 50%, #1a0505 100%)">
-      <div class="max-w-7xl mx-auto px-4 py-12 md:py-20">
-        <div class="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
-          <!-- Left — Brand promise text -->
-          <div class="panel-reveal-left">
-            <p class="text-gold-400 text-[10px] uppercase tracking-[0.4em] font-accent mb-4">Est. 2005 · Bangalore</p>
-            <h2 class="font-heading text-white text-3xl md:text-5xl font-bold leading-tight mb-6">
-              Jewellery That Tells<br>
-              <span class="text-gradient-gold">Your Story</span>
-            </h2>
-            <p class="text-white/65 text-sm leading-relaxed mb-8" style="font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-style: italic">
-              At Girlyf, every piece is more than an ornament — it's a chapter in your life's most beautiful moments. BIS hallmarked, IGI certified, crafted with love.
-            </p>
-            <div class="flex gap-4">
-              <a routerLink="/about" class="btn-gold text-xs px-6 py-2.5">OUR STORY</a>
-              <a routerLink="/contact" class="text-white/70 text-xs uppercase tracking-widest py-2.5 hover:text-gold-400 transition-colors flex items-center gap-1">
-                Visit Our Store <mat-icon class="text-sm">arrow_forward</mat-icon>
-              </a>
-            </div>
-          </div>
-          <!-- Right — Stats grid -->
-          <div class="panel-reveal-right">
-            <div class="grid grid-cols-2 gap-px" style="background: rgba(233,187,44,0.1)">
-              @for (stat of brandStats; track stat.label) {
-                <div class="bg-black/30 p-6 md:p-8 text-center" style="backdrop-filter: blur(10px)">
-                  <div class="stat-anim text-3xl md:text-4xl font-heading font-bold text-gold-400 mb-2">{{ stat.value }}</div>
-                  <div class="text-white/50 text-[10px] uppercase tracking-widest">{{ stat.label }}</div>
-                </div>
-              }
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+
 
     <!-- ═══════════════════════════════════════════════════════ -->
     <!-- 12. SHOP BY EARRING TYPE ← KEEP (redesigned cards)   -->

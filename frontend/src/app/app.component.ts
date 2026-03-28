@@ -33,7 +33,7 @@ import { AnalyticsService } from '@core/services/analytics.service';
     <!-- Back to Top -->
     @if (showBackToTop()) {
       <button (click)="scrollToTop()"
-        class="fixed bottom-6 right-4 z-50 w-11 h-11 bg-primary-900 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-primary-700 transition-all duration-300"
+        class="fixed bottom-6 left-4 z-50 w-11 h-11 bg-primary-900 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-primary-700 transition-all duration-300"
         title="Back to top">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
