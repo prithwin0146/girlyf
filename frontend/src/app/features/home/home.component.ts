@@ -20,56 +20,19 @@ type TabId = 'featured' | 'bestsellers' | 'new';
   template: `
 
     <!-- ═══════════════════════════════════════════════════════ -->
-    <!-- 1. PARAKKAT-STYLE SPLIT HERO                           -->
-    <!--    Left: staggered text reveal  Right: hero image      -->
+    <!-- 1. FULL-BLEED HERO IMAGE                               -->
     <!-- ═══════════════════════════════════════════════════════ -->
     <section class="parakkat-hero relative w-full overflow-hidden">
+      <img src="/assets/images/hero/Heroimage.webp"
+        alt="Girlyf — Exquisite Jewellery"
+        class="ph-hero-img ph-anim-img"
+        loading="eager">
 
-      <!-- ── Offer Badge (top-right, springs in) ── -->
+      <!-- Offer Badge -->
       <div class="hero-offer-badge">
         <span class="badge-label">GET UPTO</span>
         <span class="badge-number">50%</span>
         <span class="badge-label">OFF</span>
-      </div>
-
-      <!-- ── Split layout (flex row on desktop, column on mobile) ── -->
-      <div class="parakkat-hero-inner">
-
-        <!-- LEFT — Text content -->
-        <div class="parakkat-text-side">
-
-          <!-- Eyebrow tag with gold rules -->
-          <div class="ph-tag ph-anim-1">
-            <div class="ph-tag-line"></div>
-            <span class="ph-tag-text">New Collection · 2025</span>
-            <div class="ph-tag-line"></div>
-          </div>
-
-          <!-- Mixed heading: script + heavy display -->
-          <h1 class="parakkat-heading">
-            <span class="ph-script ph-anim-2">Wear Your</span>
-            <span class="ph-bold ph-anim-3">Story.</span>
-          </h1>
-
-          <!-- Subline -->
-          <p class="ph-sub ph-anim-4">
-            Be the first to own our <strong>newest arrivals</strong>.
-          </p>
-
-          <!-- CTA buttons -->
-          <div class="ph-ctas ph-anim-5">
-            <a routerLink="/products" class="ph-btn-primary">EXPLORE NEW ARRIVALS</a>
-            <a routerLink="/products" class="ph-btn-secondary">All Jewellery</a>
-          </div>
-        </div>
-
-        <!-- RIGHT — Hero image (edge-to-edge on desktop) -->
-        <div class="parakkat-img-side">
-          <img src="/assets/images/hero/Heroimage.webp"
-            alt="Girlyf — Exquisite Jewellery"
-            class="ph-hero-img ph-anim-img"
-            loading="eager">
-        </div>
       </div>
     </section>
 
