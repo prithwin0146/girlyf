@@ -855,28 +855,54 @@ img[loading="lazy"]:not([src=""]) {
 .product-tab-btn.active::after { left: 0; right: 0; }
 .product-tab-btn:hover { color: #571613; }
 
-/* ── Testimonial card premium ── */
-.testimonial-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 28px 24px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
-  border: 1px solid rgba(233,187,44,0.1);
-  transition: all 0.4s ease;
-  position: relative;
+/* ── Testimonials — BlueStone clip-card style ── */
+
+/* Section hides overflow for the slide-in animation */
+.clip-cards-section { overflow-x: hidden; }
+
+/* Slide-from-right on desktop when revealed */
+@media (min-width: 768px) {
+  .clip-reveal-right {
+    transform: translateX(50%);
+    transition: transform 2000ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .clip-reveal-right.revealed { transform: translateX(0); }
 }
-.testimonial-card::before {
-  content: '\201C';
-  position: absolute; top: 16px; left: 20px;
-  font-family: 'Playfair Display', serif;
-  font-size: 5rem; line-height: 1; color: rgba(233,187,44,0.15);
-  pointer-events: none;
+
+/* Outer card wrapper — SVG wavy rope as repeating background */
+.clip-card-outer {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='20'><path d='M0 10 C20 5, 40 15, 60 10 S80 5, 100 10 S120 15, 140 10 S160 5, 180 10 S200 15, 220 10' stroke='rgba(0,0,0,0.1)' stroke-width='.3' fill='none'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 333% auto;
+  background-position: 0 -5px;
+  padding-top: 50px;
+  padding-bottom: 40px;
+  padding-left: 16px;
+  padding-right: 16px;
 }
-.testimonial-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-  border-color: rgba(233,187,44,0.25);
+@media (min-width: 768px) {
+  .clip-card-outer {
+    padding-top: 65px;
+    padding-bottom: 25px;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
 }
+
+/* The card itself */
+.clip-card {
+  background: #FFE5E8;
+  border-radius: 4px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.clip-card:hover {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+}
+
+/* Drag-scroll cursor */
+.clip-cards-scroll { cursor: grab; }
+.clip-cards-scroll:active { cursor: grabbing; }
 
 /* ── Counting stat animation ── */
 @keyframes countUp {
@@ -943,10 +969,105 @@ img[loading="lazy"]:not([src=""]) {
 }
 .earring-card:hover .earring-label { transform: translateY(0); }
 
-/* ── Trust badge strip (Fiona-style animated marquee) ── */
-@keyframes trustMarquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-.trust-marquee { display: inline-flex; animation: trustMarquee 20s linear infinite; }
-.trust-marquee:hover { animation-play-state: paused; }
+/* ── Style Feed — snap-scroll reel strip ── */
+
+/* Outer scroll wrapper */
+.style-feed-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  /* edge fade masks */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%);
+  mask-image:         linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%);
+  padding-bottom: 6px; /* space for hover lift */
+}
+.style-feed-wrap::-webkit-scrollbar { display: none; }
+
+.style-feed-track {
+  display: flex;
+  gap: 14px;
+  padding: 0 max(24px, calc((100vw - 1280px) / 2 + 24px));
+  width: max-content;
+}
+
+/* ── Staggered entrance (triggered by parent .revealed) ── */
+@keyframes reelEnter {
+  from { opacity: 0; transform: translateY(36px) scale(0.93); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+.scroll-reveal .style-reel-card { opacity: 0; }
+
+.scroll-reveal.revealed .style-reel-card {
+  animation: reelEnter 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+.scroll-reveal.revealed .style-reel-card:nth-child(1) { animation-delay: 0.02s; }
+.scroll-reveal.revealed .style-reel-card:nth-child(2) { animation-delay: 0.10s; }
+.scroll-reveal.revealed .style-reel-card:nth-child(3) { animation-delay: 0.18s; }
+.scroll-reveal.revealed .style-reel-card:nth-child(4) { animation-delay: 0.26s; }
+.scroll-reveal.revealed .style-reel-card:nth-child(5) { animation-delay: 0.34s; }
+.scroll-reveal.revealed .style-reel-card:nth-child(6) { animation-delay: 0.42s; }
+.scroll-reveal.revealed .style-reel-card:nth-child(7) { animation-delay: 0.50s; }
+.scroll-reveal.revealed .style-reel-card:nth-child(8) { animation-delay: 0.58s; }
+
+.style-reel-card {
+  flex-shrink: 0;
+  width: 155px;
+  cursor: pointer;
+}
+@media (min-width: 768px)  { .style-reel-card { width: 195px; } }
+@media (min-width: 1024px) { .style-reel-card { width: 220px; } }
+
+.style-reel-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: #571613;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  padding-left: 2px;
+  font-family: var(--font-accent, sans-serif);
+  transition: color 0.3s ease;
+}
+.style-reel-card:hover .style-reel-tag { color: #e9bb2c; }
+
+.style-reel-video {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f0e9e2;
+  /* lift + glow on hover */
+  transition:
+    transform    0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    box-shadow   0.45s ease;
+}
+.style-reel-card:hover .style-reel-video {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow:
+    0 28px 60px rgba(87, 22, 19, 0.22),
+    0 0 0 2.5px rgba(233, 187, 44, 0.50);
+}
+
+/* Video inner zoom on hover */
+.reel-video-inner {
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+.style-reel-card:hover .reel-video-inner { transform: scale(1.07); }
+
+.style-reel-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(87,22,19,0.72) 0%, rgba(87,22,19,0.1) 45%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  display: flex;
+  align-items: flex-end;
+  padding: 14px;
+  border-radius: 14px;
+}
+.style-reel-card:hover .style-reel-overlay { opacity: 1; }
 
 /* ── Blog card editorial style ── */
 .blog-editorial-card {

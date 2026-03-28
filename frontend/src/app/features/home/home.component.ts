@@ -429,124 +429,85 @@ type TabId = 'featured' | 'bestsellers' | 'new';
     </section>
 
     <!-- ═══════════════════════════════════════════════════════ -->
-    <!-- 13. UNDER ₹2K DEALS (price-conscious section)        -->
+    <!-- 15b. STYLE FEED — hashtag reel strip                  -->
     <!-- ═══════════════════════════════════════════════════════ -->
     <section class="py-10 md:py-14 bg-white scroll-reveal">
       <div class="max-w-7xl mx-auto px-4">
-        <!-- Hero banner for this section -->
-        <div class="relative mb-8 overflow-hidden rounded-2xl">
-          <img src="/assets/images/misc/products-under-2k.avif" alt="Products Under ₹2,000"
-            class="w-full object-cover" style="max-height: 160px; object-position: center" loading="lazy">
-          <div class="absolute inset-0 rounded-2xl" style="background: linear-gradient(90deg, rgba(87,22,19,0.85) 0%, rgba(87,22,19,0.4) 50%, transparent 100%)"></div>
-          <div class="absolute inset-0 flex items-center px-6 md:px-10">
-            <div>
-              <span class="text-gold-400 text-[10px] font-accent uppercase tracking-[0.25em]">Affordable Luxury</span>
-              <h2 class="text-white text-2xl md:text-3xl font-heading font-bold tracking-wider">UNDER ₹2,000</h2>
-              <p class="text-white/70 text-xs mt-1">Everyday jewellery, extraordinary shine</p>
-            </div>
-            <!-- Floating badge -->
-            <div class="badge-float ml-auto mr-4 hidden md:block">
-              <div class="w-20 h-20 rounded-full flex flex-col items-center justify-center text-center"
-                style="background: linear-gradient(135deg, #e9bb2c, #ffc40c); box-shadow: 0 8px 20px rgba(233,187,44,0.4)">
-                <span class="text-primary-900 text-[10px] font-bold uppercase leading-tight">Starting</span>
-                <span class="text-primary-900 font-price text-lg font-extrabold leading-none">₹999</span>
+        <div class="text-center mb-8">
+          <p class="text-gold-500 font-accent text-xs uppercase tracking-[0.3em] mb-1">Real Style, Real People</p>
+          <h2 class="section-title text-base md:text-lg">#GIRLYF STYLE FEED</h2>
+          <div class="gold-divider"></div>
+          <p class="section-subtitle mt-1">Style it your way — wear it, share it</p>
+        </div>
+      </div>
+
+      <!-- Snap-scroll reel strip -->
+      <div class="style-feed-wrap">
+        <div class="style-feed-track">
+          @for (reel of styleReels; track reel.tag) {
+            <div class="style-reel-card">
+              <p class="style-reel-tag">{{ reel.tag }}</p>
+              <div class="style-reel-video">
+                <video [src]="reel.src" autoplay [muted]="true" loop playsinline
+                  class="w-full h-full object-cover reel-video-inner">
+                </video>
+                <div class="style-reel-overlay">
+                  <span class="text-white text-xs font-semibold tracking-wider uppercase">{{ reel.tag }}</span>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-
-        @if (isBrowser && under2k().length) {
-          <owl-carousel-o [options]="productCarouselOptions">
-            @for (product of under2k(); track product.id) {
-              <ng-template carouselSlide>
-                <div class="px-2">
-                  <app-product-card [product]="product" />
-                </div>
-              </ng-template>
-            }
-          </owl-carousel-o>
-        } @else {
-          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-            @for (product of under2k(); track product.id) {
-              <app-product-card [product]="product" />
-            }
-          </div>
-        }
-
-        <div class="text-center mt-8">
-          <a routerLink="/products" [queryParams]="{maxPrice: 2000}" class="btn-primary inline-flex items-center gap-1">
-            <mat-icon class="text-sm">arrow_forward</mat-icon> VIEW ALL UNDER &#8377;2K
-          </a>
+          }
         </div>
       </div>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════ -->
-    <!-- 15. TRUST BADGES — animated marquee strip             -->
+    <!-- 17. TESTIMONIALS — BlueStone clip-card style         -->
     <!-- ═══════════════════════════════════════════════════════ -->
-    <section class="py-6 overflow-hidden relative scroll-reveal" style="background: #f4eeeb; border-top: 1px solid #e5cfc2; border-bottom: 1px solid #e5cfc2">
-      <!-- Edge fade -->
-      <div class="absolute left-0 top-0 bottom-0 w-20 z-10 pointer-events-none" style="background: linear-gradient(90deg, #f4eeeb, transparent)"></div>
-      <div class="absolute right-0 top-0 bottom-0 w-20 z-10 pointer-events-none" style="background: linear-gradient(-90deg, #f4eeeb, transparent)"></div>
-
-      <div class="trust-marquee">
-        @for (badge of trustBadgesDuplicated; track $index) {
-          <div class="inline-flex items-center gap-3 px-8 flex-shrink-0">
-            <img [src]="badge.icon" [alt]="badge.label" class="h-7 w-auto flex-shrink-0" loading="lazy">
-            <span class="text-xs text-gray-700 font-semibold whitespace-nowrap uppercase tracking-wider">{{ badge.label }}</span>
-            <span class="text-gold-400 text-base ml-2">✦</span>
-          </div>
-        }
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════ -->
-    <!-- 17. TESTIMONIALS — premium card carousel              -->
-    <!-- ═══════════════════════════════════════════════════════ -->
-    @if (testimonials().length) {
-      <section class="py-12 md:py-20 scroll-reveal" style="background: linear-gradient(135deg, #fdf9f4 0%, #f4eeeb 100%)">
-        <div class="max-w-7xl mx-auto px-4">
-          <h2 class="section-title">LOVED BY MANY</h2>
+    <section class="clip-cards-section w-full py-8 md:py-12 relative bg-white">
+      <div class="clip-cards-content clip-reveal-right">
+        <div class="max-w-7xl mx-auto px-4 mb-6 text-center">
+          <p style="color:#9D7792;font-size:0.75rem;letter-spacing:0.3em;text-transform:uppercase;text-align:center;margin-bottom:4px">Happy Customers</p>
+          <h2 class="section-title">Customer Testimonials</h2>
           <div class="gold-divider"></div>
-          <p class="section-subtitle mb-10">Real stories from real customers</p>
-
-          @if (isBrowser) {
-            <owl-carousel-o [options]="testimonialOptions">
-              @for (t of testimonials(); track t.id) {
-                <ng-template carouselSlide>
-                  <div class="px-2 pb-2">
-                    <div class="testimonial-card">
-                      <!-- Stars -->
-                      <div class="flex gap-0.5 mb-4 relative z-10">
-                        @for (s of [1,2,3,4,5]; track s) {
-                          <span [class]="s <= t.rating ? 'text-gold-500' : 'text-gray-200'" style="font-size: 16px">★</span>
-                        }
+          <p style="color:#9D7792;font-size:0.875rem;text-align:center">#GirlyfAndMe</p>
+        </div>
+        <div class="relative bg-white overflow-visible">
+          <div class="clip-cards-scroll overflow-x-auto overflow-y-hidden py-8"
+            style="scrollbar-width:thin;scrollbar-color:#FFE5E8 transparent">
+            <div class="flex min-w-max">
+              @for (t of displayTestimonials; track t.id; let i = $index) {
+                <div class="flex-shrink-0 relative">
+                  <div class="clip-card-outer">
+                    <div class="clip-card relative p-[15px] w-[50vw] md:w-[300px]"
+                      [style.transform]="'rotate(' + clipCardRots[i % clipCardRots.length] + ')'">
+                      <!-- Photo -->
+                      <div class="w-full overflow-hidden" style="aspect-ratio:427/373">
+                        <img [src]="t.customerImage" [alt]="t.customerName"
+                          class="w-full h-full object-cover" loading="lazy">
                       </div>
-                      <p class="text-sm text-gray-600 leading-relaxed line-clamp-3 relative z-10 italic">"{{ t.comment }}"</p>
-                      <div class="mt-5 pt-4 border-t border-gray-100 flex items-center gap-3 relative z-10">
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
-                          style="background: linear-gradient(135deg, #911b1e, #571613)">
-                          {{ t.customerName.charAt(0) }}
+                      <!-- Name + age -->
+                      <div class="pt-3 relative" style="z-index:20">
+                        <div class="my-1">
+                          <h3 style="font-size:0.85rem;font-weight:400;color:#272B64;font-family:Mulish,sans-serif">{{ t.customerName }}, {{ t.location }}</h3>
                         </div>
-                        <div>
-                          <p class="text-sm font-semibold text-gray-800">{{ t.customerName }}</p>
-                          @if (t.location) {
-                            <p class="text-[10px] text-gray-400 flex items-center gap-1">
-                              <mat-icon class="text-[12px]">location_on</mat-icon> {{ t.location }}
-                            </p>
-                          }
-                        </div>
-                        <span class="ml-auto text-[10px] text-gold-600 font-accent uppercase tracking-wider">Verified ✓</span>
+                        <p style="color:#ACACAC;font-size:0.75rem;line-height:16px">{{ t.comment }}</p>
+                      </div>
+                      <!-- Binder clip pin -->
+                      <div class="absolute" style="top:-20px;width:30px;z-index:20"
+                        [style.left]="clipPinConfigs[i % clipPinConfigs.length].pos"
+                        [style.transform]="'translateX(-50%) rotate(' + clipPinConfigs[i % clipPinConfigs.length].rot + ')'">
+                        <img src="/assets/images/testimonials/pin.png" alt="" class="w-full h-auto" loading="lazy">
                       </div>
                     </div>
                   </div>
-                </ng-template>
+                </div>
               }
-            </owl-carousel-o>
-          }
+            </div>
+          </div>
         </div>
-      </section>
-    }
+      </div>
+    </section>
 
     <!-- ═══════════════════════════════════════════════════════ -->
     <!-- 18. BLOG — editorial masonry style                    -->
@@ -661,7 +622,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   featured = signal<Product[]>([]);
   bestSellers = signal<Product[]>([]);
   newArrivals = signal<Product[]>([]);
-  under2k = signal<Product[]>([]);
   testimonials = signal<Testimonial[]>([]);
   blogPosts = signal<BlogPost[]>([]);
   openFaq = signal<number | null>(null);
@@ -748,6 +708,45 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     nav: false,
     responsive: { 0: { items: 1 }, 768: { items: 2 }, 1024: { items: 3 } },
   };
+
+  // BlueStone clip-card style — per-card rotation & pin config
+  clipCardRots = ['14deg', '-3deg', '-10deg', '7deg', '14deg', '-3deg', '-10deg', '7deg'];
+  clipPinConfigs = [
+    { pos: '0%',  rot: '-17deg' },
+    { pos: '70%', rot: '5deg'   },
+    { pos: '70%', rot: '0deg'   },
+    { pos: '5%',  rot: '2deg'   },
+    { pos: '0%',  rot: '-17deg' },
+    { pos: '85%', rot: '10deg'  },
+    { pos: '80%', rot: '0deg'   },
+    { pos: '0%',  rot: '-15deg' },
+  ];
+
+  staticTestimonials = [
+    { id: 101, customerName: 'Akanksha Khanna', location: '27', rating: 5, comment: 'Delighted with my engagement ring from Girlyf! It\'s my dream ring, fits perfectly and is stunning to look at. Thank you for helping us find the perfect symbol of love!', customerImage: '/assets/images/testimonials/t1.jpg' },
+    { id: 102, customerName: 'Diksha Singh', location: '29', rating: 5, comment: 'I was worried about buying fine jewellery online, but Girlyf\'s customer service gave me full assurance and the delivery was super quick. Their jewellery is certified — no compromise on quality.', customerImage: '/assets/images/testimonials/t2.jpg' },
+    { id: 103, customerName: 'Nutan Mishra', location: '33', rating: 5, comment: 'I bought a Nazariya for my baby boy from Girlyf. It\'s so cute seeing it on my little one\'s wrist, and it gives me such a sense of security knowing it\'s from a trusted jeweller!', customerImage: '/assets/images/testimonials/t3.jpg' },
+    { id: 104, customerName: 'Divya Mishra', location: '26', rating: 5, comment: 'On Valentine\'s Day, my husband gifted me a necklace from Girlyf and I haven\'t taken it off since. Everyone asks where it\'s from — I just LOVE how nice it looks on me.', customerImage: '/assets/images/testimonials/t4.jpg' },
+    { id: 105, customerName: 'Anuska Ananya', location: '24', rating: 5, comment: 'Girlyf is my go-to for jewellery. I wear their pieces to work, dates, and brunches — it goes with everything and makes every outfit look stylish and trendy.', customerImage: '/assets/images/testimonials/t5.jpg' },
+    { id: 106, customerName: 'Priya Singh', location: '34', rating: 5, comment: 'I had trouble finding minimalist jewellery that suited my style, but Girlyf\'s sleek and elegant designs were exactly what I was looking for. Pieces for every style and occasion!', customerImage: '/assets/images/testimonials/t6.jpg' },
+    { id: 107, customerName: 'Avni Sharma', location: '27', rating: 5, comment: 'Me and my friends are obsessed with Girlyf\'s unique designs. I love how their jewellery adds a pop of elegance to my outfits. Stylish, modern, and truly a breath of fresh air.', customerImage: '/assets/images/testimonials/t7.jpg' },
+    { id: 108, customerName: 'Sonaalee Semwal', location: '28', rating: 5, comment: 'I bought a gold bracelet from Girlyf as a birthday gift to myself. So versatile and beautiful! If you want to treat yourself, Girlyf is absolutely the place to go.', customerImage: '/assets/images/testimonials/t8.jpg' },
+  ];
+
+  get displayTestimonials() {
+    return this.testimonials().length ? this.testimonials() : this.staticTestimonials;
+  }
+
+  styleReels = [
+    { tag: '#OOTD',         src: '/assets/images/videos/1_v0.mp4' },
+    { tag: '#StyleInspo',   src: '/assets/images/videos/2_v0.mp4' },
+    { tag: '#StackItUp',    src: '/assets/images/videos/3_v0.mp4' },
+    { tag: '#MakeBoldMoves',src: '/assets/images/videos/4_v0.mp4' },
+    { tag: '#StylingTip',   src: '/assets/images/videos/5_v0.mp4' },
+    { tag: '#ArmCandy',     src: '/assets/images/videos/6_v0.mp4' },
+    { tag: '#WhatIWore',    src: '/assets/images/videos/7_v0.mp4' },
+    { tag: '#GirlyfGlow',   src: '/assets/images/videos/8_v0.mp4' },
+  ];
 
   trustBadges = [
     { icon: '/assets/images/trust-badges/safe.svg', label: 'Safe & Secure' },
@@ -850,12 +849,14 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.isBrowser) {
       this.initScrollReveal();
       this.startHeroTimer();
+      this.initDragScroll();
     }
   }
 
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe());
     if (this.heroTimer) clearInterval(this.heroTimer);
+    this.scrollObserver?.disconnect();
   }
 
   private loadData(): void {
@@ -877,12 +878,10 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
         this.testimonials.set(data.testimonials);
         this.blogPosts.set(data.blogPosts);
         this.loading.set(false);
+        // Re-observe after Angular renders the newly added @if sections
+        if (this.isBrowser) setTimeout(() => this.initScrollReveal(), 50);
       },
       error: () => this.loading.set(false),
-    });
-
-    this.api.getProducts({ maxPrice: 2000, pageSize: 6, page: 1 }).subscribe({
-      next: (res) => this.under2k.set(res.items),
     });
   }
 
@@ -930,19 +929,47 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.openFaq.set(this.openFaq() === index ? null : index);
   }
 
+  private scrollObserver?: IntersectionObserver;
+
   private initScrollReveal(): void {
     if (typeof IntersectionObserver === 'undefined') return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('revealed');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
-    );
-    document.querySelectorAll('.scroll-reveal').forEach((el) => observer.observe(el));
+    if (!this.scrollObserver) {
+      this.scrollObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('revealed');
+              this.scrollObserver!.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      );
+    }
+    // Observe only elements not yet revealed (safe to call multiple times)
+    document.querySelectorAll('.scroll-reveal:not(.revealed), .clip-reveal-right:not(.revealed)').forEach((el) => this.scrollObserver!.observe(el));
+  }
+
+  private initDragScroll(): void {
+    // Apply mouse-drag scrolling to all .clip-cards-scroll and .style-feed-wrap elements
+    const wraps = document.querySelectorAll<HTMLElement>('.clip-cards-scroll, .style-feed-wrap');
+    wraps.forEach((el) => {
+      let isDown = false;
+      let startX = 0;
+      let scrollLeft = 0;
+      el.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - el.offsetLeft;
+        scrollLeft = el.scrollLeft;
+      });
+      el.addEventListener('mouseleave', () => { isDown = false; });
+      el.addEventListener('mouseup', () => { isDown = false; });
+      el.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - el.offsetLeft;
+        el.scrollLeft = scrollLeft - (x - startX) * 1.4;
+      });
+    });
   }
 }
