@@ -732,6 +732,29 @@ img[loading="lazy"]:not([src=""]) {
   display: block;
 }
 
+.ph-overlay-cta {
+  position: absolute;
+  bottom: 7%;
+  left: clamp(20px, 5vw, 80px);
+  z-index: 10;
+}
+
+.ph-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  padding: 15px 34px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background: #2a1710;
+  color: #fff;
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  transition: background 0.28s ease, transform 0.2s ease;
+}
+.ph-btn-primary:hover { background: #c9a96e; transform: translateY(-2px); }
+
 /* ── Offer badge ── */
 .hero-offer-badge {
   position: absolute;

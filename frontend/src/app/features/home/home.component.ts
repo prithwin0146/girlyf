@@ -27,6 +27,10 @@ type TabId = 'featured' | 'bestsellers' | 'new';
         alt="Girlyf — Exquisite Jewellery"
         class="ph-hero-img ph-anim-img"
         loading="eager">
+      <!-- CTA overlay -->
+      <div class="ph-overlay-cta">
+        <a routerLink="/products" class="ph-btn-primary ph-anim-5">EXPLORE NEW ARRIVALS</a>
+      </div>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════ -->
