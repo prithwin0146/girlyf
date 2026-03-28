@@ -14,19 +14,13 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
   standalone: true,
   imports: [CommonModule, RouterLink, MatIconModule, CarouselModule, ProductCardComponent],
   template: `
-    <!-- TRUST BADGES TICKER (Section 9) -->
-    <div class="bg-white border-b border-gray-100 py-2 overflow-hidden">
-      <div class="ticker-wrap">
-        <div class="ticker-content">
-          @for (badge of trustBadgesDuplicated; track $index) {
-            <span class="inline-flex items-center gap-2 mx-6 whitespace-nowrap">
-              <img [src]="badge.icon" [alt]="badge.label" class="h-8 w-auto">
-              <span class="text-xs text-gray-700 font-medium">{{ badge.label }}</span>
-            </span>
-          }
-        </div>
-      </div>
-    </div>
+    <!-- HERO AD VIDEO (Top Banner — matches JA Section Ad) -->
+    <section class="w-full relative bg-black">
+      <video class="w-full h-auto hidden md:block" style="aspect-ratio: 16/6" autoplay [muted]="true" loop playsinline
+        src="/assets/images/videos/hero-ad.mp4"></video>
+      <video class="w-full h-auto md:hidden" style="aspect-ratio: 15/12" autoplay [muted]="true" loop playsinline
+        src="/assets/images/videos/hero-ad.mp4"></video>
+    </section>
 
     <!-- HERO BANNER CAROUSEL (Section 1 - Owl Carousel) -->
     <section class="w-full relative">
@@ -182,39 +176,6 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
       </div>
     </section>
 
-    <!-- FEATURED PRODUCTS (Owl Carousel) -->
-    @if (featured().length) {
-      <section class="py-10 md:py-14 bg-gray-50 scroll-reveal">
-        <div class="max-w-7xl mx-auto px-4">
-          <h2 class="section-title">FEATURED JEWELLERY</h2>
-          <div class="gold-divider"></div>
-          <p class="section-subtitle mb-8">Handpicked pieces from our finest collections</p>
-
-          @if (isBrowser) {
-            <owl-carousel-o [options]="productCarouselOptions">
-              @for (product of featured(); track product.id) {
-                <ng-template carouselSlide>
-                  <div class="px-2">
-                    <app-product-card [product]="product" />
-                  </div>
-                </ng-template>
-              }
-            </owl-carousel-o>
-          } @else {
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-              @for (product of featured(); track product.id) {
-                <app-product-card [product]="product" />
-              }
-            </div>
-          }
-
-          <div class="text-center mt-8">
-            <a routerLink="/products" class="btn-outline">VIEW ALL PRODUCTS</a>
-          </div>
-        </div>
-      </section>
-    }
-
     <!-- GIFTS BANNER (Section 8) -->
     <section class="scroll-reveal">
       <a routerLink="/gift-cards" class="block">
@@ -223,12 +184,34 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
       </a>
     </section>
 
+    <!-- TRUST BADGES STRIP (Section 9 — matches JA 9-column grid) -->
+    <section class="py-8 bg-[#f4eeeb] scroll-reveal">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="hidden md:grid md:grid-cols-9 gap-4">
+          @for (badge of trustBadges; track $index) {
+            <div class="flex flex-col items-center text-center gap-2">
+              <img [src]="badge.icon" [alt]="badge.label" class="h-10 w-auto">
+              <span class="text-[10px] text-gray-700 font-medium leading-tight">{{ badge.label }}</span>
+            </div>
+          }
+        </div>
+        <div class="flex md:hidden gap-6 overflow-x-auto scrollbar-hide pb-2">
+          @for (badge of trustBadges; track $index) {
+            <div class="flex flex-col items-center text-center gap-2 flex-shrink-0 w-20">
+              <img [src]="badge.icon" [alt]="badge.label" class="h-10 w-auto">
+              <span class="text-[10px] text-gray-700 font-medium leading-tight">{{ badge.label }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
     <!-- CUSTOMIZATION VIDEO CTA (Section 10) -->
     <section class="py-12 md:py-16 bg-primary-900 text-white scroll-reveal">
       <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center gap-8">
         <div class="md:w-1/2">
           <div class="relative rounded-lg overflow-hidden">
-            <video src="/assets/images/videos/customization.mp4" autoplay muted loop playsinline
+            <video src="/assets/images/videos/customization.mp4" autoplay [muted]="true" loop playsinline
               class="w-full aspect-video object-cover">
             </video>
           </div>
@@ -254,9 +237,9 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
     <!-- AIRA COLLECTION VIDEO (Section 11) -->
     <section class="scroll-reveal">
       <a routerLink="/collections/aira" class="block relative">
-        <video class="w-full h-auto hidden md:block" autoplay muted loop playsinline
+        <video class="w-full h-auto hidden md:block" autoplay [muted]="true" loop playsinline
           src="/assets/images/videos/aira-banner.mp4"></video>
-        <video class="w-full h-auto md:hidden" autoplay muted loop playsinline
+        <video class="w-full h-auto md:hidden" autoplay [muted]="true" loop playsinline
           src="/assets/images/videos/aira-responsive.mp4"></video>
       </a>
     </section>
@@ -339,9 +322,9 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
     <!-- FLUTTER COLLECTION VIDEO (Section 16) -->
     <section class="scroll-reveal">
       <a routerLink="/collections/flutter" class="block relative">
-        <video class="w-full h-auto hidden md:block" autoplay muted loop playsinline
+        <video class="w-full h-auto hidden md:block" autoplay [muted]="true" loop playsinline
           src="/assets/images/videos/flutter-banner.mp4"></video>
-        <video class="w-full h-auto md:hidden" autoplay muted loop playsinline
+        <video class="w-full h-auto md:hidden" autoplay [muted]="true" loop playsinline
           src="/assets/images/videos/flutter-responsive.mp4"></video>
       </a>
     </section>
@@ -468,6 +451,22 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
             </a>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- NEWSLETTER SUBSCRIBE (matches JA) -->
+    <section class="py-12 md:py-16 bg-brown-200 scroll-reveal">
+      <div class="max-w-3xl mx-auto px-4 text-center">
+        <h2 class="text-xl md:text-2xl font-heading font-bold text-gray-800 tracking-wider">SUBSCRIBE TO GIRLYF</h2>
+        <p class="mt-2 text-sm text-gray-500">Elevate your style with dazzling jewellery updates & exclusive offers</p>
+        <form class="mt-6 flex flex-col sm:flex-row gap-3 max-w-lg mx-auto" (submit)="$event.preventDefault()">
+          <div class="flex-1 relative">
+            <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">email</mat-icon>
+            <input type="email" placeholder="Enter your email address"
+              class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded text-sm focus:outline-none focus:border-gold-500">
+          </div>
+          <button type="submit" class="btn-primary px-8 py-3 whitespace-nowrap">SUBSCRIBE</button>
+        </form>
       </div>
     </section>
 
@@ -717,7 +716,17 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     if (this.isBrowser) {
       this.initScrollReveal();
+      this.muteAllVideos();
     }
+  }
+
+  private muteAllVideos(): void {
+    setTimeout(() => {
+      document.querySelectorAll('video').forEach((v) => {
+        (v as HTMLVideoElement).muted = true;
+        (v as HTMLVideoElement).volume = 0;
+      });
+    }, 500);
   }
 
   ngOnDestroy(): void {
