@@ -45,7 +45,7 @@ import { MatIconModule } from '@angular/material/icon';
     <!-- MAIN FOOTER (JA: 4 columns + App Download) -->
     <footer class="bg-white py-10 border-t">
       <div class="max-w-[1400px] mx-auto px-4">
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
           <!-- Column 1: SHOPPING -->
           <div>
             <h4 class="footer-heading">Shopping</h4>
@@ -55,7 +55,6 @@ import { MatIconModule } from '@angular/material/icon';
               <li><a routerLink="/platinum-jewellery" class="footer-link">Platinum Jewellery</a></li>
               <li><a routerLink="/silver-jewellery" class="footer-link">Silver Jewellery</a></li>
               <li><a routerLink="/gold-coin" class="footer-link">Gold Coin</a></li>
-              <li><a routerLink="/digi-gold" class="footer-link">Digi Gold</a></li>
               <li><a routerLink="/blog" class="footer-link">Blog</a></li>
               <li><a routerLink="/gold-rate" class="footer-link">Gold Rate</a></li>
             </ul>
@@ -92,7 +91,7 @@ import { MatIconModule } from '@angular/material/icon';
             <h4 class="footer-heading">Our Company</h4>
             <ul class="space-y-2">
               <li><a routerLink="/about" class="footer-link">About Us</a></li>
-              <li><a routerLink="/stores" class="footer-link">Store Locator</a></li>
+              <li><a routerLink="/contact" class="footer-link">Our Store</a></li>
               <li><a routerLink="/our-brands" class="footer-link">Our Brands</a></li>
               <li><a routerLink="/contact" class="footer-link">Feedback</a></li>
             </ul>
@@ -106,24 +105,6 @@ import { MatIconModule } from '@angular/material/icon';
             </div>
           </div>
 
-          <!-- Column 5: APP DOWNLOAD (JA feature) -->
-          <div class="col-span-2 md:col-span-1">
-            <h4 class="footer-heading">Download Our App</h4>
-            <div class="flex flex-col items-start gap-3">
-              <!-- QR Code -->
-              <div class="w-24 h-24 bg-white border border-gray-200 rounded overflow-hidden">
-                <img src="/assets/images/misc/qr-code.svg" alt="Scan to download Girlyf app" class="w-full h-full object-contain p-1">
-              </div>
-              <div class="flex flex-col gap-2">
-                <a href="#" class="block">
-                  <img src="/assets/images/misc/google-play.svg" alt="Get it on Google Play" class="h-10">
-                </a>
-                <a href="#" class="block">
-                  <img src="/assets/images/misc/app-store.svg" alt="Download on the App Store" class="h-10">
-                </a>
-              </div>
-            </div>
-          </div>
         </div>
 
         <!-- PAYMENT BADGES -->

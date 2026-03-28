@@ -30,11 +30,11 @@ import { Category, GoldRate, Product } from '@core/models';
           }
         </div>
         <div class="flex items-center gap-3">
-          <a routerLink="/stores" class="hover:text-gold-400 transition-colors">Store Locator</a>
-          <span class="text-primary-700">|</span>
           <a routerLink="/blog" class="hover:text-gold-400 transition-colors">Blog</a>
           <span class="text-primary-700">|</span>
-          <a routerLink="/digi-gold" class="hover:text-gold-400 transition-colors">Digi Gold</a>
+          <a routerLink="/gold-rate" class="hover:text-gold-400 transition-colors">Gold Rate</a>
+          <span class="text-primary-700">|</span>
+          <a routerLink="/gift-cards" class="hover:text-gold-400 transition-colors">Gift Cards</a>
           <span class="text-primary-700">|</span>
           <a href="tel:18001234567" class="hover:text-gold-400 transition-colors">📞 1800-123-4567</a>
         </div>
@@ -116,10 +116,7 @@ import { Category, GoldRate, Product } from '@core/models';
             <button (click)="mobileSearchOpen.set(!mobileSearchOpen())" class="lg:hidden text-gray-600 p-2 hover:text-primary-900">
               <mat-icon>search</mat-icon>
             </button>
-            <a routerLink="/stores" class="hidden md:flex flex-col items-center text-gray-600 hover:text-primary-900 transition-colors p-2">
-              <mat-icon class="text-xl">location_on</mat-icon>
-              <span class="text-[8px] mt-0.5 tracking-wider uppercase">Stores</span>
-            </a>
+
             <!-- Wishlist with hover panel -->
             <div class="relative" (mouseenter)="showWishlistPanel.set(true)" (mouseleave)="showWishlistPanel.set(false)">
               <a routerLink="/wishlist" class="flex flex-col items-center text-gray-600 hover:text-primary-900 transition-colors p-2">
@@ -366,8 +363,6 @@ import { Category, GoldRate, Product } from '@core/models';
           }
           <div class="p-4 bg-brown-200/30 grid grid-cols-2 gap-2 text-xs">
             <a routerLink="/gold-rate" (click)="closeMobile()" class="flex items-center gap-2 py-2 font-medium text-gray-700">📈 Gold Rate</a>
-            <a routerLink="/stores" (click)="closeMobile()" class="flex items-center gap-2 py-2 font-medium text-gray-700">📍 Store Locator</a>
-            <a routerLink="/digi-gold" (click)="closeMobile()" class="flex items-center gap-2 py-2 font-medium text-gray-700">🥇 Digi Gold</a>
             <a routerLink="/gift-cards" (click)="closeMobile()" class="flex items-center gap-2 py-2 font-medium text-gray-700">🎁 Gift Cards</a>
             <a routerLink="/our-brands" (click)="closeMobile()" class="flex items-center gap-2 py-2 font-medium text-gray-700">💎 Our Brands</a>
             <a routerLink="/ring-size-guide" (click)="closeMobile()" class="flex items-center gap-2 py-2 font-medium text-gray-700">💍 Size Guide</a>
@@ -540,7 +535,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     this.navItems.push(
       { label: 'Coins & Gifts', route: '/gold-coin' },
-      { label: 'Digi Gold',    route: '/digi-gold' },
     );
   }
 

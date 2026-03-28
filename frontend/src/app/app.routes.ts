@@ -44,14 +44,11 @@ export const routes: Routes = [
   { path: 'myaccount', canActivate: [authGuard], loadComponent: () => import('@features/myaccount/myaccount.component').then(m => m.MyAccountComponent) },
 
   // ── Features ──
-  { path: 'digi-gold', loadComponent: () => import('@features/digi-gold/digi-gold.component').then(m => m.DigiGoldComponent) },
   { path: 'gift-cards', loadComponent: () => import('@features/gift-cards/gift-cards.component').then(m => m.GiftCardsComponent) },
   { path: 'our-brands', loadComponent: () => import('@features/our-brands/our-brands.component').then(m => m.OurBrandsComponent) },
   { path: 'gold-rate', loadComponent: () => import('@features/gold-rate/gold-rate.component').then(m => m.GoldRateComponent) },
   { path: 'gold-rate-today', loadComponent: () => import('@features/gold-rate/gold-rate.component').then(m => m.GoldRateComponent) },
   { path: 'blog', loadComponent: () => import('@features/blog/blog.component').then(m => m.BlogComponent) },
-  { path: 'stores', loadComponent: () => import('@features/store-locator/store-locator.component').then(m => m.StoreLocatorComponent) },
-  { path: 'store-locator', redirectTo: 'stores', pathMatch: 'full' },
 
   // ── Info Pages ──
   { path: 'about', loadComponent: () => import('@features/about/about.component').then(m => m.AboutComponent) },

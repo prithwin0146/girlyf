@@ -136,8 +136,7 @@ public class AppDbContext : DbContext
             new CmsSection { Id = 8, SectionKey = "bestsellers", Title = "Best Sellers", SubTitle = "Most loved by our customers", DisplayOrder = 8 },
             new CmsSection { Id = 9, SectionKey = "testimonials", Title = "Customer Stories", SubTitle = "Hear what our customers say", DisplayOrder = 9 },
             new CmsSection { Id = 10, SectionKey = "blog_preview", Title = "From Our Blog", SubTitle = "Jewellery tips, trends & more", DisplayOrder = 10 },
-            new CmsSection { Id = 11, SectionKey = "store_locator", Title = "Visit Our Stores", SubTitle = "Find a store near you", DisplayOrder = 11 },
-            new CmsSection { Id = 12, SectionKey = "app_download", Title = "Download Our App", SubTitle = "Shop on the go with exclusive app offers", DisplayOrder = 12 }
+            new CmsSection { Id = 11, SectionKey = "store_locator", Title = "Visit Our Store", SubTitle = "Come visit us in Bangalore", DisplayOrder = 11 }
         );
 
         // ── Seed: Testimonials ──

@@ -103,9 +103,9 @@ import { SeoService } from '@core/services/seo.service';
     <!-- CTA -->
     <section class="py-12 bg-primary-900 text-center">
       <h2 class="font-heading text-2xl text-white mb-2">Visit Us Today</h2>
-      <p class="text-white/60 text-sm mb-6">Experience our jewellery collection at a store near you</p>
+      <p class="text-white/60 text-sm mb-6">Come experience our jewellery collection at our Bangalore showroom</p>
       <div class="flex justify-center gap-3">
-        <a routerLink="/stores" class="btn-gold text-sm">FIND A STORE</a>
+        <a routerLink="/contact" class="btn-gold text-sm">GET DIRECTIONS</a>
         <a routerLink="/products" class="btn-outline border-white text-white hover:bg-white hover:text-primary-900 text-sm">SHOP ONLINE</a>
       </div>
     </section>
@@ -128,13 +128,10 @@ export class AboutComponent implements OnInit {
 
   milestones = [
     { year: '2005', event: 'Founded with a single boutique in Bangalore' },
-    { year: '2009', event: 'Expanded to 5 stores across South India' },
     { year: '2013', event: 'Launched exclusive diamond collections' },
-    { year: '2016', event: 'Reached 20+ showrooms nationwide' },
     { year: '2018', event: 'Launched Girlyf online store' },
-    { year: '2020', event: 'Introduced Digital Gold investment' },
     { year: '2022', event: 'Won National Jewellery Design Award' },
-    { year: '2024', event: '50+ stores, 500K+ happy customers' },
+    { year: '2024', event: '20K+ happy customers across India' },
   ];
 
   values = [

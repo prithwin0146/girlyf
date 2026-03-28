@@ -5,7 +5,7 @@ import { environment } from '@env/environment';
 import {
   Product, PagedResult, ProductFilter, Category,
   GoldRate, Banner, CmsSection, BlogPost,
-  StoreLocation, Testimonial, Review, CouponValidation,
+  Testimonial, Review, CouponValidation,
 } from '@core/models';
 
 @Injectable({ providedIn: 'root' })
@@ -91,15 +91,6 @@ export class ApiService {
 
   getPostBySlug(slug: string): Observable<BlogPost> {
     return this.http.get<BlogPost>(`${this.base}/blog/${slug}`);
-  }
-
-  // ── Stores ──
-  getStores(): Observable<StoreLocation[]> {
-    return this.http.get<StoreLocation[]>(`${this.base}/stores`);
-  }
-
-  getStoresByCity(city: string): Observable<StoreLocation[]> {
-    return this.http.get<StoreLocation[]>(`${this.base}/stores/city/${city}`);
   }
 
   // ── Testimonials ──

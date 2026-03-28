@@ -377,8 +377,8 @@ type TabId = 'featured' | 'bestsellers' | 'new';
             </p>
             <div class="flex gap-4">
               <a routerLink="/about" class="btn-gold text-xs px-6 py-2.5">OUR STORY</a>
-              <a routerLink="/store-locator" class="text-white/70 text-xs uppercase tracking-widest py-2.5 hover:text-gold-400 transition-colors flex items-center gap-1">
-                Find a Store <mat-icon class="text-sm">arrow_forward</mat-icon>
+              <a routerLink="/contact" class="text-white/70 text-xs uppercase tracking-widest py-2.5 hover:text-gold-400 transition-colors flex items-center gap-1">
+                Visit Our Store <mat-icon class="text-sm">arrow_forward</mat-icon>
               </a>
             </div>
           </div>
@@ -690,7 +690,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   ];
 
   brandStats = [
-    { value: '500+', label: 'Stores Pan India' },
+    { value: '1', label: 'Store in Bangalore' },
     { value: '20K+', label: 'Happy Customers' },
     { value: '5000+', label: 'Unique Designs' },
     { value: '20+', label: 'Years of Trust' },
@@ -702,7 +702,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     { desktop: '/assets/images/banners/desktop/banner-03.avif', mobile: '/assets/images/banners/mobile/banner-03.avif', alt: 'Girlyf New Arrivals', label: 'Just Arrived', headline: 'Timeless Craft', subline: 'BIS hallmarked gold, shaped by master artisans, worn for generations', ctaLabel: 'New Arrivals', ctaLink: '/products' },
     { desktop: '/assets/images/banners/desktop/banner-04.avif', mobile: '/assets/images/banners/mobile/banner-04.avif', alt: 'Girlyf Wedding Collection', label: 'Wedding Season', headline: 'Made for Her', subline: 'Bridal sets, mangalsutras & rings that make every moment unforgettable', ctaLabel: 'Bridal Collection', ctaLink: '/gold-jewellery' },
     { desktop: '/assets/images/banners/desktop/banner-05.avif', mobile: '/assets/images/banners/mobile/banner-05.avif', alt: 'Girlyf Gift Cards', label: 'Gift with Love', headline: 'Gifted with Grace', subline: 'Give the gift of brilliance — jewellery gift cards for every occasion', ctaLabel: 'Gift Now', ctaLink: '/gift-cards' },
-    { desktop: '/assets/images/banners/desktop/banner-06.avif', mobile: '/assets/images/banners/mobile/banner-06.avif', alt: 'Girlyf Digi Gold', label: 'Invest Smartly', headline: 'Start with Gold', subline: 'Buy digital gold starting ₹10 — safe, certified, redeemable anytime', ctaLabel: 'Explore Digi Gold', ctaLink: '/digi-gold' },
   ];
 
   categoryOptions: OwlOptions = {
@@ -797,7 +796,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   ];
 
   financialCards = [
-    { label: 'Digi Gold', image: '/assets/images/misc/digi-gold.avif', link: '/digi-gold' },
     { label: 'Easy Buy', image: '/assets/images/misc/easy-buy.avif', link: '/products' },
     { label: 'Gift Cards', image: '/assets/images/misc/gift-card.avif', link: '/gift-cards' },
     { label: 'Gold Coins', image: '/assets/images/misc/gold-coin.avif', link: '/gold-coin' },

@@ -1,13 +1,12 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { SeoService } from '@core/services/seo.service';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   template: `
     <section class="bg-primary-900 py-12">
       <div class="max-w-4xl mx-auto px-4 text-center">
@@ -87,9 +86,10 @@ import { SeoService } from '@core/services/seo.service';
           </div>
 
           <div class="bg-brown-200/30 p-6 border border-brown-500/10">
-            <h3 class="font-heading text-sm uppercase tracking-wider text-primary-900 mb-3">Visit a Store</h3>
-            <p class="text-sm text-gray-600 mb-3">Find your nearest Girlyf showroom</p>
-            <a routerLink="/stores" class="btn-primary text-xs inline-block">STORE LOCATOR →</a>
+            <h3 class="font-heading text-sm uppercase tracking-wider text-primary-900 mb-3">Visit Our Store</h3>
+            <p class="text-sm text-gray-600 mb-1 font-semibold">Girlyf Jewellery — Bangalore</p>
+            <p class="text-xs text-gray-500 mb-3">Jayanagar 4th Block, Bangalore 560011<br>Mon–Sun: 10:00 AM – 9:00 PM</p>
+            <a href="https://maps.google.com/?q=Jayanagar+4th+Block+Bangalore" target="_blank" class="btn-primary text-xs inline-block">GET DIRECTIONS →</a>
           </div>
         </div>
       </div>
