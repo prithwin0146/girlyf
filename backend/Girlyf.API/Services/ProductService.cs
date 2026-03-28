@@ -14,6 +14,7 @@ public interface IProductService
     Task<List<ProductDto>> GetBestSellersAsync(int count = 8);
     Task<List<ProductDto>> GetNewArrivalsAsync(int count = 8);
     Task<List<ProductDto>> GetRelatedAsync(int productId, int count = 6);
+    Task<SearchSuggestionsDto> GetSearchSuggestionsAsync(string query, int count = 8);
 }
 
 public class ProductService : IProductService
@@ -127,6 +128,56 @@ public class ProductService : IProductService
             .Where(p => p.IsActive && p.CategoryId == product.CategoryId && p.Id != productId).Take(count).ToListAsync();
         var rates = await _goldRate.GetLatestRatesAsync();
         return related.Select(p => MapToDto(p, rates)).ToList();
+    }
+
+    public async Task<SearchSuggestionsDto> GetSearchSuggestionsAsync(string query, int count = 8)
+    {
+        var q = query.ToLower();
+
+        // Find matching product names for suggestions
+        var matchingProducts = await _db.Products
+            .Include(p => p.Category)
+            .Include(p => p.Images)
+            .Where(p => p.IsActive && (
+                p.Name.ToLower().Contains(q) ||
+                p.Category.Name.ToLower().Contains(q) ||
+                (p.Description != null && p.Description.ToLower().Contains(q))
+            ))
+            .Take(count)
+            .ToListAsync();
+
+        var rates = await _goldRate.GetLatestRatesAsync();
+
+        // Build product hits
+        var productHits = matchingProducts.Select(p =>
+        {
+            var ratePerGram = rates.GetValueOrDefault(p.Karat, 6600);
+            var goldValue = p.NetWeight * ratePerGram;
+            var wastage = goldValue * (p.WastagePercent / 100);
+            var making = (goldValue + wastage) * (p.MakingChargePercent / 100);
+            var calculatedPrice = goldValue + wastage + making + p.StonePrice;
+
+            return new SearchProductHitDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Slug = p.Slug,
+                ImageUrl = p.Images.FirstOrDefault(i => i.IsPrimary)?.ImageUrl ?? p.Images.FirstOrDefault()?.ImageUrl,
+                Price = Math.Round(calculatedPrice, 2),
+                CategoryName = p.Category?.Name ?? ""
+            };
+        }).ToList();
+
+        // Build text suggestions from product names and categories
+        var suggestions = matchingProducts
+            .Select(p => p.Name)
+            .Concat(matchingProducts.Select(p => p.Category?.Name ?? ""))
+            .Where(s => !string.IsNullOrEmpty(s))
+            .Distinct()
+            .Take(6)
+            .ToList();
+
+        return new SearchSuggestionsDto { Products = productHits, Suggestions = suggestions };
     }
 
     private ProductDto MapToDto(Product product, Dictionary<string, decimal> goldRates)

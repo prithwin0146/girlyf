@@ -81,6 +81,7 @@ export interface GoldRate {
 // ── Auth Models ──
 export interface AuthResponse {
   token: string;
+  refreshToken: string;
   name: string;
   email: string;
   role: string;

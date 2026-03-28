@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { AuthService } from './auth.service';
@@ -10,8 +11,12 @@ export class WishlistService {
 
   readonly wishlistIds = this._ids.asReadonly();
 
-  constructor(private http: HttpClient, private auth: AuthService) {
-    if (this.auth.isLoggedIn()) {
+  constructor(
+    private http: HttpClient,
+    private auth: AuthService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    if (isPlatformBrowser(this.platformId) && this.auth.isLoggedIn()) {
       this.loadWishlist();
     }
   }

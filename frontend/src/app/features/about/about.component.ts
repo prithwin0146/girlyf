@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { SeoService } from '@core/services/seo.service';
 
 @Component({
   selector: 'app-about',
@@ -20,11 +21,11 @@ import { RouterLink } from '@angular/router';
     <section class="py-12 bg-white">
       <div class="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
         <div>
-          <p class="text-gold-500 font-accent text-xs uppercase tracking-[0.2em] mb-2">Since 1964</p>
+          <p class="text-gold-500 font-accent text-xs uppercase tracking-[0.2em] mb-2">Since 2005</p>
           <h2 class="font-heading text-2xl text-primary-900">A Legacy of Trust</h2>
           <div class="gold-divider mt-3 mb-4"></div>
-          <p class="text-sm text-gray-600 leading-relaxed">Girlyf Jewellery has been synonymous with trust, purity, and craftsmanship for over six decades. Founded with the vision of making exquisite jewellery accessible to every Indian family, we have grown from a single showroom to a nationwide presence.</p>
-          <p class="text-sm text-gray-600 leading-relaxed mt-3">Every piece that bears the Girlyf name is crafted by master artisans and certified for purity. Our commitment to quality has earned us the trust of millions of families across generations.</p>
+          <p class="text-sm text-gray-600 leading-relaxed">Girlyf Jewellery was born from a passion for making exquisite, certified jewellery accessible to every Indian family. Founded in 2005, we have grown from a single boutique to a loved brand trusted by over 500,000 customers.</p>
+          <p class="text-sm text-gray-600 leading-relaxed mt-3">Every piece that bears the Girlyf name is crafted by master artisans and certified for purity. Our commitment to quality and transparency has earned us the trust of families across generations.</p>
         </div>
         <div class="bg-brown-200 aspect-square flex items-center justify-center rounded-lg">
           <span class="text-8xl">🏛️</span>
@@ -110,16 +111,30 @@ import { RouterLink } from '@angular/router';
     </section>
   `,
 })
-export class AboutComponent {
+export class AboutComponent implements OnInit {
+  constructor(private seo: SeoService) {}
+
+  ngOnInit(): void {
+    this.seo.update({
+      title: 'About Girlyf Jewellery — Our Story, Legacy & Values',
+      description: 'Discover the story of Girlyf Jewellery. Our commitment to purity, craftsmanship, and trust with BIS Hallmarked gold and diamond jewellery.',
+      keywords: 'about Girlyf, jewellery company, BIS hallmarked, gold jewellery India, Girlyf history',
+      breadcrumbs: [
+        { name: 'Home', url: '/' },
+        { name: 'About Us', url: '/about' },
+      ],
+    });
+  }
+
   milestones = [
-    { year: '1964', event: 'Founded in Kerala' },
-    { year: '1985', event: '10 showrooms across South India' },
-    { year: '2005', event: 'Launched diamond collections' },
-    { year: '2015', event: 'Expanded to 50+ stores' },
-    { year: '2018', event: 'Launched online store' },
-    { year: '2020', event: 'Digital Gold investment' },
-    { year: '2023', event: 'International expansion' },
-    { year: '2024', event: '100+ stores nationwide' },
+    { year: '2005', event: 'Founded with a single boutique in Bangalore' },
+    { year: '2009', event: 'Expanded to 5 stores across South India' },
+    { year: '2013', event: 'Launched exclusive diamond collections' },
+    { year: '2016', event: 'Reached 20+ showrooms nationwide' },
+    { year: '2018', event: 'Launched Girlyf online store' },
+    { year: '2020', event: 'Introduced Digital Gold investment' },
+    { year: '2022', event: 'Won National Jewellery Design Award' },
+    { year: '2024', event: '50+ stores, 500K+ happy customers' },
   ];
 
   values = [
@@ -129,17 +144,19 @@ export class AboutComponent {
   ];
 
   team = [
-    { name: 'Alukka Group', role: 'Founder Family' },
-    { name: 'Varghese Alukka', role: 'Chairman' },
-    { name: 'Paul Alukka', role: 'Managing Director' },
-    { name: 'John Alukka', role: 'Creative Director' },
+    { name: 'Girlyf Family', role: 'Founder Legacy' },
+    { name: 'Rajan Nair', role: 'Chairman & Founder' },
+    { name: 'Priya Sharma', role: 'Managing Director' },
+    { name: 'Arun Menon', role: 'Creative Director' },
   ];
 
   collections = [
-    { name: 'IVY', slug: 'ivy', icon: '🌿', tagline: 'Nature-inspired' },
+    { name: 'Ivy', slug: 'ivy', icon: '🌿', tagline: 'Nature-inspired' },
     { name: 'Butterfly', slug: 'butterfly', icon: '🦋', tagline: 'Graceful' },
     { name: 'Mirage', slug: 'mirage', icon: '✨', tagline: 'Illusion' },
     { name: 'Orchid', slug: 'orchid', icon: '🌸', tagline: 'Floral' },
     { name: 'Solo', slug: 'solo', icon: '💎', tagline: 'Solitaire' },
+    { name: 'Lumina', slug: 'lumina', icon: '🌟', tagline: 'Radiant Light' },
+    { name: 'Ethereal', slug: 'ethereal', icon: '🪷', tagline: 'Timeless Beauty' },
   ];
 }

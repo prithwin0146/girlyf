@@ -6,74 +6,178 @@ import { MatIconModule } from '@angular/material/icon';
 import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
 import { ApiService } from '@core/services/api.service';
 import { CartService } from '@core/services/cart.service';
+import { SeoService } from '@core/services/seo.service';
+import { AnalyticsService } from '@core/services/analytics.service';
 import { Product, Category, GoldRate, Banner, BlogPost, Testimonial, CmsSection } from '@core/models';
 import { ProductCardComponent } from '@shared/components/product-card/product-card.component';
+
+type TabId = 'featured' | 'bestsellers' | 'new';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule, RouterLink, MatIconModule, CarouselModule, ProductCardComponent],
   template: `
-    <!-- HERO AD VIDEO (Top Banner — matches JA Section Ad) -->
-    <section class="w-full relative bg-black">
-      <video class="w-full h-auto hidden md:block" style="aspect-ratio: 16/6" autoplay [muted]="true" loop playsinline
-        src="/assets/images/videos/hero-ad.mp4"></video>
-      <video class="w-full h-auto md:hidden" style="aspect-ratio: 15/12" autoplay [muted]="true" loop playsinline
-        src="/assets/images/videos/hero-ad.mp4"></video>
-    </section>
 
-    <!-- HERO BANNER CAROUSEL (Section 1 - Owl Carousel) -->
-    <section class="w-full relative">
-      @if (isBrowser && bannersLoaded()) {
-        <owl-carousel-o [options]="heroBannerOptions">
-          @for (banner of heroBanners; track $index) {
-            <ng-template carouselSlide>
-              <a [routerLink]="banner.link" class="block w-full cursor-pointer">
-                <picture>
-                  <source media="(max-width: 768px)" [srcset]="banner.mobile">
-                  <img [src]="banner.desktop" [alt]="banner.alt"
-                    class="w-full h-auto" style="aspect-ratio: 1920/600" loading="eager">
-                </picture>
-              </a>
-            </ng-template>
-          }
-        </owl-carousel-o>
-      } @else {
-        <div class="w-full bg-brown-200 animate-pulse" style="aspect-ratio: 1920/600"></div>
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 1. KEN BURNS HERO SLIDER — Cinematic image carousel    -->
+    <!--    Each slide: full-viewport image with soft zoom,     -->
+    <!--    staggered text reveal, progress bar, numbered nav   -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="relative w-full overflow-hidden bg-black"
+      style="height: 100svh; min-height: 580px; max-height: 980px">
+
+      <!-- Image stack — all loaded, cross-fade via CSS -->
+      @for (slide of heroSlides; track $index) {
+        <picture>
+          <source media="(max-width: 767px)" [srcset]="slide.mobile">
+          <img [src]="slide.desktop" [alt]="slide.alt"
+            class="hero-slide-img"
+            [class.hero-active]="currentBanner() === $index"
+            [class.hero-alt]="$index % 2 === 1"
+            [loading]="$index === 0 ? 'eager' : 'lazy'">
+        </picture>
       }
+
+      <!-- Directional gradient scrim — rich, cinematic -->
+      <div class="absolute inset-0 pointer-events-none"
+        style="background: linear-gradient(168deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.08) 30%, rgba(0,0,0,0.74) 100%)">
+      </div>
+      <!-- Side vignette -->
+      <div class="absolute inset-0 pointer-events-none hidden md:block"
+        style="background: linear-gradient(90deg, rgba(0,0,0,0.25) 0%, transparent 25%, transparent 75%, rgba(0,0,0,0.2) 100%)">
+      </div>
+      <!-- Film grain -->
+      <div class="film-grain absolute inset-0 pointer-events-none"></div>
+
+      <!-- Per-slide text — recreated on slide change (forces re-animation) -->
+      @for (slide of heroSlides; track $index) {
+        @if (currentBanner() === $index) {
+          <div class="absolute inset-0 flex flex-col items-center justify-end pb-28 md:pb-36 px-4 text-center">
+            <!-- Tag line -->
+            <div class="hero-slide-text hero-text-d1 flex items-center gap-3 mb-4">
+              <div class="h-px w-8 bg-gold-400/60"></div>
+              <span class="text-gold-400 text-[10px] uppercase tracking-[0.35em] font-accent">{{ slide.label }}</span>
+              <div class="h-px w-8 bg-gold-400/60"></div>
+            </div>
+            <!-- Main headline -->
+            <h1 class="hero-slide-text hero-text-d2 font-heading text-white font-bold leading-none mb-5"
+              style="font-size: clamp(2.8rem, 7vw, 6.5rem); text-shadow: 0 4px 50px rgba(0,0,0,0.45); letter-spacing: -0.02em">
+              {{ slide.headline }}
+            </h1>
+            <!-- Sub-line in Cormorant italic -->
+            <p class="hero-slide-text hero-text-d3 text-white/65 max-w-md leading-relaxed mb-9"
+              style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(1rem, 2.2vw, 1.2rem)">
+              {{ slide.subline }}
+            </p>
+            <!-- CTAs -->
+            <div class="hero-slide-text hero-text-d4 flex gap-3 flex-wrap justify-center">
+              <a [routerLink]="slide.ctaLink"
+                class="btn-gold px-8 py-3.5 text-sm font-bold tracking-widest shadow-xl">
+                {{ slide.ctaLabel }}
+              </a>
+              <a routerLink="/products"
+                class="px-8 py-3.5 text-sm font-semibold tracking-widest text-white uppercase"
+                style="backdrop-filter: blur(10px); background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.4); border-radius: 2px; transition: all 0.3s ease">
+                All Jewellery
+              </a>
+            </div>
+          </div>
+        }
+      }
+
+      <!-- Prev arrow -->
+      <button (click)="prevSlide()" class="hero-arrow" style="left: 16px" aria-label="Previous slide">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M11 14L6 9L11 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <!-- Next arrow -->
+      <button (click)="nextSlide()" class="hero-arrow" style="right: 16px" aria-label="Next slide">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M7 4L12 9L7 14" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <!-- Bottom bar: dots + slide counter -->
+      <div class="absolute bottom-9 left-0 right-0 px-6 md:px-12 flex items-center justify-between">
+        <!-- Dot navigation -->
+        <div class="flex gap-2">
+          @for (slide of heroSlides; track $index) {
+            <button (click)="goToSlide($index)" [attr.aria-label]="'Go to slide ' + ($index + 1)"
+              class="rounded-full transition-all duration-500"
+              [style.width.px]="currentBanner() === $index ? 28 : 8"
+              [style.height.px]="8"
+              [style.background]="currentBanner() === $index ? '#e9bb2c' : 'rgba(255,255,255,0.35)'">
+            </button>
+          }
+        </div>
+
+        <!-- Slide counter — editorial style -->
+        <div class="hidden md:flex items-baseline gap-1.5"
+          style="font-family: 'Roboto', monospace">
+          <span class="text-white font-bold text-xl leading-none">
+            {{ (currentBanner() + 1).toString().padStart(2, '0') }}
+          </span>
+          <span class="text-white/30 text-sm">/</span>
+          <span class="text-white/40 text-sm">
+            {{ heroSlides.length.toString().padStart(2, '0') }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Progress bar — gold line, resets each slide -->
+      <div class="absolute bottom-0 left-0 right-0 h-[2px]" style="background: rgba(255,255,255,0.07)">
+        @if (showProgress() && isBrowser) {
+          <div class="hero-progress-fill"></div>
+        }
+      </div>
+
+      <!-- Scroll hint (desktop) -->
+      <div class="hero-scroll-hint absolute bottom-8 left-1/2 pointer-events-none hidden md:flex flex-col items-center gap-1.5">
+        <div class="w-px h-10 bg-gradient-to-b from-white/40 to-transparent"></div>
+        <span class="text-white/35 text-[9px] uppercase tracking-[0.25em]">Scroll</span>
+      </div>
     </section>
 
-    <!-- GOLD RATE TICKER -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 2. PREMIUM GOLD RATE TICKER                            -->
+    <!-- ═══════════════════════════════════════════════════════ -->
     @if (goldRates().length) {
-      <div class="bg-primary-900 text-white py-2 overflow-hidden">
-        <div class="ticker-wrap">
-          <div class="ticker-content">
-            @for (rate of duplicatedGoldRates(); track $index) {
-              <span class="inline-flex items-center gap-2 mx-8 text-xs whitespace-nowrap">
-                <span class="text-gold-500 font-bold">{{ rate.karat }}</span>
-                <span>Gold Rate:</span>
-                <span class="font-price font-bold text-gold-400">&#8377;{{ rate.ratePerGram | number:'1.0-0' }}/g</span>
-                <span class="text-white/50">|</span>
-              </span>
-            }
-          </div>
+      <div class="relative overflow-hidden py-0" style="background: linear-gradient(90deg, #1a0505, #571613, #911b1e, #571613, #1a0505)">
+        <!-- Shine edge overlay -->
+        <div class="absolute left-0 top-0 bottom-0 w-16 z-10 pointer-events-none"
+          style="background: linear-gradient(90deg, #1a0505, transparent)"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-16 z-10 pointer-events-none"
+          style="background: linear-gradient(-90deg, #1a0505, transparent)"></div>
+        <div class="gold-ticker-track py-3">
+          @for (rate of duplicatedGoldRates(); track $index) {
+            <span class="inline-flex items-center gap-3 px-8 text-xs whitespace-nowrap">
+              <span class="w-1.5 h-1.5 rounded-full bg-gold-400 flex-shrink-0"></span>
+              <span class="text-white/60 uppercase tracking-widest text-[10px]">{{ rate.karat }}</span>
+              <span class="text-white font-medium">Gold Rate</span>
+              <span class="font-price font-bold text-gold-400 text-sm">&#8377;{{ rate.ratePerGram | number:'1.0-0' }}/g</span>
+              <span class="text-white/30 text-lg">|</span>
+            </span>
+          }
         </div>
       </div>
     }
 
-    <!-- SHOP BY CATEGORY (Section 2 - Owl Carousel) -->
-    <section class="py-10 md:py-14 bg-white animate__animated animate__fadeIn scroll-reveal">
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 4. SHOP BY CATEGORY ← KEEP                            -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="py-10 md:py-14 bg-white scroll-reveal">
       <div class="max-w-7xl mx-auto px-4">
         <h2 class="section-title">SHOP BY CATEGORY</h2>
         <div class="gold-divider"></div>
         <p class="section-subtitle mb-8">Discover jewellery for every occasion</p>
-
         @if (isBrowser) {
           <owl-carousel-o [options]="categoryOptions">
             @for (cat of categoryCards; track cat.name) {
               <ng-template carouselSlide>
                 <a [routerLink]="cat.link" class="block text-center group px-2">
-                  <div class="mx-auto w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-2 border-transparent group-hover:border-gold-500 transition-all duration-300 bg-brown-200">
+                  <div class="category-ring mx-auto w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-transparent group-hover:border-gold-500 transition-all duration-300 bg-brown-200">
                     <img [src]="cat.image" [alt]="cat.name"
                       class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy">
                   </div>
@@ -83,10 +187,10 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
             }
           </owl-carousel-o>
         } @else {
-          <div class="flex gap-6 overflow-x-auto scrollbar-hide pb-4">
+          <div class="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
             @for (cat of categoryCards; track cat.name) {
-              <a [routerLink]="cat.link" class="flex-shrink-0 text-center w-32">
-                <div class="mx-auto w-28 h-28 rounded-full overflow-hidden bg-brown-200">
+              <a [routerLink]="cat.link" class="flex-shrink-0 text-center w-28">
+                <div class="mx-auto w-24 h-24 rounded-full overflow-hidden bg-brown-200">
                   <img [src]="cat.image" [alt]="cat.name" class="w-full h-full object-cover">
                 </div>
                 <p class="mt-3 text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">{{ cat.name }}</p>
@@ -97,33 +201,95 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
       </div>
     </section>
 
-    <!-- JEWELLERY FOR HER BANNER (Section 3) -->
-    <section class="scroll-reveal">
-      <a routerLink="/gold-jewellery" [queryParams]="{gender: 'Women'}" class="block">
-        <img src="/assets/images/misc/jewellery-for-her.avif" alt="Jewellery For Her"
-          class="w-full h-auto" loading="lazy">
-      </a>
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 6. TABBED PRODUCT SHOWCASE — BlueStone-inspired       -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="py-12 md:py-16 bg-white scroll-reveal">
+      <div class="max-w-7xl mx-auto px-4">
+        <!-- Tab headers -->
+        <div class="flex items-end justify-between mb-2 flex-wrap gap-3">
+          <h2 class="section-title text-left" style="width: auto">HANDPICKED FOR YOU</h2>
+          <a routerLink="/products" class="text-xs text-primary-700 font-semibold uppercase tracking-wider hover:text-primary-900 flex items-center gap-1">
+            View All <mat-icon class="text-sm">arrow_forward</mat-icon>
+          </a>
+        </div>
+        <div class="gold-divider" style="margin-left: 0; margin-right: auto"></div>
+
+        <div class="flex gap-0 border-b border-gray-100 mb-8 mt-4 overflow-x-auto scrollbar-hide">
+          @for (tab of productTabs; track tab.id) {
+            <button class="product-tab-btn flex-shrink-0" [class.active]="activeTab() === tab.id"
+              (click)="setTab(tab.id)">{{ tab.label }}</button>
+          }
+        </div>
+
+        <!-- Tab content -->
+        @if (isBrowser && activeTabProducts().length) {
+          <owl-carousel-o [options]="productCarouselOptions">
+            @for (product of activeTabProducts(); track product.id) {
+              <ng-template carouselSlide>
+                <div class="px-2">
+                  <app-product-card [product]="product" />
+                </div>
+              </ng-template>
+            }
+          </owl-carousel-o>
+        } @else {
+          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            @for (product of activeTabProducts(); track product.id) {
+              <app-product-card [product]="product" />
+            }
+          </div>
+        }
+      </div>
     </section>
 
-    <!-- BRAND COLLECTIONS (Section 4) -->
-    <section class="py-10 md:py-14 bg-brown-200 animate__animated animate__fadeIn scroll-reveal">
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 7. OUR COLLECTIONS ← KEEP                             -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="py-10 md:py-14 scroll-reveal" style="background: #faf7f3">
       <div class="max-w-7xl mx-auto px-4">
         <h2 class="section-title">OUR COLLECTIONS</h2>
         <div class="gold-divider"></div>
-        <p class="section-subtitle mb-8">Curated collections for the modern woman</p>
+        <p class="section-subtitle mb-10">Curated collections for the modern woman</p>
 
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-          @for (collection of collections; track collection.name) {
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <!-- First 4 as regular cards -->
+          @for (collection of collections.slice(0, 4); track collection.name; let i = $index) {
             <a [routerLink]="['/collections', collection.slug]"
-              class="group relative overflow-hidden rounded bg-white shadow-sm hover:shadow-lg transition-all duration-500">
+              class="scroll-reveal collection-card group relative overflow-hidden rounded-lg bg-white shadow-sm"
+              [class]="'scroll-reveal-delay-' + (i + 1)">
               <div class="aspect-[3/4] overflow-hidden">
                 <img [src]="collection.image" [alt]="collection.name"
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
+                  class="w-full h-full object-cover group-hover:scale-[1.08] transition-transform duration-700" loading="lazy">
               </div>
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+              <!-- Gold top-border reveal on hover -->
+              <div class="absolute top-0 left-0 right-0 h-[3px] bg-gold-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
               <div class="absolute bottom-0 left-0 right-0 p-4 text-center">
-                <h3 class="text-white font-heading text-sm font-bold tracking-wider uppercase">{{ collection.name }}</h3>
-                <span class="inline-block mt-2 text-gold-400 text-[10px] uppercase tracking-widest border-b border-gold-400 pb-0.5 group-hover:text-gold-300">Explore</span>
+                <h3 class="text-white font-heading text-sm md:text-base font-bold tracking-wider uppercase">{{ collection.name }}</h3>
+                <span class="inline-block mt-1 text-gold-400 text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300">Explore →</span>
+              </div>
+            </a>
+          }
+          <!-- Last 2 — span wide as editorial banners -->
+          @for (collection of collections.slice(4, 6); track collection.name; let i = $index) {
+            <a [routerLink]="['/collections', collection.slug]"
+              class="scroll-reveal collection-card group relative overflow-hidden rounded-lg bg-white shadow-sm md:col-span-2"
+              [class]="'scroll-reveal-delay-' + (i + 5)">
+              <div class="aspect-[3/2] overflow-hidden">
+                <img [src]="collection.image" [alt]="collection.name"
+                  class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700" loading="lazy">
+              </div>
+              <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent"></div>
+              <div class="absolute top-0 left-0 right-0 h-[3px] bg-gold-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+              <div class="absolute inset-0 flex items-center px-8 md:px-12">
+                <div>
+                  <p class="text-gold-400 text-[10px] uppercase tracking-[0.3em] font-accent">Girlyf Collection</p>
+                  <h3 class="text-white font-heading text-xl md:text-3xl font-bold tracking-wider uppercase mt-1">{{ collection.name }}</h3>
+                  <span class="inline-flex items-center gap-2 mt-3 text-white/80 text-xs uppercase tracking-widest border-b border-white/40 pb-0.5 group-hover:border-gold-400 group-hover:text-gold-400 transition-all duration-300">
+                    Shop Collection
+                  </span>
+                </div>
               </div>
             </a>
           }
@@ -131,22 +297,161 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
       </div>
     </section>
 
-    <!-- CELEBRATION EDIT BANNER (Section 5) -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 9. LUMINA VIDEO (cinematic collection reveal)         -->
+    <!-- ═══════════════════════════════════════════════════════ -->
     <section class="scroll-reveal">
-      <a routerLink="/gold-jewellery" class="block">
-        <img src="/assets/images/misc/celebration-edit.avif" alt="Celebration Edit"
-          class="w-full h-auto" loading="lazy">
+      <a routerLink="/collections/lumina" class="block relative group overflow-hidden">
+        <video class="w-full h-auto hidden md:block" style="aspect-ratio: 16/7"
+          autoplay [muted]="true" loop playsinline
+          src="/assets/images/videos/aira-banner.mp4">
+        </video>
+        <video class="w-full h-auto md:hidden" autoplay [muted]="true" loop playsinline
+          src="/assets/images/videos/aira-responsive.mp4">
+        </video>
+        <!-- Elegant overlay -->
+        <div class="absolute inset-0 pointer-events-none"
+          style="background: linear-gradient(135deg, rgba(0,0,0,0.5) 0%, transparent 50%, rgba(0,0,0,0.2) 100%)">
+        </div>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div class="text-center">
+            <p class="text-gold-400 text-[10px] uppercase tracking-[0.4em] font-accent mb-2">Girlyf Exclusive</p>
+            <h2 class="text-white font-heading text-3xl md:text-6xl font-bold tracking-[0.15em] uppercase"
+              style="text-shadow: 0 2px 30px rgba(0,0,0,0.6)">LUMINA</h2>
+            <div class="mt-3 flex items-center justify-center gap-3">
+              <div class="h-px w-12 bg-gold-400/60"></div>
+              <span class="text-white/70 text-[10px] uppercase tracking-[0.25em]">Explore Collection</span>
+              <div class="h-px w-12 bg-gold-400/60"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Film grain -->
+        <div class="film-grain absolute inset-0 pointer-events-none"></div>
       </a>
     </section>
 
-    <!-- PRODUCTS UNDER 2K (Section 6) -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 10. SHOP FOR ← KEEP (redesigned with stats strip)     -->
+    <!-- ═══════════════════════════════════════════════════════ -->
     <section class="py-10 md:py-14 bg-white scroll-reveal">
       <div class="max-w-7xl mx-auto px-4">
-        <div class="flex flex-col md:flex-row items-center gap-8 mb-8">
-          <img src="/assets/images/misc/ja-logo-section.avif" alt="Girlyf" class="h-10 w-auto" loading="lazy">
-          <div class="text-center md:text-left">
-            <h2 class="section-title !mb-0">PRODUCTS UNDER &#8377;2,000</h2>
-            <p class="section-subtitle">Affordable luxury for every occasion</p>
+        <h2 class="section-title">SHOP FOR</h2>
+        <div class="gold-divider"></div>
+
+        <div class="grid grid-cols-3 gap-3 md:gap-6 mt-8">
+          @for (gc of genderCards; track gc.label) {
+            <a [routerLink]="gc.link" [queryParams]="gc.params"
+              class="group relative overflow-hidden rounded-lg bg-brown-200">
+              <div class="aspect-[3/4] md:aspect-[4/5] overflow-hidden">
+                <img [src]="gc.image" [alt]="gc.label"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy">
+              </div>
+              <!-- Gold accent line reveal -->
+              <div class="absolute bottom-0 left-0 right-0 h-[3px] bg-gold-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-center"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
+              <div class="absolute bottom-4 left-0 right-0 text-center px-2">
+                <h3 class="text-white text-base md:text-xl font-heading font-bold tracking-wider">{{ gc.label }}</h3>
+                <span class="inline-block mt-1 text-gold-400 text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300">Shop Now</span>
+              </div>
+            </a>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 11. BRAND STORY STATS (Kohira-inspired split panel)   -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="scroll-reveal overflow-hidden" style="background: linear-gradient(135deg, #0e0305 0%, #2a0a0b 50%, #1a0505 100%)">
+      <div class="max-w-7xl mx-auto px-4 py-12 md:py-20">
+        <div class="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
+          <!-- Left — Brand promise text -->
+          <div class="panel-reveal-left">
+            <p class="text-gold-400 text-[10px] uppercase tracking-[0.4em] font-accent mb-4">Est. 2005 · Bangalore</p>
+            <h2 class="font-heading text-white text-3xl md:text-5xl font-bold leading-tight mb-6">
+              Jewellery That Tells<br>
+              <span class="text-gradient-gold">Your Story</span>
+            </h2>
+            <p class="text-white/65 text-sm leading-relaxed mb-8" style="font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-style: italic">
+              At Girlyf, every piece is more than an ornament — it's a chapter in your life's most beautiful moments. BIS hallmarked, IGI certified, crafted with love.
+            </p>
+            <div class="flex gap-4">
+              <a routerLink="/about" class="btn-gold text-xs px-6 py-2.5">OUR STORY</a>
+              <a routerLink="/store-locator" class="text-white/70 text-xs uppercase tracking-widest py-2.5 hover:text-gold-400 transition-colors flex items-center gap-1">
+                Find a Store <mat-icon class="text-sm">arrow_forward</mat-icon>
+              </a>
+            </div>
+          </div>
+          <!-- Right — Stats grid -->
+          <div class="panel-reveal-right">
+            <div class="grid grid-cols-2 gap-px" style="background: rgba(233,187,44,0.1)">
+              @for (stat of brandStats; track stat.label) {
+                <div class="bg-black/30 p-6 md:p-8 text-center" style="backdrop-filter: blur(10px)">
+                  <div class="stat-anim text-3xl md:text-4xl font-heading font-bold text-gold-400 mb-2">{{ stat.value }}</div>
+                  <div class="text-white/50 text-[10px] uppercase tracking-widest">{{ stat.label }}</div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 12. SHOP BY EARRING TYPE ← KEEP (redesigned cards)   -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="py-10 md:py-14 scroll-reveal" style="background: #faf7f3">
+      <div class="max-w-7xl mx-auto px-4">
+        <h2 class="section-title">SHOP BY EARRING TYPE</h2>
+        <div class="gold-divider"></div>
+        <p class="section-subtitle mb-8">Find the perfect style for every look</p>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+          @for (type of earringTypes; track type.label; let i = $index) {
+            <a [routerLink]="type.link"
+              class="earring-card scroll-reveal" [class]="'scroll-reveal-delay-' + (i + 1)">
+              <div class="aspect-square overflow-hidden rounded-xl">
+                <img [src]="type.image" [alt]="type.label"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy">
+              </div>
+              <div class="earring-label rounded-b-xl">
+                <h3 class="text-sm font-heading font-bold tracking-wider uppercase">{{ type.label }}</h3>
+                <p class="text-[10px] text-white/70 mt-0.5">Shop Now →</p>
+              </div>
+              <!-- Always-visible label below -->
+              <div class="text-center mt-3 px-2 pb-2">
+                <h3 class="text-sm font-heading font-bold text-gray-800 uppercase tracking-wider">{{ type.label }}</h3>
+              </div>
+            </a>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 13. UNDER ₹2K DEALS (price-conscious section)        -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="py-10 md:py-14 bg-white scroll-reveal">
+      <div class="max-w-7xl mx-auto px-4">
+        <!-- Hero banner for this section -->
+        <div class="relative mb-8 overflow-hidden rounded-2xl">
+          <img src="/assets/images/misc/products-under-2k.avif" alt="Products Under ₹2,000"
+            class="w-full object-cover" style="max-height: 160px; object-position: center" loading="lazy">
+          <div class="absolute inset-0 rounded-2xl" style="background: linear-gradient(90deg, rgba(87,22,19,0.85) 0%, rgba(87,22,19,0.4) 50%, transparent 100%)"></div>
+          <div class="absolute inset-0 flex items-center px-6 md:px-10">
+            <div>
+              <span class="text-gold-400 text-[10px] font-accent uppercase tracking-[0.25em]">Affordable Luxury</span>
+              <h2 class="text-white text-2xl md:text-3xl font-heading font-bold tracking-wider">UNDER ₹2,000</h2>
+              <p class="text-white/70 text-xs mt-1">Everyday jewellery, extraordinary shine</p>
+            </div>
+            <!-- Floating badge -->
+            <div class="badge-float ml-auto mr-4 hidden md:block">
+              <div class="w-20 h-20 rounded-full flex flex-col items-center justify-center text-center"
+                style="background: linear-gradient(135deg, #e9bb2c, #ffc40c); box-shadow: 0 8px 20px rgba(233,187,44,0.4)">
+                <span class="text-primary-900 text-[10px] font-bold uppercase leading-tight">Starting</span>
+                <span class="text-primary-900 font-price text-lg font-extrabold leading-none">₹999</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -176,317 +481,119 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
       </div>
     </section>
 
-    <!-- GIFTS BANNER (Section 8) -->
-    <section class="scroll-reveal">
-      <a routerLink="/gift-cards" class="block">
-        <img src="/assets/images/misc/gifts.avif" alt="Gifts"
-          class="w-full h-auto" loading="lazy">
-      </a>
-    </section>
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 15. TRUST BADGES — animated marquee strip             -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="py-6 overflow-hidden relative scroll-reveal" style="background: #f4eeeb; border-top: 1px solid #e5cfc2; border-bottom: 1px solid #e5cfc2">
+      <!-- Edge fade -->
+      <div class="absolute left-0 top-0 bottom-0 w-20 z-10 pointer-events-none" style="background: linear-gradient(90deg, #f4eeeb, transparent)"></div>
+      <div class="absolute right-0 top-0 bottom-0 w-20 z-10 pointer-events-none" style="background: linear-gradient(-90deg, #f4eeeb, transparent)"></div>
 
-    <!-- TRUST BADGES STRIP (Section 9 — matches JA 9-column grid) -->
-    <section class="py-8 bg-[#f4eeeb] scroll-reveal">
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="hidden md:grid md:grid-cols-9 gap-4">
-          @for (badge of trustBadges; track $index) {
-            <div class="flex flex-col items-center text-center gap-2">
-              <img [src]="badge.icon" [alt]="badge.label" class="h-10 w-auto">
-              <span class="text-[10px] text-gray-700 font-medium leading-tight">{{ badge.label }}</span>
-            </div>
-          }
-        </div>
-        <div class="flex md:hidden gap-6 overflow-x-auto scrollbar-hide pb-2">
-          @for (badge of trustBadges; track $index) {
-            <div class="flex flex-col items-center text-center gap-2 flex-shrink-0 w-20">
-              <img [src]="badge.icon" [alt]="badge.label" class="h-10 w-auto">
-              <span class="text-[10px] text-gray-700 font-medium leading-tight">{{ badge.label }}</span>
-            </div>
-          }
-        </div>
-      </div>
-    </section>
-
-    <!-- CUSTOMIZATION VIDEO CTA (Section 10) -->
-    <section class="py-12 md:py-16 bg-primary-900 text-white scroll-reveal">
-      <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center gap-8">
-        <div class="md:w-1/2">
-          <div class="relative rounded-lg overflow-hidden">
-            <video src="/assets/images/videos/customization.mp4" autoplay [muted]="true" loop playsinline
-              class="w-full aspect-video object-cover">
-            </video>
+      <div class="trust-marquee">
+        @for (badge of trustBadgesDuplicated; track $index) {
+          <div class="inline-flex items-center gap-3 px-8 flex-shrink-0">
+            <img [src]="badge.icon" [alt]="badge.label" class="h-7 w-auto flex-shrink-0" loading="lazy">
+            <span class="text-xs text-gray-700 font-semibold whitespace-nowrap uppercase tracking-wider">{{ badge.label }}</span>
+            <span class="text-gold-400 text-base ml-2">✦</span>
           </div>
-        </div>
-        <div class="md:w-1/2 text-center md:text-left">
-          <h2 class="text-2xl md:text-3xl font-heading font-bold tracking-wider">CUSTOMIZE YOUR JEWELLERY</h2>
-          <p class="mt-3 text-white/80 text-sm leading-relaxed">
-            Let our master craftsmen create a bespoke piece just for you.
-            Share your design or pick from our catalog.
-          </p>
-          <div class="mt-6 flex gap-4 justify-center md:justify-start">
-            <a routerLink="/contact" class="btn-gold inline-flex items-center gap-1">
-              <mat-icon class="text-base">design_services</mat-icon> GET STARTED
-            </a>
-            <a href="https://wa.me/919876543210" target="_blank" class="btn-outline border-white text-white hover:bg-white hover:text-primary-900 inline-flex items-center gap-2">
-              <mat-icon class="text-base">chat</mat-icon> WHATSAPP
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- AIRA COLLECTION VIDEO (Section 11) -->
-    <section class="scroll-reveal">
-      <a routerLink="/collections/aira" class="block relative">
-        <video class="w-full h-auto hidden md:block" autoplay [muted]="true" loop playsinline
-          src="/assets/images/videos/aira-banner.mp4"></video>
-        <video class="w-full h-auto md:hidden" autoplay [muted]="true" loop playsinline
-          src="/assets/images/videos/aira-responsive.mp4"></video>
-      </a>
-    </section>
-
-    <!-- SHOP BY GENDER (Section 12) -->
-    <section class="py-10 md:py-14 bg-white scroll-reveal">
-      <div class="max-w-7xl mx-auto px-4">
-        <h2 class="section-title">SHOP FOR</h2>
-        <div class="gold-divider"></div>
-
-        <div class="grid grid-cols-3 gap-4 md:gap-6 mt-8">
-          @for (gc of genderCards; track gc.label) {
-            <a [routerLink]="gc.link" [queryParams]="gc.params"
-              class="group relative overflow-hidden rounded bg-brown-200">
-              <div class="aspect-[4/5] overflow-hidden">
-                <img [src]="gc.image" [alt]="gc.label"
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
-              </div>
-              <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
-              <div class="absolute bottom-4 left-0 right-0 text-center">
-                <h3 class="text-white text-lg md:text-xl font-heading font-bold tracking-wider">{{ gc.label }}</h3>
-                <span class="inline-block mt-1 text-gold-400 text-xs uppercase tracking-widest">Shop Now</span>
-              </div>
-            </a>
-          }
-        </div>
-      </div>
-    </section>
-
-    <!-- EARRING TYPES (Section 13) -->
-    <section class="py-10 md:py-14 bg-brown-200 scroll-reveal">
-      <div class="max-w-7xl mx-auto px-4">
-        <h2 class="section-title">SHOP BY EARRING TYPE</h2>
-        <div class="gold-divider"></div>
-
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-          @for (type of earringTypes; track type.label) {
-            <a [routerLink]="type.link" class="group text-center bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-              <div class="aspect-square overflow-hidden">
-                <img [src]="type.image" [alt]="type.label"
-                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy">
-              </div>
-              <div class="p-3">
-                <h3 class="text-sm font-heading font-bold text-gray-800 group-hover:text-primary-900 uppercase tracking-wider">{{ type.label }}</h3>
-              </div>
-            </a>
-          }
-        </div>
-      </div>
-    </section>
-
-    <!-- DIGI GOLD / EASY BUY / GIFT CARD / GOLD COIN (Section 14) -->
-    <section class="py-10 md:py-14 bg-white scroll-reveal">
-      <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-        @for (card of financialCards; track card.label) {
-          <a [routerLink]="card.link" class="group block overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow">
-            <div class="aspect-[4/3] overflow-hidden">
-              <img [src]="card.image" [alt]="card.label"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
-            </div>
-            <div class="p-3 text-center bg-white">
-              <h3 class="text-xs font-heading font-bold text-gray-800 uppercase tracking-wider">{{ card.label }}</h3>
-            </div>
-          </a>
         }
       </div>
     </section>
 
-    <!-- ENSEMBLE COLLECTION BANNER (Section 15) -->
-    <section class="scroll-reveal">
-      <a routerLink="/collections/ensemble" class="block">
-        <picture>
-          <source media="(max-width: 768px)" srcset="/assets/images/collections/ensemble-mobile.avif">
-          <img src="/assets/images/collections/ensemble.avif" alt="Ensemble Collection"
-            class="w-full h-auto" loading="lazy">
-        </picture>
-      </a>
-    </section>
-
-    <!-- FLUTTER COLLECTION VIDEO (Section 16) -->
-    <section class="scroll-reveal">
-      <a routerLink="/collections/flutter" class="block relative">
-        <video class="w-full h-auto hidden md:block" autoplay [muted]="true" loop playsinline
-          src="/assets/images/videos/flutter-banner.mp4"></video>
-        <video class="w-full h-auto md:hidden" autoplay [muted]="true" loop playsinline
-          src="/assets/images/videos/flutter-responsive.mp4"></video>
-      </a>
-    </section>
-
-    <!-- BESTSELLERS (Owl Carousel) -->
-    @if (bestSellers().length) {
-      <section class="py-10 md:py-14 bg-white scroll-reveal">
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 17. TESTIMONIALS — premium card carousel              -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    @if (testimonials().length) {
+      <section class="py-12 md:py-20 scroll-reveal" style="background: linear-gradient(135deg, #fdf9f4 0%, #f4eeeb 100%)">
         <div class="max-w-7xl mx-auto px-4">
-          <h2 class="section-title">BESTSELLERS</h2>
+          <h2 class="section-title">LOVED BY MANY</h2>
           <div class="gold-divider"></div>
-          <p class="section-subtitle mb-8">Most loved by our customers</p>
+          <p class="section-subtitle mb-10">Real stories from real customers</p>
 
           @if (isBrowser) {
-            <owl-carousel-o [options]="productCarouselOptions">
-              @for (product of bestSellers(); track product.id) {
+            <owl-carousel-o [options]="testimonialOptions">
+              @for (t of testimonials(); track t.id) {
                 <ng-template carouselSlide>
-                  <div class="px-2">
-                    <app-product-card [product]="product" />
+                  <div class="px-2 pb-2">
+                    <div class="testimonial-card">
+                      <!-- Stars -->
+                      <div class="flex gap-0.5 mb-4 relative z-10">
+                        @for (s of [1,2,3,4,5]; track s) {
+                          <span [class]="s <= t.rating ? 'text-gold-500' : 'text-gray-200'" style="font-size: 16px">★</span>
+                        }
+                      </div>
+                      <p class="text-sm text-gray-600 leading-relaxed line-clamp-3 relative z-10 italic">"{{ t.comment }}"</p>
+                      <div class="mt-5 pt-4 border-t border-gray-100 flex items-center gap-3 relative z-10">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+                          style="background: linear-gradient(135deg, #911b1e, #571613)">
+                          {{ t.customerName.charAt(0) }}
+                        </div>
+                        <div>
+                          <p class="text-sm font-semibold text-gray-800">{{ t.customerName }}</p>
+                          @if (t.location) {
+                            <p class="text-[10px] text-gray-400 flex items-center gap-1">
+                              <mat-icon class="text-[12px]">location_on</mat-icon> {{ t.location }}
+                            </p>
+                          }
+                        </div>
+                        <span class="ml-auto text-[10px] text-gold-600 font-accent uppercase tracking-wider">Verified ✓</span>
+                      </div>
+                    </div>
                   </div>
                 </ng-template>
               }
             </owl-carousel-o>
-          } @else {
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-              @for (product of bestSellers(); track product.id) {
-                <app-product-card [product]="product" />
-              }
-            </div>
           }
         </div>
       </section>
     }
 
-    <!-- TESTIMONIALS -->
-    @if (testimonials().length) {
-      <section class="py-10 md:py-14 bg-brown-200 scroll-reveal">
-        <div class="max-w-7xl mx-auto px-4">
-          <h2 class="section-title">WHAT OUR CUSTOMERS SAY</h2>
-          <div class="gold-divider"></div>
-
-          @if (isBrowser) {
-            <div class="mt-8">
-              <owl-carousel-o [options]="testimonialOptions">
-                @for (t of testimonials(); track t.id) {
-                  <ng-template carouselSlide>
-                    <div class="px-2">
-                      <div class="bg-white p-6 rounded-lg shadow-sm h-full">
-                        <div class="flex gap-0.5 mb-3">
-                          @for (s of [1,2,3,4,5]; track s) {
-                            <mat-icon class="text-sm" [ngClass]="s <= t.rating ? 'text-gold-500' : 'text-gray-200'">star</mat-icon>
-                          }
-                        </div>
-                        <p class="text-sm text-gray-600 italic leading-relaxed line-clamp-3">"{{ t.comment }}"</p>
-                        <div class="mt-4 flex items-center gap-3">
-                          <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-900 font-bold text-sm">
-                            {{ t.customerName.charAt(0) }}
-                          </div>
-                          <div>
-                            <p class="text-sm font-semibold text-gray-800">{{ t.customerName }}</p>
-                            @if (t.location) {
-                              <p class="text-[10px] text-gray-400">{{ t.location }}</p>
-                            }
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </ng-template>
-                }
-              </owl-carousel-o>
-            </div>
-          }
-        </div>
-      </section>
-    }
-
-    <!-- BLOG -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 18. BLOG — editorial masonry style                    -->
+    <!-- ═══════════════════════════════════════════════════════ -->
     @if (blogPosts().length) {
-      <section class="py-10 md:py-14 bg-gray-50 scroll-reveal">
+      <section class="py-12 md:py-20 bg-white scroll-reveal">
         <div class="max-w-7xl mx-auto px-4">
-          <h2 class="section-title">FROM OUR BLOG</h2>
-          <div class="gold-divider"></div>
+          <div class="flex items-end justify-between mb-2 flex-wrap gap-3">
+            <h2 class="section-title text-left" style="width: auto">FROM THE JOURNAL</h2>
+            <a routerLink="/blog" class="text-xs text-primary-700 font-semibold uppercase tracking-wider hover:text-primary-900 flex items-center gap-1">
+              All Stories <mat-icon class="text-sm">arrow_forward</mat-icon>
+            </a>
+          </div>
+          <div class="gold-divider" style="margin-left: 0; margin-right: auto"></div>
+          <p class="section-subtitle text-left mt-1 mb-8">Style, culture &amp; the art of adornment</p>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-            @for (post of blogPosts(); track post.id) {
-              <a [routerLink]="['/blog', post.slug]" class="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                <div class="aspect-[16/10] overflow-hidden">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            @for (post of blogPosts(); track post.id; let i = $index) {
+              <a [routerLink]="['/blog', post.slug]"
+                class="blog-editorial-card scroll-reveal" [class]="'scroll-reveal-delay-' + (i + 1)">
+                <div [class]="i === 0 ? 'aspect-[16/10]' : 'aspect-[4/3]'" class="overflow-hidden">
                   <img [src]="post.featuredImageUrl || '/assets/images/blog/placeholder.avif'" [alt]="post.title"
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy">
+                  <div class="blog-overlay"></div>
                 </div>
-                <div class="p-5">
-                  <p class="text-[10px] text-gold-600 uppercase font-accent font-bold tracking-wider">{{ post.publishedAt | date:'mediumDate' }}</p>
-                  <h3 class="mt-2 text-sm font-heading font-bold text-gray-800 group-hover:text-primary-900 line-clamp-2">{{ post.title }}</h3>
-                  <p class="mt-2 text-xs text-gray-500 line-clamp-2">{{ post.excerpt }}</p>
-                  <span class="inline-flex items-center gap-1 mt-3 text-xs text-primary-700 font-semibold uppercase tracking-wider group-hover:text-primary-900">
+                <div class="p-5 bg-white">
+                  <p class="text-[10px] text-gold-600 uppercase font-accent font-bold tracking-widest mb-2">{{ post.publishedAt | date:'MMM d, y' }}</p>
+                  <h3 class="text-sm md:text-base font-heading font-bold text-gray-900 line-clamp-2 leading-snug mb-2">{{ post.title }}</h3>
+                  <p class="text-xs text-gray-500 line-clamp-2 leading-relaxed mb-3">{{ post.excerpt }}</p>
+                  <span class="inline-flex items-center gap-1 text-xs text-primary-700 font-semibold uppercase tracking-wider hover:gap-2 transition-all">
                     Read More <mat-icon class="text-sm">arrow_forward</mat-icon>
                   </span>
                 </div>
               </a>
             }
           </div>
-
-          <div class="text-center mt-8">
-            <a routerLink="/blog" class="btn-outline">VIEW ALL POSTS</a>
-          </div>
         </div>
       </section>
     }
 
-    <!-- APP DOWNLOAD -->
-    <section class="py-10 bg-primary-900 text-white scroll-reveal">
-      <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center gap-8">
-        <div class="md:w-1/3">
-          <img src="/assets/images/misc/mobile-app.avif" alt="Girlyf Mobile App" class="w-48 mx-auto" loading="lazy">
-        </div>
-        <div class="md:w-2/3 text-center md:text-left">
-          <h3 class="text-xl font-heading font-bold tracking-wider">DOWNLOAD OUR APP</h3>
-          <p class="mt-2 text-white/70 text-sm">Shop on the go with exclusive app-only offers</p>
-          <div class="flex gap-3 mt-4 justify-center md:justify-start">
-            <a href="#" class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 rounded-lg px-4 py-2 text-sm transition-colors">
-              <mat-icon>apple</mat-icon> App Store
-            </a>
-            <a href="#" class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 rounded-lg px-4 py-2 text-sm transition-colors">
-              <mat-icon>shop</mat-icon> Google Play
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- NEWSLETTER SUBSCRIBE (matches JA) -->
-    <section class="py-12 md:py-16 bg-brown-200 scroll-reveal">
-      <div class="max-w-3xl mx-auto px-4 text-center">
-        <h2 class="text-xl md:text-2xl font-heading font-bold text-gray-800 tracking-wider">SUBSCRIBE TO GIRLYF</h2>
-        <p class="mt-2 text-sm text-gray-500">Elevate your style with dazzling jewellery updates & exclusive offers</p>
-        <form class="mt-6 flex flex-col sm:flex-row gap-3 max-w-lg mx-auto" (submit)="$event.preventDefault()">
-          <div class="flex-1 relative">
-            <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">email</mat-icon>
-            <input type="email" placeholder="Enter your email address"
-              class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded text-sm focus:outline-none focus:border-gold-500">
-          </div>
-          <button type="submit" class="btn-primary px-8 py-3 whitespace-nowrap">SUBSCRIBE</button>
-        </form>
-      </div>
-    </section>
-
-    <!-- CATEGORY TAGS -->
-    <section class="py-6 bg-brown-200">
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="flex flex-wrap gap-2 justify-center">
-          @for (tag of categoryTags; track tag.label) {
-            <a [routerLink]="tag.link" class="filter-chip text-[11px] hover:bg-primary-900 hover:text-white hover:border-primary-900">{{ tag.label }}</a>
-          }
-        </div>
-      </div>
-    </section>
-
-    <!-- SEO + FAQ -->
-    <section class="py-10 md:py-14 bg-white">
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 19. SEO + FAQ                                         -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="py-10 md:py-14 bg-white scroll-reveal">
       <div class="max-w-4xl mx-auto px-4">
-        <h2 class="section-title text-lg">BUY JEWELLERY ONLINE AT GIRLYF</h2>
+        <h2 class="section-title text-base md:text-lg">BUY JEWELLERY ONLINE AT GIRLYF</h2>
         <div class="gold-divider"></div>
-
         <div class="mt-6 text-sm text-gray-600 leading-relaxed space-y-3" [class.line-clamp-3]="!showFullSeo">
           <p>Girlyf is India's most trusted online jewellery store, offering a wide range of gold, diamond, platinum, and silver jewellery.</p>
           <p>Whether you're looking for wedding jewellery, daily wear gold chains, stunning diamond earrings, or elegant platinum rings, Girlyf has it all.</p>
@@ -496,16 +603,23 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
           {{ showFullSeo ? 'SHOW LESS' : 'READ MORE' }}
         </button>
 
-        <div class="mt-8 space-y-2">
+        <!-- Category tag cloud -->
+        <div class="mt-8 flex flex-wrap gap-2">
+          @for (tag of categoryTags; track tag.label) {
+            <a [routerLink]="tag.link" class="filter-chip text-[11px] hover:bg-primary-900 hover:text-white hover:border-primary-900">{{ tag.label }}</a>
+          }
+        </div>
+
+        <div class="mt-10 space-y-2">
           <h3 class="text-sm font-heading font-bold text-gray-800 uppercase tracking-wider mb-4">Frequently Asked Questions</h3>
           @for (faq of homeFaqs; track faq.q; let i = $index) {
-            <div class="border border-gray-200 rounded">
-              <button (click)="toggleFaq(i)" class="w-full text-left px-4 py-3 flex items-center justify-between text-sm font-semibold text-gray-700 hover:bg-gray-50">
+            <div class="border border-gray-200 rounded-lg overflow-hidden">
+              <button (click)="toggleFaq(i)" class="w-full text-left px-4 py-3 flex items-center justify-between text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
                 {{ faq.q }}
-                <mat-icon class="text-base transition-transform" [class.rotate-180]="openFaq() === i">expand_more</mat-icon>
+                <mat-icon class="text-base transition-transform flex-shrink-0" [class.rotate-180]="openFaq() === i">expand_more</mat-icon>
               </button>
               @if (openFaq() === i) {
-                <div class="px-4 pb-3 text-xs text-gray-500 leading-relaxed animate__animated animate__fadeIn">{{ faq.a }}</div>
+                <div class="px-4 pb-3 text-xs text-gray-500 leading-relaxed animate__animated animate__fadeIn border-t border-gray-100">{{ faq.a }}</div>
               }
             </div>
           }
@@ -513,18 +627,28 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
       </div>
     </section>
 
-    <!-- WHATSAPP FLOATING BUTTON -->
-    <a href="https://wa.me/919876543210" target="_blank"
-      class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 transition-colors animate__animated animate__bounceIn"
-      style="animation-delay: 2s">
-      <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- WHATSAPP FAB                                          -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <a href="https://wa.me/919876543210" target="_blank" rel="noopener"
+      class="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-transform hover:scale-110"
+      style="background: #25d366; animation: whatsappPulse 2s ease-in-out 3s infinite">
+      <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+      </svg>
     </a>
 
-    <!-- LOADING -->
+    <!-- Loading overlay -->
     @if (loading()) {
       <div class="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center">
-        <div class="w-16 h-16 border-4 border-gold-200 border-t-gold-500 rounded-full animate-spin"></div>
-        <p class="mt-4 text-sm text-gray-400 font-heading tracking-wider">Loading Girlyf...</p>
+        <div class="relative">
+          <div class="w-16 h-16 border-4 border-brown-200 border-t-gold-500 rounded-full animate-spin"></div>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="w-6 h-6 rounded-full bg-gold-400/30 animate-pulse"></div>
+          </div>
+        </div>
+        <p class="mt-5 text-sm text-gray-400 font-heading tracking-[0.2em] uppercase">Girlyf</p>
+        <p class="mt-1 text-xs text-gray-300 tracking-wider">Loading your collection...</p>
       </div>
     }
   `,
@@ -532,7 +656,6 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
 export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   loading = signal(true);
   banners = signal<Banner[]>([]);
-  midBanners = signal<Banner[]>([]);
   categories = signal<Category[]>([]);
   goldRates = signal<GoldRate[]>([]);
   featured = signal<Product[]>([]);
@@ -541,34 +664,46 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   under2k = signal<Product[]>([]);
   testimonials = signal<Testimonial[]>([]);
   blogPosts = signal<BlogPost[]>([]);
-  recentlyViewed = signal<Product[]>([]);
   openFaq = signal<number | null>(null);
-  bannersLoaded = signal(false);
+  currentBanner = signal(0);
+  showProgress   = signal(true);
+  private heroTimer?: ReturnType<typeof setInterval>;
+  activeTab = signal<TabId>('featured');
 
   duplicatedGoldRates = computed(() => [...this.goldRates(), ...this.goldRates()]);
 
+  activeTabProducts = computed<Product[]>(() => {
+    const t = this.activeTab();
+    if (t === 'bestsellers') return this.bestSellers();
+    if (t === 'new') return this.newArrivals();
+    return this.featured();
+  });
+
   showFullSeo = false;
   isBrowser: boolean;
-
   private subs: Subscription[] = [];
 
-  heroBannerOptions: OwlOptions = {
-    loop: true,
-    mouseDrag: true,
-    touchDrag: true,
-    pullDrag: false,
-    dots: true,
-    navSpeed: 700,
-    autoplay: true,
-    autoplayTimeout: 5000,
-    autoplayHoverPause: true,
-    nav: true,
-    navText: [
-      '<span class="material-icons">chevron_left</span>',
-      '<span class="material-icons">chevron_right</span>'
-    ],
-    responsive: { 0: { items: 1 }, 768: { items: 1 }, 1024: { items: 1 } },
-  };
+  productTabs = [
+    { id: 'featured' as TabId, label: 'Featured' },
+    { id: 'bestsellers' as TabId, label: 'Bestsellers' },
+    { id: 'new' as TabId, label: 'New Arrivals' },
+  ];
+
+  brandStats = [
+    { value: '500+', label: 'Stores Pan India' },
+    { value: '20K+', label: 'Happy Customers' },
+    { value: '5000+', label: 'Unique Designs' },
+    { value: '20+', label: 'Years of Trust' },
+  ];
+
+  heroSlides = [
+    { desktop: '/assets/images/banners/desktop/banner-01.avif', mobile: '/assets/images/banners/mobile/banner-01.avif', alt: 'Girlyf Gold Jewellery Collection', label: 'New Season 2025', headline: 'Wear Your Story', subline: 'Exquisite gold & diamond jewellery, crafted for moments that matter', ctaLabel: 'Shop Gold', ctaLink: '/gold-jewellery' },
+    { desktop: '/assets/images/banners/desktop/banner-02.avif', mobile: '/assets/images/banners/mobile/banner-02.avif', alt: 'Girlyf Diamond Collection', label: 'Brilliance Redefined', headline: 'Born to Shine', subline: 'Certified diamond jewellery — from solitaires to statement pieces', ctaLabel: 'Shop Diamonds', ctaLink: '/diamond-jewellery' },
+    { desktop: '/assets/images/banners/desktop/banner-03.avif', mobile: '/assets/images/banners/mobile/banner-03.avif', alt: 'Girlyf New Arrivals', label: 'Just Arrived', headline: 'Timeless Craft', subline: 'BIS hallmarked gold, shaped by master artisans, worn for generations', ctaLabel: 'New Arrivals', ctaLink: '/products' },
+    { desktop: '/assets/images/banners/desktop/banner-04.avif', mobile: '/assets/images/banners/mobile/banner-04.avif', alt: 'Girlyf Wedding Collection', label: 'Wedding Season', headline: 'Made for Her', subline: 'Bridal sets, mangalsutras & rings that make every moment unforgettable', ctaLabel: 'Bridal Collection', ctaLink: '/gold-jewellery' },
+    { desktop: '/assets/images/banners/desktop/banner-05.avif', mobile: '/assets/images/banners/mobile/banner-05.avif', alt: 'Girlyf Gift Cards', label: 'Gift with Love', headline: 'Gifted with Grace', subline: 'Give the gift of brilliance — jewellery gift cards for every occasion', ctaLabel: 'Gift Now', ctaLink: '/gift-cards' },
+    { desktop: '/assets/images/banners/desktop/banner-06.avif', mobile: '/assets/images/banners/mobile/banner-06.avif', alt: 'Girlyf Digi Gold', label: 'Invest Smartly', headline: 'Start with Gold', subline: 'Buy digital gold starting ₹10 — safe, certified, redeemable anytime', ctaLabel: 'Explore Digi Gold', ctaLink: '/digi-gold' },
+  ];
 
   categoryOptions: OwlOptions = {
     loop: true,
@@ -615,13 +750,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     responsive: { 0: { items: 1 }, 768: { items: 2 }, 1024: { items: 3 } },
   };
 
-  heroBanners = [
-    { desktop: '/assets/images/banners/desktop/banner-01.avif', mobile: '/assets/images/banners/mobile/banner-01.avif', alt: 'Girlyf Gold Jewellery', link: '/gold-jewellery' },
-    { desktop: '/assets/images/banners/desktop/banner-02.avif', mobile: '/assets/images/banners/mobile/banner-02.avif', alt: 'Girlyf Diamond Collection', link: '/diamond-jewellery' },
-    { desktop: '/assets/images/banners/desktop/banner-03.avif', mobile: '/assets/images/banners/mobile/banner-03.avif', alt: 'Girlyf New Arrivals', link: '/products' },
-    { desktop: '/assets/images/banners/desktop/banner-04.avif', mobile: '/assets/images/banners/mobile/banner-04.avif', alt: 'Girlyf Special Offer', link: '/products' },
-  ];
-
   trustBadges = [
     { icon: '/assets/images/trust-badges/safe.svg', label: 'Safe & Secure' },
     { icon: '/assets/images/trust-badges/shipping.svg', label: 'Free Shipping' },
@@ -646,11 +774,13 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   ];
 
   collections = [
-    { name: 'IVY', slug: 'ivy', image: '/assets/images/collections/ivy.avif' },
+    { name: 'Ivy', slug: 'ivy', image: '/assets/images/collections/ivy.avif' },
     { name: 'Butterfly', slug: 'butterfly', image: '/assets/images/collections/butterfly.avif' },
     { name: 'Mirage', slug: 'mirage', image: '/assets/images/collections/mirage.avif' },
     { name: 'Orchid', slug: 'orchid', image: '/assets/images/collections/orchid.avif' },
     { name: 'Solo', slug: 'solo', image: '/assets/images/collections/solo.avif' },
+    { name: 'Lumina', slug: 'lumina', image: '/assets/images/collections/ensemble.avif' },
+    { name: 'Ethereal', slug: 'ethereal', image: '/assets/images/collections/butterfly.avif' },
   ];
 
   genderCards = [
@@ -701,36 +831,33 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private api: ApiService,
     private cart: CartService,
+    private seo: SeoService,
+    private analytics: AnalyticsService,
     @Inject(PLATFORM_ID) platformId: Object,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
   ngOnInit(): void {
+    this.seo.update({
+      title: 'Girlyf — Exquisite Jewellery Online | Gold, Diamond & Silver',
+      description: 'Shop exquisite BIS hallmarked gold, diamond and silver jewellery online at Girlyf. Live gold rates, transparent pricing, free insured shipping across India.',
+      keywords: 'jewellery online, gold jewellery, diamond jewellery, silver jewellery, BIS hallmarked, Girlyf',
+      faq: this.homeFaqs.map(f => ({ question: f.q, answer: f.a })),
+    });
     this.loadData();
-    if (this.isBrowser) {
-      setTimeout(() => this.bannersLoaded.set(true), 100);
-    }
   }
 
   ngAfterViewInit(): void {
     if (this.isBrowser) {
       this.initScrollReveal();
-      this.muteAllVideos();
+      this.startHeroTimer();
     }
-  }
-
-  private muteAllVideos(): void {
-    setTimeout(() => {
-      document.querySelectorAll('video').forEach((v) => {
-        (v as HTMLVideoElement).muted = true;
-        (v as HTMLVideoElement).volume = 0;
-      });
-    }, 500);
   }
 
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe());
+    if (this.heroTimer) clearInterval(this.heroTimer);
   }
 
   private loadData(): void {
@@ -759,6 +886,46 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.api.getProducts({ maxPrice: 2000, pageSize: 6, page: 1 }).subscribe({
       next: (res) => this.under2k.set(res.items),
     });
+  }
+
+  setTab(id: TabId): void {
+    this.activeTab.set(id);
+  }
+
+  /* ── Hero slider controls ── */
+  goToSlide(index: number): void {
+    this.currentBanner.set(index);
+    this.resetProgress();
+    this.resetHeroTimer();
+  }
+
+  nextSlide(): void {
+    this.currentBanner.set((this.currentBanner() + 1) % this.heroSlides.length);
+    this.resetProgress();
+    this.resetHeroTimer();
+  }
+
+  prevSlide(): void {
+    this.currentBanner.set((this.currentBanner() - 1 + this.heroSlides.length) % this.heroSlides.length);
+    this.resetProgress();
+    this.resetHeroTimer();
+  }
+
+  private resetProgress(): void {
+    this.showProgress.set(false);
+    setTimeout(() => this.showProgress.set(true), 20);
+  }
+
+  private startHeroTimer(): void {
+    this.heroTimer = setInterval(() => {
+      this.currentBanner.set((this.currentBanner() + 1) % this.heroSlides.length);
+      this.resetProgress();
+    }, 6000);
+  }
+
+  private resetHeroTimer(): void {
+    if (this.heroTimer) clearInterval(this.heroTimer);
+    this.startHeroTimer();
   }
 
   toggleFaq(index: number): void {

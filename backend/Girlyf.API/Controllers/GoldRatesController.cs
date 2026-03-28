@@ -11,6 +11,7 @@ public class GoldRatesController : ControllerBase
     public GoldRatesController(IGoldRateService goldRate) => _goldRate = goldRate;
 
     [HttpGet]
+    [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)] // Cache gold rates for 1 hour
     public async Task<IActionResult> GetAll()
         => Ok(await _goldRate.GetAllRatesAsync());
 

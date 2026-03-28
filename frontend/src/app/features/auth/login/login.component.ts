@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
+import { CartService } from '@core/services/cart.service';
+import { AnalyticsService } from '@core/services/analytics.service';
 
 @Component({
   selector: 'app-login',
@@ -117,13 +119,18 @@ export class LoginComponent {
   otpDigits: string[] = ['', '', '', '', '', ''];
   private timerInterval: any;
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private auth: AuthService, private cart: CartService, private analytics: AnalyticsService, private router: Router) {}
 
   loginWithPassword(): void {
     this.loading.set(true);
     this.error.set('');
     this.auth.login({ email: this.email, password: this.password }).subscribe({
-      next: () => { this.loading.set(false); this.router.navigate(['/']); },
+      next: () => {
+        this.loading.set(false);
+        this.cart.syncOnLogin();
+        this.analytics.trackLogin('password');
+        this.router.navigate(['/']);
+      },
       error: (err) => { this.loading.set(false); this.error.set(err?.error?.message || 'Invalid credentials'); }
     });
   }

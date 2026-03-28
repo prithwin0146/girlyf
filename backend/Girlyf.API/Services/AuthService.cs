@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Girlyf.API.Data;
 using Girlyf.API.DTOs;
@@ -13,6 +14,8 @@ public interface IAuthService
 {
     Task<AuthResponseDto?> RegisterAsync(RegisterDto dto);
     Task<AuthResponseDto?> LoginAsync(LoginDto dto);
+    Task<AuthResponseDto?> RefreshTokenAsync(string refreshToken);
+    Task<bool> RevokeTokenAsync(string refreshToken);
 }
 
 public class AuthService : IAuthService
@@ -41,7 +44,7 @@ public class AuthService : IAuthService
 
         _db.Users.Add(user);
         await _db.SaveChangesAsync();
-        return new AuthResponseDto(GenerateToken(user), user.Name, user.Email, user.Role);
+        return await GenerateAuthResponse(user);
     }
 
     public async Task<AuthResponseDto?> LoginAsync(LoginDto dto)
@@ -50,10 +53,43 @@ public class AuthService : IAuthService
         if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
             return null;
 
-        return new AuthResponseDto(GenerateToken(user), user.Name, user.Email, user.Role);
+        return await GenerateAuthResponse(user);
     }
 
-    private string GenerateToken(User user)
+    public async Task<AuthResponseDto?> RefreshTokenAsync(string refreshToken)
+    {
+        var stored = await _db.RefreshTokens
+            .Include(rt => rt.User)
+            .FirstOrDefaultAsync(rt => rt.Token == refreshToken && !rt.IsRevoked);
+
+        if (stored == null || stored.ExpiresAt < DateTime.UtcNow)
+            return null;
+
+        // Rotate: revoke old, issue new
+        stored.IsRevoked = true;
+        var user = stored.User;
+        return await GenerateAuthResponse(user);
+    }
+
+    public async Task<bool> RevokeTokenAsync(string refreshToken)
+    {
+        var stored = await _db.RefreshTokens
+            .FirstOrDefaultAsync(rt => rt.Token == refreshToken && !rt.IsRevoked);
+
+        if (stored == null) return false;
+        stored.IsRevoked = true;
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
+    private async Task<AuthResponseDto> GenerateAuthResponse(User user)
+    {
+        var jwt = GenerateJwtToken(user);
+        var refresh = await CreateRefreshTokenAsync(user.Id);
+        return new AuthResponseDto(jwt, refresh.Token, user.Name, user.Email, user.Role);
+    }
+
+    private string GenerateJwtToken(User user)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -69,10 +105,31 @@ public class AuthService : IAuthService
             issuer: _config["Jwt:Issuer"],
             audience: _config["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddDays(7),
+            expires: DateTime.UtcNow.AddMinutes(30), // short-lived access token
             signingCredentials: creds
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    private async Task<RefreshToken> CreateRefreshTokenAsync(int userId)
+    {
+        var token = new RefreshToken
+        {
+            UserId = userId,
+            Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+            ExpiresAt = DateTime.UtcNow.AddDays(30)
+        };
+
+        _db.RefreshTokens.Add(token);
+
+        // Cleanup: remove expired/revoked tokens for this user
+        var staleTokens = await _db.RefreshTokens
+            .Where(rt => rt.UserId == userId && (rt.IsRevoked || rt.ExpiresAt < DateTime.UtcNow))
+            .ToListAsync();
+        _db.RefreshTokens.RemoveRange(staleTokens);
+
+        await _db.SaveChangesAsync();
+        return token;
     }
 }

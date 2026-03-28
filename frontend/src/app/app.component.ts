@@ -1,9 +1,11 @@
-import { Component, signal, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, signal, HostListener, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '@shared/components/header/header.component';
 import { FooterComponent } from '@shared/components/footer/footer.component';
 import { ToastComponent } from '@shared/components/toast/toast.component';
+import { SeoService } from '@core/services/seo.service';
+import { AnalyticsService } from '@core/services/analytics.service';
 
 @Component({
   selector: 'app-root',
@@ -63,13 +65,28 @@ import { ToastComponent } from '@shared/components/toast/toast.component';
 export class AppComponent {
   showBackToTop = signal(false);
   showCookie = signal(true);
+  private readonly isBrowser: boolean;
+
+  constructor(
+    @Inject(PLATFORM_ID) platformId: Object,
+    private seo: SeoService,
+    private analytics: AnalyticsService
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+    // Initialize with default SEO tags
+    this.seo.resetDefaults();
+  }
 
   @HostListener('window:scroll')
   onScroll(): void {
-    this.showBackToTop.set(window.scrollY > 500);
+    if (this.isBrowser) {
+      this.showBackToTop.set(window.scrollY > 500);
+    }
   }
 
   scrollToTop(): void {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (this.isBrowser) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }
 }

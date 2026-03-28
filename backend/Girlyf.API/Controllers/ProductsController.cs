@@ -44,4 +44,14 @@ public class ProductsController : ControllerBase
     [HttpGet("{id:int}/related")]
     public async Task<IActionResult> GetRelated(int id, [FromQuery] int count = 6)
         => Ok(await _products.GetRelatedAsync(id, count));
+
+    /// <summary>Search suggestions: returns matching product names and category names</summary>
+    [HttpGet("search/suggestions")]
+    [ResponseCache(Duration = 60)]
+    public async Task<IActionResult> GetSearchSuggestions([FromQuery] string q)
+    {
+        if (string.IsNullOrWhiteSpace(q) || q.Length < 2) return Ok(new { products = Array.Empty<object>(), suggestions = Array.Empty<string>() });
+        var suggestions = await _products.GetSearchSuggestionsAsync(q, 8);
+        return Ok(suggestions);
+    }
 }

@@ -49,6 +49,12 @@ export class ApiService {
     return this.http.get<Product[]>(`${this.base}/products/${id}/related?count=${count}`);
   }
 
+  getSearchSuggestions(query: string, count = 6): Observable<{ products: { id: number; name: string; slug: string; imageUrl: string; price: number }[]; suggestions: string[] }> {
+    return this.http.get<{ products: { id: number; name: string; slug: string; imageUrl: string; price: number }[]; suggestions: string[] }>(
+      `${this.base}/products/search/suggestions`, { params: { query, count: count.toString() } }
+    );
+  }
+
   // ── Categories ──
   getCategories(): Observable<Category[]> {
     return this.http.get<Category[]>(`${this.base}/categories`);

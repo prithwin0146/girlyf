@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '@core/guards/auth.guard';
+import { adminGuard } from '@core/guards/admin.guard';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('@features/home/home.component').then(m => m.HomeComponent) },
@@ -69,6 +70,21 @@ export const routes: Routes = [
   { path: 'cancellation-policy', loadComponent: () => import('@features/policies/cancellation-policy.component').then(m => m.CancellationPolicyComponent) },
   { path: 'privacy-policy', loadComponent: () => import('@features/policies/privacy-policy.component').then(m => m.PrivacyPolicyComponent) },
   { path: 'return-exchange-policy', loadComponent: () => import('@features/policies/return-exchange-policy.component').then(m => m.ReturnExchangePolicyComponent) },
+
+  // ── Admin Routes ──
+  {
+    path: 'admin',
+    canActivate: [adminGuard],
+    loadComponent: () => import('@features/admin/admin.component').then(m => m.AdminLayoutComponent),
+    children: [
+      { path: '', loadComponent: () => import('@features/admin/admin.component').then(m => m.AdminDashboardComponent) },
+      { path: 'products', loadComponent: () => import('@features/admin/admin-products.component').then(m => m.AdminProductsComponent) },
+      { path: 'orders', loadComponent: () => import('@features/admin/admin-orders.component').then(m => m.AdminOrdersComponent) },
+      { path: 'gold-rates', loadComponent: () => import('@features/admin/admin-gold-rates.component').then(m => m.AdminGoldRatesComponent) },
+      { path: 'banners', loadComponent: () => import('@features/admin/admin-banners.component').then(m => m.AdminBannersComponent) },
+      { path: 'users', loadComponent: () => import('@features/admin/admin-users.component').then(m => m.AdminUsersComponent) },
+    ]
+  },
 
   { path: '**', redirectTo: '' },
 ];

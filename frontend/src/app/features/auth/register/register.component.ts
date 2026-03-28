@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
+import { CartService } from '@core/services/cart.service';
+import { AnalyticsService } from '@core/services/analytics.service';
 
 @Component({
   selector: 'app-register',
@@ -160,7 +162,7 @@ export class RegisterComponent {
     { num: 4, label: 'Profile' },
   ];
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private auth: AuthService, private cart: CartService, private analytics: AnalyticsService, private router: Router) {}
 
   hasUpperCase(): boolean { return /[A-Z]/.test(this.formData.password); }
   hasNumber(): boolean { return /[0-9]/.test(this.formData.password); }
@@ -189,7 +191,12 @@ export class RegisterComponent {
     if (!this.formData.name) { this.error.set('Please enter your name'); return; }
     this.loading.set(true);
     this.auth.register(this.formData).subscribe({
-      next: () => { this.loading.set(false); this.router.navigate(['/']); },
+      next: () => {
+        this.loading.set(false);
+        this.cart.syncOnLogin();
+        this.analytics.trackSignUp('email');
+        this.router.navigate(['/']);
+      },
       error: (err) => { this.loading.set(false); this.error.set(err?.error?.message || 'Registration failed'); }
     });
   }

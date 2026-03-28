@@ -4,6 +4,7 @@ import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subscription, forkJoin } from 'rxjs';
 import { ApiService } from '@core/services/api.service';
+import { SeoService } from '@core/services/seo.service';
 import { Product, Category, ProductFilter, PagedResult, GoldRate } from '@core/models';
 import { ProductCardComponent } from '@shared/components/product-card/product-card.component';
 
@@ -425,6 +426,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   constructor(
     private api: ApiService,
+    private seo: SeoService,
     private route: ActivatedRoute,
     private router: Router,
   ) {}
@@ -500,6 +502,20 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
     this.metalType.set(metal);
     this.pageTitle.set(title);
+
+    // SEO — dynamic per listing page
+    this.seo.update({
+      title: `${title} — Buy Online at Best Prices`,
+      description: `Shop ${title.toLowerCase()} online at Girlyf. BIS hallmarked, transparent pricing, free insured shipping. Browse ${title.toLowerCase()} collections with live gold rates.`,
+      keywords: `${title.toLowerCase()}, buy ${title.toLowerCase()} online, Girlyf, BIS hallmarked jewellery`,
+      type: 'website',
+      breadcrumbs: [
+        { name: 'Home', url: '/' },
+        ...(metal ? [{ name: `${metal.charAt(0).toUpperCase() + metal.slice(1)} Jewellery`, url: `/${metal}-jewellery` }] : []),
+        { name: title, url: this.router.url },
+      ],
+    });
+
     this.loadProducts(false);
   }
 

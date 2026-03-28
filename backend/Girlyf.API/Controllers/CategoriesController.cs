@@ -13,6 +13,7 @@ public class CategoriesController : ControllerBase
     public CategoriesController(AppDbContext db) => _db = db;
 
     [HttpGet]
+    [ResponseCache(Duration = 1800, Location = ResponseCacheLocation.Any)] // Cache categories for 30 min
     public async Task<IActionResult> GetAll()
     {
         var categories = await _db.Categories

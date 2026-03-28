@@ -6,6 +6,8 @@ import { Subscription, forkJoin } from 'rxjs';
 import { ApiService } from '@core/services/api.service';
 import { CartService } from '@core/services/cart.service';
 import { WishlistService } from '@core/services/wishlist.service';
+import { SeoService } from '@core/services/seo.service';
+import { AnalyticsService } from '@core/services/analytics.service';
 import { Product, GoldRate, Review } from '@core/models';
 
 @Component({
@@ -46,7 +48,7 @@ import { Product, GoldRate, Review } from '@core/models';
             <!-- Main Image -->
             <div class="relative aspect-square overflow-hidden bg-gray-50 rounded border border-gray-100 group cursor-zoom-in"
               (mousemove)="onZoom($event)" (mouseleave)="resetZoom()">
-              <img [src]="selectedImage()" [alt]="product()!.name"
+              <img [src]="selectedImage()" [alt]="product()!.name" fetchpriority="high"
                 class="w-full h-full object-cover transition-transform duration-300"
                 [style.transform]="zoomTransform()"
                 [style.transform-origin]="zoomOrigin()">
@@ -424,6 +426,8 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     private api: ApiService,
     private cart: CartService,
     public wishlist: WishlistService,
+    private seo: SeoService,
+    private analytics: AnalyticsService,
     private route: ActivatedRoute,
     private router: Router,
     @Inject(PLATFORM_ID) platformId: Object,
@@ -444,6 +448,41 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
           const primary = p.images?.find(i => i.isPrimary);
           this.selectedImage.set(primary?.imageUrl || p.images?.[0]?.imageUrl || '/assets/images/misc/placeholder.svg');
           this.loading.set(false);
+
+          // SEO — Product structured data + Open Graph
+          this.seo.update({
+            title: p.name,
+            description: `Buy ${p.name} online at Girlyf. ${p.karat} ${p.metal}, Net Wt: ${p.netWeight}g. BIS Hallmarked, free shipping, lifetime exchange.`,
+            keywords: `${p.name}, ${p.categoryName}, ${p.karat} ${p.metal}, buy ${p.categoryName.toLowerCase()} online, Girlyf`,
+            image: primary?.imageUrl || p.images?.[0]?.imageUrl,
+            type: 'product',
+            product: {
+              name: p.name,
+              description: p.description,
+              image: primary?.imageUrl || p.images?.[0]?.imageUrl,
+              price: p.calculatedPrice,
+              currency: 'INR',
+              availability: 'InStock',
+              sku: p.sku,
+              brand: 'Girlyf',
+              category: p.categoryName,
+              rating: p.averageRating,
+              reviewCount: p.reviewCount,
+            },
+            breadcrumbs: [
+              { name: 'Home', url: '/' },
+              { name: p.categoryName, url: `/category/${p.categoryName.toLowerCase()}` },
+              { name: p.name, url: `/product/${p.id}` },
+            ],
+          });
+
+          // Analytics — View Item
+          this.analytics.trackViewItem({
+            id: p.id,
+            name: p.name,
+            category: p.categoryName,
+            price: p.calculatedPrice,
+          });
 
           // Track recently viewed
           this.trackRecentlyViewed(p.id);
@@ -503,6 +542,14 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       grossWeight: p.grossWeight,
       quantity: this.quantity,
       unitPrice: p.calculatedPrice,
+    });
+    // Analytics — Add to Cart
+    this.analytics.trackAddToCart({
+      id: p.id,
+      name: p.name,
+      category: p.categoryName,
+      price: p.calculatedPrice,
+      quantity: this.quantity,
     });
   }
 

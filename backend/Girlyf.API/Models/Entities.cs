@@ -80,6 +80,18 @@ public class Wishlist
     public DateTime AddedAt { get; set; } = DateTime.UtcNow;
 }
 
+public class CartItem
+{
+    public int Id { get; set; }
+    public int UserId { get; set; }
+    public User User { get; set; } = null!;
+    public int ProductId { get; set; }
+    public Product Product { get; set; } = null!;
+    public int Quantity { get; set; } = 1;
+    public DateTime AddedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+}
+
 public class Review
 {
     public int Id { get; set; }

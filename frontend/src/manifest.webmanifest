@@ -1,0 +1,27 @@
+{
+  "name": "Girlyf — Exquisite Jewellery Online",
+  "short_name": "Girlyf",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a0f0a",
+  "description": "Shop exquisite BIS hallmarked gold, diamond and silver jewellery online at Girlyf.",
+  "orientation": "portrait-primary",
+  "categories": ["shopping", "lifestyle"],
+  "icons": [
+    {
+      "src": "assets/images/misc/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/misc/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "prefer_related_applications": false
+}

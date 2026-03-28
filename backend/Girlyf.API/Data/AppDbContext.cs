@@ -17,8 +17,10 @@ public class AppDbContext : DbContext
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<Address> Addresses => Set<Address>();
     public DbSet<Wishlist> Wishlists => Set<Wishlist>();
+    public DbSet<CartItem> CartItems => Set<CartItem>();
     public DbSet<Review> Reviews => Set<Review>();
     public DbSet<Banner> Banners => Set<Banner>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     // ── CMS Entities (homepage sections) ──
     public DbSet<CmsSection> CmsSections => Set<CmsSection>();
@@ -60,7 +62,9 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<CmsSection>().HasIndex(s => s.SectionKey).IsUnique();
         modelBuilder.Entity<BlogPost>().HasIndex(b => b.Slug).IsUnique();
         modelBuilder.Entity<Wishlist>().HasIndex(w => new { w.UserId, w.ProductId }).IsUnique();
+        modelBuilder.Entity<CartItem>().HasIndex(ci => new { ci.UserId, ci.ProductId }).IsUnique();
         modelBuilder.Entity<Review>().HasIndex(r => new { r.UserId, r.ProductId }).IsUnique();
+        modelBuilder.Entity<RefreshToken>().HasIndex(rt => rt.Token).IsUnique();
 
         // ── Decimal precision ──
         modelBuilder.Entity<Product>(e =>

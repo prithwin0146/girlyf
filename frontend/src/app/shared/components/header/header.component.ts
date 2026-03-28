@@ -1,18 +1,20 @@
-import { Component, signal, HostListener, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { Component, signal, HostListener, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { Subject, Subscription, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
 import { CartService } from '@core/services/cart.service';
 import { WishlistService } from '@core/services/wishlist.service';
+import { AnalyticsService } from '@core/services/analytics.service';
 import { ApiService } from '@core/services/api.service';
 import { Category, GoldRate, Product } from '@core/models';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, FormsModule, MatIconModule],
+  imports: [CommonModule, RouterLink, FormsModule, MatIconModule],
   template: `
     <!-- ═══ ROW 1: TOP BAR ═══ -->
     <div class="bg-primary-900 text-white text-[11px] hidden md:block">
@@ -64,11 +66,11 @@ import { Category, GoldRate, Product } from '@core/models';
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
               </button>
             </div>
-            @if (searchFocused() && (searchSuggestions.length || searchProducts().length)) {
+            @if (searchFocused() && (searchSuggestions.length || searchResultProducts().length || searchProducts().length)) {
               <div class="absolute top-full left-0 right-0 bg-white shadow-2xl border border-gray-100 z-[60] mt-1 animate-fade-in-up">
                 <div class="flex">
                   <div class="w-2/5 border-r p-4">
-                    <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-2">Did you mean</p>
+                    <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-2">{{ searchSuggestions.length ? 'Suggestions' : 'Trending' }}</p>
                     @for (s of searchSuggestions; track s) {
                       <button (mousedown)="searchQuery = s; onSearch()" class="flex items-center gap-2 w-full text-left px-2 py-1.5 text-sm hover:bg-brown-200/30 rounded transition-colors">
                         <span class="text-gold-500">★</span> {{ s }}
@@ -76,18 +78,33 @@ import { Category, GoldRate, Product } from '@core/models';
                     }
                   </div>
                   <div class="w-3/5 p-4">
-                    <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-2">Popular Products</p>
-                    <div class="grid grid-cols-3 gap-2">
-                      @for (p of searchProducts(); track p.id) {
-                        <a [routerLink]="['/product', p.id]" (mousedown)="searchFocused.set(false)" class="text-center group">
-                          <div class="aspect-square bg-gray-50 border overflow-hidden rounded">
-                            <img [src]="(p.images && p.images[0] ? p.images[0].imageUrl : '/assets/images/misc/placeholder.svg')" [alt]="p.name" class="w-full h-full object-cover group-hover:scale-110 transition-transform">
-                          </div>
-                          <p class="text-[9px] mt-1 line-clamp-1">{{ p.name }}</p>
-                          <p class="text-[10px] font-price font-bold text-primary-900">₹{{ p.calculatedPrice | number:'1.0-0' }}</p>
-                        </a>
-                      }
-                    </div>
+                    @if (searchResultProducts().length) {
+                      <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-2">Matching Products</p>
+                      <div class="grid grid-cols-3 gap-2">
+                        @for (rp of searchResultProducts(); track rp.id) {
+                          <a [routerLink]="['/product', rp.id]" (mousedown)="searchFocused.set(false)" class="text-center group">
+                            <div class="aspect-square bg-gray-50 border overflow-hidden rounded">
+                              <img [src]="rp.imageUrl || '/assets/images/misc/placeholder.svg'" [alt]="rp.name" class="w-full h-full object-cover group-hover:scale-110 transition-transform">
+                            </div>
+                            <p class="text-[9px] mt-1 line-clamp-1">{{ rp.name }}</p>
+                            <p class="text-[10px] font-price font-bold text-primary-900">₹{{ rp.price | number:'1.0-0' }}</p>
+                          </a>
+                        }
+                      </div>
+                    } @else {
+                      <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-2">Popular Products</p>
+                      <div class="grid grid-cols-3 gap-2">
+                        @for (p of searchProducts(); track p.id) {
+                          <a [routerLink]="['/product', p.id]" (mousedown)="searchFocused.set(false)" class="text-center group">
+                            <div class="aspect-square bg-gray-50 border overflow-hidden rounded">
+                              <img [src]="getProductImage(p)" [alt]="p.name" class="w-full h-full object-cover group-hover:scale-110 transition-transform">
+                            </div>
+                            <p class="text-[9px] mt-1 line-clamp-1">{{ p.name }}</p>
+                            <p class="text-[10px] font-price font-bold text-primary-900">₹{{ p.calculatedPrice | number:'1.0-0' }}</p>
+                          </a>
+                        }
+                      </div>
+                    }
                   </div>
                 </div>
               </div>
@@ -181,40 +198,95 @@ import { Category, GoldRate, Product } from '@core/models';
         </div>
       </div>
 
-      <!-- ═══ ROW 3: CATEGORY NAV with mega menus ═══ -->
+      <!-- ═══ ROW 3: CATEGORY NAV with JOS-style mega menus ═══ -->
       <nav class="hidden lg:block bg-primary-900">
         <div class="max-w-[1400px] mx-auto px-4">
           <ul class="flex items-center justify-center">
             @for (navItem of navItems; track navItem.label) {
               <li class="relative group">
-                <a [routerLink]="navItem.route" class="block px-3 xl:px-4 py-2.5 text-[11px] text-white/90 tracking-[0.08em] uppercase hover:text-white transition-colors relative">
+                <a [routerLink]="navItem.route"
+                  class="block px-3 xl:px-4 py-3 text-[11px] text-white/90 tracking-[0.08em] uppercase hover:text-white transition-colors relative group-hover:text-gold-400">
                   {{ navItem.label }}
-                  <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 group-hover:w-full h-0.5 bg-gold-500 transition-all duration-300"></span>
+                  <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 group-hover:w-full h-[2px] bg-gold-400 transition-all duration-300"></span>
                 </a>
-                @if (navItem.children) {
-                  <div class="absolute left-1/2 -translate-x-1/2 top-full bg-white shadow-2xl border-t-2 border-gold-500 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 min-w-[550px]">
-                    <div class="flex">
-                      <div class="flex-1 p-5 grid grid-cols-2 gap-x-6">
-                        @for (group of navItem.children; track group.title) {
-                          <div class="mb-4">
-                            <p class="text-[10px] text-brown-600 font-bold uppercase tracking-widest mb-2">{{ group.title }}</p>
-                            @for (link of group.links; track link.label) {
-                              <a [routerLink]="link.route" [queryParams]="link.params || {}" class="mega-menu-link text-xs">{{ link.label }}</a>
-                            }
+                @if (navItem.megaMenu) {
+                  <!-- Wide mega dropdown — fixed to viewport width -->
+                  <div class="fixed left-0 right-0 top-auto bg-white shadow-2xl border-t-2 border-gold-500 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100]"
+                    style="margin-top: 0;">
+                    <div class="max-w-[1400px] mx-auto px-6 py-5 flex gap-0">
+
+                      <!-- COL 1: SHOP FOR -->
+                      <div class="w-[160px] shrink-0 border-r border-gray-100 pr-5">
+                        <p class="text-[10px] text-primary-900 font-bold uppercase tracking-[0.15em] mb-4 border-b border-gold-300 pb-2">Shop For</p>
+                        @for (g of navItem.megaMenu.genders; track g.label) {
+                          <a [routerLink]="navItem.route" [queryParams]="{gender: g.label}"
+                            class="flex items-center gap-3 py-2 group/item hover:text-primary-900 transition-colors">
+                            <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-200 shrink-0 group-hover/item:border-gold-400 transition-colors">
+                              <img [src]="g.image" [alt]="g.label" class="w-full h-full object-cover">
+                            </div>
+                            <span class="text-[12px] text-gray-700 group-hover/item:text-primary-900 font-medium">{{ g.label }}</span>
+                          </a>
+                        }
+                      </div>
+
+                      <!-- COL 2: BY CATEGORY (with images) -->
+                      <div class="flex-1 px-6 border-r border-gray-100">
+                        <p class="text-[10px] text-primary-900 font-bold uppercase tracking-[0.15em] mb-4 border-b border-gold-300 pb-2">By Category</p>
+                        <div class="grid grid-cols-4 gap-x-4 gap-y-3">
+                          @for (cat of navItem.megaMenu.categories; track cat.label) {
+                            <a [routerLink]="cat.route" class="flex flex-col items-center text-center group/cat">
+                              <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-100 group-hover/cat:border-gold-400 transition-all duration-200 bg-brown-100">
+                                <img [src]="cat.image" [alt]="cat.label" class="w-full h-full object-cover group-hover/cat:scale-110 transition-transform duration-300">
+                              </div>
+                              <span class="mt-1.5 text-[10px] text-gray-600 group-hover/cat:text-primary-900 leading-tight font-medium">{{ cat.label }}</span>
+                            </a>
+                          }
+                        </div>
+                        <!-- View All link -->
+                        <div class="mt-4 pt-3 border-t border-gray-100">
+                          <a [routerLink]="navItem.route" class="inline-flex items-center gap-1 text-[11px] text-primary-900 font-bold uppercase tracking-wider hover:text-gold-600 transition-colors">
+                            VIEW ALL <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                          </a>
+                        </div>
+                      </div>
+
+                      <!-- COL 3: BY OCCASION -->
+                      <div class="w-[160px] shrink-0 border-r border-gray-100 px-5">
+                        <p class="text-[10px] text-primary-900 font-bold uppercase tracking-[0.15em] mb-4 border-b border-gold-300 pb-2">Occasion</p>
+                        @for (occ of navItem.megaMenu.occasions; track occ.label) {
+                          <a [routerLink]="navItem.route" [queryParams]="{occasion: occ.label}"
+                            class="flex items-center gap-2 py-1.5 text-[12px] text-gray-600 hover:text-primary-900 hover:pl-1 transition-all duration-150 group/occ">
+                            <span class="text-gold-500 group-hover/occ:text-gold-600">›</span> {{ occ.label }}
+                          </a>
+                        }
+                      </div>
+
+                      <!-- COL 4: BRANDS + Feature image -->
+                      <div class="w-[220px] shrink-0 pl-5">
+                        <p class="text-[10px] text-primary-900 font-bold uppercase tracking-[0.15em] mb-3 border-b border-gold-300 pb-2">Collections</p>
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                          @for (col of navItem.megaMenu.collections; track col.name) {
+                            <a [routerLink]="['/collections', col.slug]"
+                              class="text-[10px] text-center py-1.5 px-2 border border-gray-200 hover:border-gold-400 hover:bg-gold-50 transition-all text-gray-600 hover:text-primary-900 rounded">
+                              {{ col.name }}
+                            </a>
+                          }
+                        </div>
+                        @if (navItem.megaMenu.featureImage) {
+                          <div class="overflow-hidden rounded mt-2">
+                            <img [src]="navItem.megaMenu.featureImage" [alt]="navItem.label"
+                              class="w-full h-24 object-cover hover:scale-105 transition-transform duration-500">
                           </div>
                         }
                       </div>
-                      <div class="w-44 bg-brown-200/20 p-4 flex flex-col items-center justify-center border-l">
-                        <div class="w-32 h-32 bg-white rounded border border-gold-500/20 overflow-hidden flex items-center justify-center text-5xl">💎</div>
-                        <a [routerLink]="navItem.route" class="text-[10px] text-primary-900 font-bold uppercase tracking-wider mt-3 hover:text-gold-600">View All →</a>
-                      </div>
+
                     </div>
                   </div>
                 }
               </li>
             }
-            <li><a routerLink="/gold-rate" class="block px-3 xl:px-4 py-2.5 text-[11px] text-gold-400 font-semibold tracking-[0.08em] uppercase hover:text-gold-300">Gold Rate</a></li>
-            <li><a routerLink="/our-brands" class="block px-3 xl:px-4 py-2.5 text-[11px] text-gold-400 font-semibold tracking-[0.08em] uppercase hover:text-gold-300">Our Brands</a></li>
+            <li><a routerLink="/gold-rate" class="block px-3 xl:px-4 py-3 text-[11px] text-gold-400 font-semibold tracking-[0.08em] uppercase hover:text-gold-300">Gold Rate</a></li>
+            <li><a routerLink="/our-brands" class="block px-3 xl:px-4 py-3 text-[11px] text-gold-400 font-semibold tracking-[0.08em] uppercase hover:text-gold-300">Our Brands</a></li>
           </ul>
         </div>
       </nav>
@@ -257,19 +329,36 @@ import { Category, GoldRate, Product } from '@core/models';
             <div class="border-b border-gray-100">
               <button (click)="toggleMobileNav(navItem.label)" class="flex items-center justify-between w-full px-5 py-3 text-sm font-bold text-primary-900">
                 {{ navItem.label }}
-                @if (navItem.children) {
+                @if (navItem.megaMenu) {
                   <svg class="w-4 h-4 transition-transform text-gray-400" [class.rotate-180]="mobileExpanded() === navItem.label" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 } @else {
                   <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 }
               </button>
-              @if (navItem.children && mobileExpanded() === navItem.label) {
-                <div class="bg-gray-50 pb-2">
-                  @for (group of navItem.children; track group.title) {
-                    <p class="px-7 pt-3 pb-1 text-[10px] text-brown-600 font-bold uppercase tracking-widest">{{ group.title }}</p>
-                    @for (link of group.links; track link.label) {
-                      <a [routerLink]="link.route" [queryParams]="link.params || {}" (click)="closeMobile()" class="block px-9 py-1.5 text-xs text-gray-600 hover:text-primary-900 hover:bg-brown-200/30">{{ link.label }}</a>
-                    }
+              @if (navItem.megaMenu && mobileExpanded() === navItem.label) {
+                <div class="bg-gray-50 pb-3">
+                  <!-- Gender links -->
+                  <p class="px-7 pt-3 pb-1 text-[10px] text-brown-600 font-bold uppercase tracking-widest">Shop For</p>
+                  @for (g of navItem.megaMenu.genders; track g.label) {
+                    <a [routerLink]="navItem.route" [queryParams]="{gender: g.label}" (click)="closeMobile()"
+                      class="flex items-center gap-3 px-8 py-1.5 text-xs text-gray-700 hover:text-primary-900 hover:bg-brown-200/30">
+                      <div class="w-7 h-7 rounded-full overflow-hidden border border-gray-200 shrink-0">
+                        <img [src]="g.image" [alt]="g.label" class="w-full h-full object-cover">
+                      </div>
+                      {{ g.label }}
+                    </a>
+                  }
+                  <!-- Category links -->
+                  <p class="px-7 pt-3 pb-1 text-[10px] text-brown-600 font-bold uppercase tracking-widest">By Category</p>
+                  @for (cat of navItem.megaMenu.categories; track cat.label) {
+                    <a [routerLink]="cat.route" (click)="closeMobile()"
+                      class="block px-9 py-1.5 text-xs text-gray-600 hover:text-primary-900 hover:bg-brown-200/30">{{ cat.label }}</a>
+                  }
+                  <!-- Occasion links -->
+                  <p class="px-7 pt-3 pb-1 text-[10px] text-brown-600 font-bold uppercase tracking-widest">By Occasion</p>
+                  @for (occ of navItem.megaMenu.occasions; track occ.label) {
+                    <a [routerLink]="navItem.route" [queryParams]="{occasion: occ.label}" (click)="closeMobile()"
+                      class="block px-9 py-1.5 text-xs text-gray-600 hover:text-primary-900 hover:bg-brown-200/30">{{ occ.label }}</a>
                   }
                 </div>
               }
@@ -290,7 +379,7 @@ import { Category, GoldRate, Product } from '@core/models';
     </header>
   `,
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   categories = signal<Category[]>([]);
   goldRates = signal<GoldRate[]>([]);
   searchProducts = signal<Product[]>([]);
@@ -304,47 +393,173 @@ export class HeaderComponent implements OnInit {
   searchQuery = '';
   isScrolled = signal(false);
   searchSuggestions: string[] = [];
-  navItems: { label: string; route: string; previewImage?: string; children?: { title: string; links: { label: string; route: string; params?: any }[] }[] }[] = [];
+  searchResultProducts = signal<{ id: number; name: string; slug: string; imageUrl: string; price: number }[]>([]);
+  private searchSubject = new Subject<string>();
+  private searchSub?: Subscription;
+  navItems: {
+    label: string; route: string;
+    megaMenu?: {
+      genders: { label: string; image: string }[];
+      categories: { label: string; route: string; image: string }[];
+      occasions: { label: string }[];
+      collections: { name: string; slug: string }[];
+      featureImage?: string;
+    };
+  }[] = [];
+  private isBrowser: boolean;
 
-  constructor(public auth: AuthService, public cart: CartService, public wishlist: WishlistService, private api: ApiService, private router: Router) {}
+  constructor(
+    public auth: AuthService,
+    public cart: CartService,
+    public wishlist: WishlistService,
+    private analytics: AnalyticsService,
+    private api: ApiService,
+    private router: Router,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
 
   ngOnInit(): void {
     this.api.getCategories().subscribe(cats => { this.categories.set(cats); this.buildNavItems(cats); });
     this.api.getGoldRates().subscribe(r => this.goldRates.set(r));
     this.api.getFeaturedProducts(6).subscribe(p => this.searchProducts.set(p));
+
+    // Debounced live search suggestions from backend API
+    this.searchSub = this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(q => q.length > 1
+        ? this.api.getSearchSuggestions(q, 6)
+        : of({ products: [], suggestions: [] })
+      ),
+    ).subscribe({
+      next: (res) => {
+        this.searchSuggestions = res.suggestions || [];
+        this.searchResultProducts.set(res.products || []);
+      },
+      error: () => {
+        this.searchSuggestions = [];
+        this.searchResultProducts.set([]);
+      },
+    });
   }
 
-  @HostListener('window:scroll') onScroll(): void { this.isScrolled.set(window.scrollY > 50); }
+  ngOnDestroy(): void {
+    this.searchSub?.unsubscribe();
+  }
+
+  @HostListener('window:scroll') onScroll(): void {
+    if (this.isBrowser) {
+      this.isScrolled.set(window.scrollY > 50);
+    }
+  }
 
   buildNavItems(cats: Category[]): void {
-    const genders = ['Women', 'Men', 'Kids'];
-    const occasions = ['Wedding', 'Daily Wear', 'Party Wear', 'Office Wear'];
-    const metals = [
-      { label: 'Gold Jewellery', route: '/gold-jewellery' },
-      { label: 'Diamond Jewellery', route: '/diamond-jewellery' },
-      { label: 'Platinum Jewellery', route: '/platinum-jewellery' },
-      { label: 'Silver Jewellery', route: '/silver-jewellery' },
-      { label: 'Daily Wear / 18KT', route: '/18k-jewellery' },
+    const genders = [
+      { label: 'Women', image: '/assets/images/menu/women.avif' },
+      { label: 'Men',   image: '/assets/images/menu/men.avif' },
+      { label: 'Kids',  image: '/assets/images/menu/kids.avif' },
     ];
+    const occasions = [
+      { label: 'Wedding' }, { label: 'Engagement' },
+      { label: 'Daily Wear' }, { label: 'Party Wear' }, { label: 'Office Wear' },
+    ];
+    const collections = [
+      { name: 'Ivy', slug: 'ivy' }, { name: 'Butterfly', slug: 'butterfly' },
+      { name: 'Mirage', slug: 'mirage' }, { name: 'Orchid', slug: 'orchid' },
+      { name: 'Lumina', slug: 'lumina' }, { name: 'Ethereal', slug: 'ethereal' },
+    ];
+
+    // Per-menu category icons from downloaded menu assets
+    const menuCats: Record<string, { label: string; route: string; image: string }[]> = {
+      '/gold-jewellery': [
+        { label: 'Necklaces',    route: '/gold-jewellery/necklaces',    image: '/assets/images/menu/necklaces.avif' },
+        { label: 'Earrings',     route: '/gold-jewellery/earrings',     image: '/assets/images/menu/earrings.avif' },
+        { label: 'Bangles',      route: '/gold-jewellery/bangles',      image: '/assets/images/menu/bangles.avif' },
+        { label: 'Rings',        route: '/gold-jewellery/rings',        image: '/assets/images/menu/rings.avif' },
+        { label: 'Pendants',     route: '/gold-jewellery/pendants',     image: '/assets/images/menu/pendants.avif' },
+        { label: 'Mangalsutra',  route: '/gold-jewellery/mangalsutras', image: '/assets/images/menu/mangalsutra.avif' },
+        { label: 'Chains',       route: '/gold-jewellery/chains',       image: '/assets/images/menu/necklaces.avif' },
+        { label: 'Anklets',      route: '/gold-jewellery/anklets',      image: '/assets/images/menu/bangles.avif' },
+      ],
+      '/diamond-jewellery': [
+        { label: 'D. Necklaces', route: '/diamond-jewellery/necklaces', image: '/assets/images/menu/diamond-necklaces.avif' },
+        { label: 'D. Earrings',  route: '/diamond-jewellery/earrings',  image: '/assets/images/menu/diamond-earrings.avif' },
+        { label: 'D. Rings',     route: '/diamond-jewellery/rings',     image: '/assets/images/menu/diamond-rings.avif' },
+        { label: 'D. Pendants',  route: '/diamond-jewellery/pendants',  image: '/assets/images/menu/diamond-pendant.avif' },
+        { label: 'D. Bangles',   route: '/diamond-jewellery/bangles',   image: '/assets/images/menu/gold-bangles.avif' },
+        { label: 'Solitaire',    route: '/diamond-jewellery/rings',     image: '/assets/images/menu/diamond-ring.avif' },
+      ],
+      '/platinum-jewellery': [
+        { label: 'Pt. Rings',    route: '/platinum-jewellery/rings',    image: '/assets/images/menu/rings.avif' },
+        { label: 'Pt. Pendants', route: '/platinum-jewellery/pendants', image: '/assets/images/menu/pendants.avif' },
+        { label: 'Pt. Earrings', route: '/platinum-jewellery/earrings', image: '/assets/images/menu/earrings.avif' },
+        { label: 'Pt. Bangles',  route: '/platinum-jewellery/bangles',  image: '/assets/images/menu/bangles.avif' },
+      ],
+      '/silver-jewellery': [
+        { label: 'Sv. Necklaces', route: '/silver-jewellery/necklaces', image: '/assets/images/menu/necklaces.avif' },
+        { label: 'Sv. Rings',     route: '/silver-jewellery/rings',     image: '/assets/images/menu/rings.avif' },
+        { label: 'Sv. Earrings',  route: '/silver-jewellery/earrings',  image: '/assets/images/menu/earrings.avif' },
+        { label: 'Sv. Bangles',   route: '/silver-jewellery/bangles',   image: '/assets/images/menu/bangles.avif' },
+      ],
+      '/18k-jewellery': [
+        { label: 'Rings',        route: '/18k-jewellery/rings',         image: '/assets/images/menu/rings.avif' },
+        { label: 'Earrings',     route: '/18k-jewellery/earrings',      image: '/assets/images/menu/earrings.avif' },
+        { label: 'Necklaces',    route: '/18k-jewellery/necklaces',     image: '/assets/images/menu/necklaces.avif' },
+        { label: 'Pendants',     route: '/18k-jewellery/pendants',      image: '/assets/images/menu/pendants.avif' },
+      ],
+    };
+
+    const featureImages: Record<string, string> = {
+      '/gold-jewellery':      '/assets/images/misc/jewellery-for-her.avif',
+      '/diamond-jewellery':   '/assets/images/menu/diamondring.avif',
+      '/platinum-jewellery':  '/assets/images/menu/rings.avif',
+      '/silver-jewellery':    '/assets/images/menu/necklaces.avif',
+      '/18k-jewellery':       '/assets/images/menu/earrings.avif',
+    };
+
+    const metals = [
+      { label: 'Gold Jewellery',      route: '/gold-jewellery' },
+      { label: 'Diamond Jewellery',   route: '/diamond-jewellery' },
+      { label: 'Platinum Jewellery',  route: '/platinum-jewellery' },
+      { label: 'Silver Jewellery',    route: '/silver-jewellery' },
+      { label: 'Daily Wear / 18KT',   route: '/18k-jewellery' },
+    ];
+
     this.navItems = metals.map(mt => ({
       label: mt.label, route: mt.route,
-      children: [
-        { title: 'Shop For', links: genders.map(g => ({ label: g, route: mt.route, params: { gender: g } })) },
-        { title: 'By Category', links: cats.slice(0, 8).map(c => ({ label: c.name, route: `${mt.route}/${c.slug}`, params: {} })) },
-        { title: 'By Occasion', links: occasions.map(o => ({ label: o, route: mt.route, params: { occasion: o } })) },
-      ]
+      megaMenu: {
+        genders,
+        categories: menuCats[mt.route] ?? [],
+        occasions,
+        collections,
+        featureImage: featureImages[mt.route],
+      },
     }));
-    this.navItems.push({ label: 'Coins & Gifts', route: '/gold-coin' }, { label: 'Digi Gold', route: '/digi-gold' });
+
+    this.navItems.push(
+      { label: 'Coins & Gifts', route: '/gold-coin' },
+      { label: 'Digi Gold',    route: '/digi-gold' },
+    );
   }
 
   onSearch(): void {
-    if (this.searchQuery.trim()) { this.searchFocused.set(false); this.router.navigate(['/products'], { queryParams: { search: this.searchQuery.trim() } }); this.searchQuery = ''; }
+    if (this.searchQuery.trim()) {
+      this.searchFocused.set(false);
+      this.analytics.trackSearch(this.searchQuery.trim());
+      this.router.navigate(['/products'], { queryParams: { search: this.searchQuery.trim() } });
+      this.searchQuery = '';
+    }
   }
   onSearchInput(): void {
-    const q = this.searchQuery.toLowerCase();
-    this.searchSuggestions = q.length > 1 ? ['Gold Rings', 'Diamond Necklace', 'Gold Bangles', 'Platinum Ring', 'Gold Earrings', 'Diamond Pendant'].filter(s => s.toLowerCase().includes(q)).slice(0, 5) : [];
+    this.searchSubject.next(this.searchQuery);
   }
   onSearchBlur(): void { setTimeout(() => this.searchFocused.set(false), 200); }
+  getProductImage(p: Product): string {
+    const primary = p.images?.find(i => i.isPrimary);
+    return primary?.imageUrl || p.images?.[0]?.imageUrl || '/assets/images/misc/placeholder.svg';
+  }
   toggleMobileNav(label: string): void { this.mobileExpanded.set(this.mobileExpanded() === label ? '' : label); }
   closeMobile(): void { this.mobileMenuOpen.set(false); this.mobileExpanded.set(''); }
 }

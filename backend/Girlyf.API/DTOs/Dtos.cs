@@ -1,9 +1,41 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Girlyf.API.DTOs;
 
 // Auth DTOs
-public record RegisterDto(string Name, string Email, string Phone, string Password);
-public record LoginDto(string Email, string Password);
-public record AuthResponseDto(string Token, string Name, string Email, string Role);
+public record RegisterDto(
+    [Required(ErrorMessage = "Name is required")]
+    [StringLength(100, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 100 characters")]
+    string Name,
+
+    [Required(ErrorMessage = "Email is required")]
+    [EmailAddress(ErrorMessage = "Invalid email address")]
+    string Email,
+
+    [Required(ErrorMessage = "Phone is required")]
+    [RegularExpression(@"^[6-9]\d{9}$", ErrorMessage = "Invalid Indian phone number")]
+    string Phone,
+
+    [Required(ErrorMessage = "Password is required")]
+    [MinLength(6, ErrorMessage = "Password must be at least 6 characters")]
+    string Password
+);
+
+public record LoginDto(
+    [Required(ErrorMessage = "Email is required")]
+    [EmailAddress(ErrorMessage = "Invalid email address")]
+    string Email,
+
+    [Required(ErrorMessage = "Password is required")]
+    string Password
+);
+
+public record AuthResponseDto(string Token, string RefreshToken, string Name, string Email, string Role);
+
+public record RefreshTokenDto(
+    [Required(ErrorMessage = "Refresh token is required")]
+    string RefreshToken
+);
 
 // Product DTOs
 public class ProductDto
@@ -104,18 +136,50 @@ public class CartDto
     public decimal TotalAmount { get; set; }
 }
 
+public class CartSyncItemDto
+{
+    [Required]
+    [Range(1, int.MaxValue)]
+    public int ProductId { get; set; }
+
+    [Required]
+    [Range(1, 10)]
+    public int Quantity { get; set; }
+}
+
+public class CartSyncDto
+{
+    [Required]
+    public List<CartSyncItemDto> Items { get; set; } = new();
+}
+
 // Order DTOs
 public class CreateOrderDto
 {
+    [Required(ErrorMessage = "Shipping address is required")]
+    [Range(1, int.MaxValue, ErrorMessage = "Invalid shipping address")]
     public int ShippingAddressId { get; set; }
+
+    [Required(ErrorMessage = "Payment method is required")]
+    [RegularExpression(@"^(COD|Razorpay|UPI|CCAvenue|PhonePe)$", ErrorMessage = "Invalid payment method")]
     public string PaymentMethod { get; set; } = "COD";
+
+    [StringLength(500, ErrorMessage = "Notes cannot exceed 500 characters")]
     public string? Notes { get; set; }
+
+    [Required(ErrorMessage = "Order must have at least one item")]
+    [MinLength(1, ErrorMessage = "Order must have at least one item")]
     public List<OrderItemInputDto> Items { get; set; } = new();
 }
 
 public class OrderItemInputDto
 {
+    [Required]
+    [Range(1, int.MaxValue, ErrorMessage = "Invalid product")]
     public int ProductId { get; set; }
+
+    [Required]
+    [Range(1, 10, ErrorMessage = "Quantity must be between 1 and 10")]
     public int Quantity { get; set; }
 }
 
@@ -146,13 +210,34 @@ public class OrderItemDto
 public class AddressDto
 {
     public int Id { get; set; }
+
+    [Required(ErrorMessage = "Full name is required")]
+    [StringLength(100, MinimumLength = 2)]
     public string FullName { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Phone number is required")]
+    [RegularExpression(@"^[6-9]\d{9}$", ErrorMessage = "Invalid phone number")]
     public string Phone { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Address line 1 is required")]
+    [StringLength(200, MinimumLength = 5)]
     public string Line1 { get; set; } = string.Empty;
+
+    [StringLength(200)]
     public string? Line2 { get; set; }
+
+    [Required(ErrorMessage = "City is required")]
+    [StringLength(100)]
     public string City { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "State is required")]
+    [StringLength(100)]
     public string State { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "PIN code is required")]
+    [RegularExpression(@"^\d{6}$", ErrorMessage = "PIN code must be 6 digits")]
     public string PinCode { get; set; } = string.Empty;
+
     public string Country { get; set; } = "India";
     public bool IsDefault { get; set; }
 }
@@ -164,4 +249,21 @@ public class GoldRateDto
     public decimal RatePerGram { get; set; }
     public DateTime EffectiveDate { get; set; }
     public string City { get; set; } = string.Empty;
+}
+
+// Search Suggestions DTO
+public class SearchSuggestionsDto
+{
+    public List<SearchProductHitDto> Products { get; set; } = new();
+    public List<string> Suggestions { get; set; } = new();
+}
+
+public class SearchProductHitDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Slug { get; set; } = string.Empty;
+    public string? ImageUrl { get; set; }
+    public decimal Price { get; set; }
+    public string CategoryName { get; set; } = string.Empty;
 }

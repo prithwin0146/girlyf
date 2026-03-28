@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { SeoService } from '@core/services/seo.service';
 
 @Component({
   selector: 'app-faq',
@@ -79,7 +80,7 @@ import { FormsModule } from '@angular/forms';
     </div>
   `,
 })
-export class FaqComponent {
+export class FaqComponent implements OnInit {
   searchQuery = '';
   selectedCategory = signal('All');
   filteredFaqs = signal<FaqItem[]>([]);
@@ -104,7 +105,22 @@ export class FaqComponent {
     { q: 'How do I create an account?', a: 'Click "Create Account" and follow our 4-step registration process. You\'ll need your email, phone number, and a password.', category: 'Account', open: false },
   ];
 
-  constructor() { this.filteredFaqs.set([...this.faqs]); }
+  constructor(private seo: SeoService) {
+    this.filteredFaqs.set([...this.faqs]);
+  }
+
+  ngOnInit(): void {
+    this.seo.update({
+      title: 'FAQ — Frequently Asked Questions | Girlyf Jewellery',
+      description: 'Find answers to common questions about Girlyf — orders, payments, shipping, returns, gold rates, and account management.',
+      keywords: 'Girlyf FAQ, jewellery questions, gold rate FAQ, shipping FAQ, return policy FAQ',
+      faq: this.faqs.map(f => ({ question: f.q, answer: f.a })),
+      breadcrumbs: [
+        { name: 'Home', url: '/' },
+        { name: 'FAQ', url: '/faq' },
+      ],
+    });
+  }
 
   filterFaqs(): void {
     let result = [...this.faqs];

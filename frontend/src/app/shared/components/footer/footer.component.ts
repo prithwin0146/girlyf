@@ -9,30 +9,33 @@ import { MatIconModule } from '@angular/material/icon';
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule, MatIconModule],
   template: `
-    <!-- NEWSLETTER (JA-style: Subscribe to Girlyf) -->
-    <section class="bg-primary-900 text-white py-10">
-      <div class="max-w-[1400px] mx-auto px-4 text-center">
-        <h3 class="font-heading text-xl md:text-2xl tracking-wider">Subscribe to Girlyf Online</h3>
-        <p class="text-white/60 text-sm mt-2 mb-6">Elevate your loved ones' style with dazzling gold jewellery</p>
-        <div class="flex max-w-lg mx-auto">
+    <!-- NEWSLETTER (Premium luxury — gradient) -->
+    <section class="bg-gradient-to-br from-primary-900 via-primary-900 to-brown-800 text-white py-12 md:py-16 relative overflow-hidden">
+      <div class="max-w-[1400px] mx-auto px-4 text-center relative z-10">
+        <h3 class="font-heading text-2xl md:text-3xl tracking-wider">Subscribe to Girlyf Online</h3>
+        <div class="w-16 h-0.5 bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto mt-3 mb-2"></div>
+        <p class="text-white/50 text-sm mt-2 mb-8 max-w-md mx-auto">Elevate your loved ones' style with dazzling gold jewellery. Get exclusive offers and early access.</p>
+        <div class="flex max-w-lg mx-auto shadow-2xl rounded-lg overflow-hidden">
           <div class="flex-1 relative">
             <mat-icon class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg">email</mat-icon>
-            <input type="email" [(ngModel)]="email" placeholder="Enter your email address" class="w-full pl-10 pr-4 py-3 text-sm text-gray-900 rounded-l focus:outline-none">
+            <input type="email" [(ngModel)]="email" placeholder="Enter your email address" class="w-full pl-12 pr-4 py-4 text-sm text-gray-900 focus:outline-none">
           </div>
-          <button (click)="subscribe()" class="btn-gold rounded-none rounded-r text-xs px-6 py-3 whitespace-nowrap">SUBSCRIBE</button>
+          <button (click)="subscribe()" class="btn-gold rounded-none text-xs px-8 py-4 whitespace-nowrap font-bold tracking-wider">SUBSCRIBE</button>
         </div>
       </div>
     </section>
 
-    <!-- TRUST STRIP (JA: 9 badges on peach #f4eeeb) -->
-    <section class="bg-brown-200 py-5 border-y border-brown-500/20">
+    <!-- TRUST STRIP (Premium elevated) -->
+    <section class="bg-gradient-to-b from-brown-200 to-white py-6 border-y border-brown-500/10">
       <div class="max-w-[1400px] mx-auto px-4">
-        <div class="flex md:grid md:grid-cols-9 gap-3 overflow-x-auto scrollbar-hide text-center">
+        <div class="flex md:grid md:grid-cols-9 gap-4 overflow-x-auto scrollbar-hide text-center">
           @for (item of trustItems; track item.line1) {
-            <div class="flex flex-col items-center gap-1.5 py-2 min-w-[80px] shrink-0 md:min-w-0">
-              <img [src]="item.icon" [alt]="item.line1" class="h-8 w-auto">
-              <span class="text-[9px] text-gray-700 font-heading uppercase tracking-wide leading-tight">{{ item.line1 }}</span>
-              <span class="text-[8px] text-gray-500 leading-tight">{{ item.line2 }}</span>
+            <div class="flex flex-col items-center gap-2 py-2 min-w-[80px] shrink-0 md:min-w-0 group cursor-default">
+              <div class="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-sm group-hover:shadow-md transition-shadow duration-300">
+                <img [src]="item.icon" [alt]="item.line1" class="h-6 w-auto">
+              </div>
+              <span class="text-[9px] text-gray-700 font-heading uppercase tracking-wide leading-tight font-semibold">{{ item.line1 }}</span>
+              <span class="text-[8px] text-gray-400 leading-tight -mt-1">{{ item.line2 }}</span>
             </div>
           }
         </div>

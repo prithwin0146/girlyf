@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Girlyf.API.DTOs;
 
 // ── CMS Section DTOs ──
@@ -102,7 +104,14 @@ public class ReviewDto
 
 public class CreateReviewDto
 {
+    [Required]
+    [Range(1, int.MaxValue, ErrorMessage = "Invalid product")]
     public int ProductId { get; set; }
+
+    [Required]
+    [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5")]
     public int Rating { get; set; }
+
+    [StringLength(1000, ErrorMessage = "Comment cannot exceed 1000 characters")]
     public string? Comment { get; set; }
 }

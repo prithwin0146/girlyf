@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { SeoService } from '@core/services/seo.service';
 
 @Component({
   selector: 'app-contact',
@@ -95,7 +96,7 @@ import { RouterLink } from '@angular/router';
     </div>
   `,
 })
-export class ContactComponent {
+export class ContactComponent implements OnInit {
   form = { name: '', email: '', phone: '', subject: '', message: '' };
   captchaA = Math.floor(Math.random() * 10) + 1;
   captchaB = Math.floor(Math.random() * 10) + 1;
@@ -103,6 +104,20 @@ export class ContactComponent {
   sending = signal(false);
   error = signal('');
   success = signal('');
+
+  constructor(private seo: SeoService) {}
+
+  ngOnInit(): void {
+    this.seo.update({
+      title: 'Contact Girlyf Jewellery — Customer Support & Enquiries',
+      description: 'Get in touch with Girlyf Jewellery. Call 1800-123-4567 (Toll Free), email support@girlyf.com, or visit our nearest showroom.',
+      keywords: 'contact Girlyf, customer support, jewellery enquiry, Girlyf phone number',
+      breadcrumbs: [
+        { name: 'Home', url: '/' },
+        { name: 'Contact Us', url: '/contact' },
+      ],
+    });
+  }
 
   submit(): void {
     this.error.set('');

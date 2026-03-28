@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '@core/services/api.service';
+import { SeoService } from '@core/services/seo.service';
 import { BlogPost } from '@core/models';
 
 @Component({
@@ -89,9 +90,19 @@ export class BlogComponent implements OnInit {
   posts = signal<BlogPost[]>([]);
   loading = signal(true);
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private seo: SeoService) {}
 
   ngOnInit(): void {
+    this.seo.update({
+      title: 'Jewellery Blog — Styling Tips, Trends & Care Guides | Girlyf',
+      description: 'Read the latest jewellery styling tips, trend reports, care guides, and expert advice from the Girlyf editorial team.',
+      keywords: 'jewellery blog, gold jewellery tips, diamond buying guide, jewellery trends, Girlyf blog',
+      breadcrumbs: [
+        { name: 'Home', url: '/' },
+        { name: 'Blog', url: '/blog' },
+      ],
+    });
+
     this.api.getLatestPosts(20).subscribe({
       next: (posts) => { this.posts.set(posts); this.loading.set(false); },
       error: () => this.loading.set(false)
