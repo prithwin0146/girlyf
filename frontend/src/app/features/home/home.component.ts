@@ -8,7 +8,7 @@ import { ApiService } from '@core/services/api.service';
 import { CartService } from '@core/services/cart.service';
 import { SeoService } from '@core/services/seo.service';
 import { AnalyticsService } from '@core/services/analytics.service';
-import { Product, Category, GoldRate, Banner, BlogPost, Testimonial, CmsSection } from '@core/models';
+import { Product, Category, BlogPost, Testimonial } from '@core/models';
 import { ProductCardComponent } from '@shared/components/product-card/product-card.component';
 
 type TabId = 'featured' | 'bestsellers' | 'new';
@@ -286,11 +286,11 @@ type TabId = 'featured' | 'bestsellers' | 'new';
                         </div>
                         <p style="color:#ACACAC;font-size:0.75rem;line-height:16px">{{ t.comment }}</p>
                       </div>
-                      <!-- Binder clip pin -->
-                      <div class="absolute" style="top:-20px;width:30px;z-index:20"
+                      <!-- Binder clip pin (CSS) -->
+                      <div class="absolute" style="top:-14px;width:10px;height:28px;z-index:20;background:linear-gradient(135deg,#b0b8c1 30%,#e8edf2 60%,#8a9299 100%);border-radius:2px 2px 0 0;box-shadow:0 2px 4px rgba(0,0,0,0.18)"
                         [style.left]="clipPinConfigs[i % clipPinConfigs.length].pos"
-                        [style.transform]="'translateX(-50%) rotate(' + clipPinConfigs[i % clipPinConfigs.length].rot + ')'">
-                        <img src="/assets/images/testimonials/pin.png" alt="" class="w-full h-auto" loading="lazy">
+                        [style.transform]="'translateX(-50%) rotate(' + clipPinConfigs[i % clipPinConfigs.length].rot + ')'"
+                        aria-hidden="true">
                       </div>
                     </div>
                   </div>
@@ -400,21 +400,15 @@ type TabId = 'featured' | 'bestsellers' | 'new';
 })
 export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   loading = signal(true);
-  banners = signal<Banner[]>([]);
   categories = signal<Category[]>([]);
-  goldRates = signal<GoldRate[]>([]);
   featured = signal<Product[]>([]);
   bestSellers = signal<Product[]>([]);
   newArrivals = signal<Product[]>([]);
   testimonials = signal<Testimonial[]>([]);
   blogPosts = signal<BlogPost[]>([]);
   openFaq = signal<number | null>(null);
-  currentBanner = signal(0);
-  showProgress   = signal(true);
-  private heroTimer?: ReturnType<typeof setInterval>;
   activeTab = signal<TabId>('featured');
 
-  duplicatedGoldRates = computed(() => [...this.goldRates(), ...this.goldRates()]);
 
   activeTabProducts = computed<Product[]>(() => {
     const t = this.activeTab();
@@ -438,14 +432,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     { value: '20K+', label: 'Happy Customers' },
     { value: '5000+', label: 'Unique Designs' },
     { value: '20+', label: 'Years of Trust' },
-  ];
-
-  heroSlides = [
-    { desktop: '/assets/images/banners/desktop/banner-01.avif', mobile: '/assets/images/banners/mobile/banner-01.avif', alt: 'Girlyf Gold Jewellery Collection', label: 'New Season 2025', headline: 'Wear Your Story', subline: 'Exquisite gold & diamond jewellery, crafted for moments that matter', ctaLabel: 'Shop Gold', ctaLink: '/gold-jewellery' },
-    { desktop: '/assets/images/banners/desktop/banner-02.avif', mobile: '/assets/images/banners/mobile/banner-02.avif', alt: 'Girlyf Diamond Collection', label: 'Brilliance Redefined', headline: 'Born to Shine', subline: 'Certified diamond jewellery — from solitaires to statement pieces', ctaLabel: 'Shop Diamonds', ctaLink: '/diamond-jewellery' },
-    { desktop: '/assets/images/banners/desktop/banner-03.avif', mobile: '/assets/images/banners/mobile/banner-03.avif', alt: 'Girlyf New Arrivals', label: 'Just Arrived', headline: 'Timeless Craft', subline: 'BIS hallmarked gold, shaped by master artisans, worn for generations', ctaLabel: 'New Arrivals', ctaLink: '/products' },
-    { desktop: '/assets/images/banners/desktop/banner-04.avif', mobile: '/assets/images/banners/mobile/banner-04.avif', alt: 'Girlyf Wedding Collection', label: 'Wedding Season', headline: 'Made for Her', subline: 'Bridal sets, mangalsutras & rings that make every moment unforgettable', ctaLabel: 'Bridal Collection', ctaLink: '/gold-jewellery' },
-    { desktop: '/assets/images/banners/desktop/banner-05.avif', mobile: '/assets/images/banners/mobile/banner-05.avif', alt: 'Girlyf Gift Cards', label: 'Gift with Love', headline: 'Gifted with Grace', subline: 'Give the gift of brilliance — jewellery gift cards for every occasion', ctaLabel: 'Gift Now', ctaLink: '/gift-cards' },
   ];
 
   categoryOptions: OwlOptions = {
@@ -560,13 +546,13 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   ];
 
   collections = [
-    { name: 'Ivy', slug: 'ivy', image: '/assets/images/collections/ivy.avif' },
+    { name: 'Ivy', slug: 'ivy', image: '/assets/images/collections/mirage.avif' },
     { name: 'Butterfly', slug: 'butterfly', image: '/assets/images/collections/butterfly.avif' },
     { name: 'Mirage', slug: 'mirage', image: '/assets/images/collections/mirage.avif' },
-    { name: 'Orchid', slug: 'orchid', image: '/assets/images/collections/orchid.avif' },
+    { name: 'Orchid', slug: 'orchid', image: '/assets/images/collections/solo.avif' },
     { name: 'Solo', slug: 'solo', image: '/assets/images/collections/solo.avif' },
-    { name: 'Lumina', slug: 'lumina', image: '/assets/images/collections/ensemble.avif' },
-    { name: 'Ethereal', slug: 'ethereal', image: '/assets/images/collections/butterfly.avif' },
+    { name: 'Lumina', slug: 'lumina', image: '/assets/images/collections/butterfly.avif' },
+    { name: 'Ethereal', slug: 'ethereal', image: '/assets/images/collections/mirage.avif' },
   ];
 
   genderCards = [
@@ -636,37 +622,30 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     if (this.isBrowser) {
       this.initScrollReveal();
-      this.startHeroTimer();
       this.initDragScroll();
     }
   }
 
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe());
-    if (this.heroTimer) clearInterval(this.heroTimer);
     this.scrollObserver?.disconnect();
   }
 
   private loadData(): void {
     forkJoin({
       categories: this.api.getCategories(),
-      goldRates: this.api.getGoldRates(),
       featured: this.api.getFeaturedProducts(10),
       bestSellers: this.api.getBestSellers(10),
       newArrivals: this.api.getNewArrivals(10),
-      testimonials: this.api.getTestimonials(6),
       blogPosts: this.api.getLatestPosts(3),
     }).subscribe({
       next: (data) => {
         this.categories.set(data.categories);
-        this.goldRates.set(data.goldRates);
         this.featured.set(data.featured);
         this.bestSellers.set(data.bestSellers);
         this.newArrivals.set(data.newArrivals);
-        this.testimonials.set(data.testimonials);
         this.blogPosts.set(data.blogPosts);
         this.loading.set(false);
-        // Re-observe after Angular renders the newly added @if sections
         if (this.isBrowser) setTimeout(() => this.initScrollReveal(), 50);
       },
       error: () => this.loading.set(false),
@@ -675,42 +654,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   setTab(id: TabId): void {
     this.activeTab.set(id);
-  }
-
-  /* ── Hero slider controls ── */
-  goToSlide(index: number): void {
-    this.currentBanner.set(index);
-    this.resetProgress();
-    this.resetHeroTimer();
-  }
-
-  nextSlide(): void {
-    this.currentBanner.set((this.currentBanner() + 1) % this.heroSlides.length);
-    this.resetProgress();
-    this.resetHeroTimer();
-  }
-
-  prevSlide(): void {
-    this.currentBanner.set((this.currentBanner() - 1 + this.heroSlides.length) % this.heroSlides.length);
-    this.resetProgress();
-    this.resetHeroTimer();
-  }
-
-  private resetProgress(): void {
-    this.showProgress.set(false);
-    setTimeout(() => this.showProgress.set(true), 20);
-  }
-
-  private startHeroTimer(): void {
-    this.heroTimer = setInterval(() => {
-      this.currentBanner.set((this.currentBanner() + 1) % this.heroSlides.length);
-      this.resetProgress();
-    }, 6000);
-  }
-
-  private resetHeroTimer(): void {
-    if (this.heroTimer) clearInterval(this.heroTimer);
-    this.startHeroTimer();
   }
 
   toggleFaq(index: number): void {
