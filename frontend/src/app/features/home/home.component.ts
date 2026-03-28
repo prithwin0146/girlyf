@@ -22,18 +22,11 @@ type TabId = 'featured' | 'bestsellers' | 'new';
     <!-- ═══════════════════════════════════════════════════════ -->
     <!-- 1. FULL-BLEED HERO IMAGE                               -->
     <!-- ═══════════════════════════════════════════════════════ -->
-    <section class="parakkat-hero relative w-full overflow-hidden">
+    <section class="parakkat-hero relative w-full">
       <img src="/assets/images/hero/Heroimage.webp"
         alt="Girlyf — Exquisite Jewellery"
         class="ph-hero-img ph-anim-img"
         loading="eager">
-
-      <!-- Offer Badge -->
-      <div class="hero-offer-badge">
-        <span class="badge-label">GET UPTO</span>
-        <span class="badge-number">50%</span>
-        <span class="badge-label">OFF</span>
-      </div>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════ -->
