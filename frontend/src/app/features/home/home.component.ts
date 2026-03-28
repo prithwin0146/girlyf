@@ -210,16 +210,14 @@ type TabId = 'featured' | 'bestsellers' | 'new';
           @for (gc of genderCards; track gc.label) {
             <a [routerLink]="gc.link" [queryParams]="gc.params"
               class="group relative overflow-hidden rounded-lg bg-brown-200">
-              <div class="aspect-[3/4] md:aspect-[4/5] overflow-hidden">
+              <div class="aspect-[2/3] md:aspect-[3/4] overflow-hidden">
                 <img [src]="gc.image" [alt]="gc.label"
-                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy">
+                  class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" loading="lazy">
               </div>
               <!-- Gold accent line reveal -->
               <div class="absolute bottom-0 left-0 right-0 h-[3px] bg-gold-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-center"></div>
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
               <div class="absolute bottom-4 left-0 right-0 text-center px-2">
-                <h3 class="text-white text-base md:text-xl font-heading font-bold tracking-wider">{{ gc.label }}</h3>
-                <span class="inline-block mt-1 text-gold-400 text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300">Shop Now</span>
+                <span class="inline-block mt-1 text-gold-300 text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300">Shop Now →</span>
               </div>
             </a>
           }
