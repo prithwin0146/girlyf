@@ -25,10 +25,10 @@ type TabId = 'featured' | 'bestsellers' | 'new';
     <section class="parakkat-hero">
       <!-- Real HTML overlaid on clean background image -->
       <div class="ph-content">
-        <div class="ph-script ph-anim-2">Freshly</div>
-        <div class="ph-bold ph-anim-3">Layered.</div>
-        <p class="ph-sub ph-anim-4">Be the first to own <strong>our newest arrivals.</strong></p>
-        <a routerLink="/products" class="ph-btn ph-anim-5">EXPLORE NEW ARRIVALS</a>
+        <div class="ph-script ph-anim-2">Born to</div>
+        <div class="ph-bold ph-anim-3">Sparkle.</div>
+        <p class="ph-sub ph-anim-4">Every piece tells a story <strong>worth wearing.</strong></p>
+        <a routerLink="/products" class="ph-btn ph-anim-5">DISCOVER THE COLLECTION</a>
       </div>
     </section>
 
