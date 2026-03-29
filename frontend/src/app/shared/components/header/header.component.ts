@@ -226,17 +226,17 @@ import { Category, GoldRate, Product } from '@core/models';
 
                       <!-- COL 2: BY CATEGORY — 2-col horizontal list with natural images -->
                       <div class="flex-1 px-7 border-r border-gray-100">
-                        <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-700 border-b-2 border-gold-500 pb-1.5 mb-5 inline-block">By Category</p>
-                        <div class="grid grid-cols-2 gap-x-8 gap-y-0">
+                        <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-700 border-b-2 border-gold-500 pb-1.5 mb-4 inline-block">By Category</p>
+                        <div class="grid grid-cols-2 gap-x-6 gap-y-0">
                           @for (cat of navItem.megaMenu.categories; track cat.label) {
                             <a [routerLink]="cat.route"
-                              class="flex items-center gap-3 py-2 text-[13px] text-gray-600 hover:text-primary-900 transition-colors">
-                              <img [src]="cat.image" [alt]="cat.label" class="w-8 h-auto object-contain shrink-0">
+                              class="flex items-center gap-2.5 py-1.5 text-[13px] text-gray-600 hover:text-primary-900 transition-colors">
+                              <img [src]="cat.image" [alt]="cat.label" class="w-7 h-7 object-contain shrink-0">
                               <span>{{ cat.label }}</span>
                             </a>
                           }
                         </div>
-                        <div class="mt-5 pt-3 border-t border-gray-100">
+                        <div class="mt-4 pt-3 border-t border-gray-100">
                           <a [routerLink]="navItem.route" class="inline-flex items-center gap-1.5 text-[11px] text-primary-900 font-semibold uppercase tracking-wider hover:text-gold-600 transition-colors">
                             View All <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                           </a>
@@ -424,43 +424,48 @@ export class HeaderComponent implements OnInit, OnDestroy {
       { label: 'Men',   image: '/assets/images/navbar/men.avif' },
       { label: 'Kids',  image: '/assets/images/navbar/kids.avif' },
     ];
-    // Per-menu category icons from downloaded menu assets
+    // Per-menu category icons — exact JOS Alukkas names & order
     const menuCats: Record<string, { label: string; route: string; image: string }[]> = {
       '/gold-jewellery': [
-        { label: 'Necklaces',    route: '/gold-jewellery/necklaces',    image: '/assets/images/menu/necklaces.avif' },
-        { label: 'Earrings',     route: '/gold-jewellery/earrings',     image: '/assets/images/menu/earrings.avif' },
-        { label: 'Bangles',      route: '/gold-jewellery/bangles',      image: '/assets/images/menu/bangles.avif' },
-        { label: 'Rings',        route: '/gold-jewellery/rings',        image: '/assets/images/menu/rings.avif' },
-        { label: 'Pendants',     route: '/gold-jewellery/pendants',     image: '/assets/images/menu/pendants.avif' },
-        { label: 'Mangalsutra',  route: '/gold-jewellery/mangalsutras', image: '/assets/images/menu/mangalsutra.avif' },
-        { label: 'Chains',       route: '/gold-jewellery/chains',       image: '/assets/images/menu/necklaces.avif' },
-        { label: 'Anklets',      route: '/gold-jewellery/anklets',      image: '/assets/images/menu/bangles.avif' },
+        { label: 'Rings',             route: '/gold-jewellery/rings',        image: '/assets/images/menu/rings.avif' },
+        { label: 'Earrings',          route: '/gold-jewellery/earrings',     image: '/assets/images/menu/earrings.avif' },
+        { label: 'Pendants',          route: '/gold-jewellery/pendants',     image: '/assets/images/menu/pendants.avif' },
+        { label: 'Necklaces',         route: '/gold-jewellery/necklaces',    image: '/assets/images/menu/necklaces.avif' },
+        { label: 'Bangles & Bracelets', route: '/gold-jewellery/bangles',   image: '/assets/images/menu/bangles.avif' },
+        { label: 'Mangalsutra',       route: '/gold-jewellery/mangalsutras', image: '/assets/images/menu/mangalsutra.avif' },
+        { label: 'Chains',            route: '/gold-jewellery/chains',       image: '/assets/images/menu/necklaces.avif' },
+        { label: 'Anklets',           route: '/gold-jewellery/anklets',      image: '/assets/images/menu/bangles.avif' },
       ],
       '/diamond-jewellery': [
-        { label: 'D. Necklaces', route: '/diamond-jewellery/necklaces', image: '/assets/images/menu/diamond-necklaces.avif' },
-        { label: 'D. Earrings',  route: '/diamond-jewellery/earrings',  image: '/assets/images/menu/diamond-earrings.avif' },
-        { label: 'D. Rings',     route: '/diamond-jewellery/rings',     image: '/assets/images/menu/diamond-rings.avif' },
-        { label: 'D. Pendants',  route: '/diamond-jewellery/pendants',  image: '/assets/images/menu/diamond-pendant.avif' },
-        { label: 'D. Bangles',   route: '/diamond-jewellery/bangles',   image: '/assets/images/menu/gold-bangles.avif' },
-        { label: 'Solitaire',    route: '/diamond-jewellery/rings',     image: '/assets/images/menu/diamond-ring.avif' },
+        { label: 'Rings',             route: '/diamond-jewellery/rings',     image: '/assets/images/menu/diamond-rings.avif' },
+        { label: 'Earrings',          route: '/diamond-jewellery/earrings',  image: '/assets/images/menu/diamond-earrings.avif' },
+        { label: 'Pendants',          route: '/diamond-jewellery/pendants',  image: '/assets/images/menu/diamond-pendant.avif' },
+        { label: 'Necklaces',         route: '/diamond-jewellery/necklaces', image: '/assets/images/menu/diamond-necklaces.avif' },
+        { label: 'Bangles & Bracelets', route: '/diamond-jewellery/bangles', image: '/assets/images/menu/gold-bangles.avif' },
+        { label: 'Nose Pin',          route: '/diamond-jewellery/nose-pins', image: '/assets/images/menu/diamond-ring.avif' },
       ],
       '/platinum-jewellery': [
-        { label: 'Pt. Rings',    route: '/platinum-jewellery/rings',    image: '/assets/images/menu/rings.avif' },
-        { label: 'Pt. Pendants', route: '/platinum-jewellery/pendants', image: '/assets/images/menu/pendants.avif' },
-        { label: 'Pt. Earrings', route: '/platinum-jewellery/earrings', image: '/assets/images/menu/earrings.avif' },
-        { label: 'Pt. Bangles',  route: '/platinum-jewellery/bangles',  image: '/assets/images/menu/bangles.avif' },
+        { label: 'Rings',             route: '/platinum-jewellery/rings',    image: '/assets/images/menu/rings.avif' },
+        { label: 'Chains',            route: '/platinum-jewellery/chains',   image: '/assets/images/menu/necklaces.avif' },
+        { label: 'Earrings',          route: '/platinum-jewellery/earrings', image: '/assets/images/menu/earrings.avif' },
+        { label: 'Bracelets',         route: '/platinum-jewellery/bangles',  image: '/assets/images/menu/bangles.avif' },
+        { label: 'Pendants',          route: '/platinum-jewellery/pendants', image: '/assets/images/menu/pendants.avif' },
+        { label: 'Love Bands',        route: '/platinum-jewellery/rings',    image: '/assets/images/menu/rings.avif' },
       ],
       '/silver-jewellery': [
-        { label: 'Sv. Necklaces', route: '/silver-jewellery/necklaces', image: '/assets/images/menu/necklaces.avif' },
-        { label: 'Sv. Rings',     route: '/silver-jewellery/rings',     image: '/assets/images/menu/rings.avif' },
-        { label: 'Sv. Earrings',  route: '/silver-jewellery/earrings',  image: '/assets/images/menu/earrings.avif' },
-        { label: 'Sv. Bangles',   route: '/silver-jewellery/bangles',   image: '/assets/images/menu/bangles.avif' },
+        { label: 'Necklaces',         route: '/silver-jewellery/necklaces',  image: '/assets/images/menu/necklaces.avif' },
+        { label: 'Earrings',          route: '/silver-jewellery/earrings',   image: '/assets/images/menu/earrings.avif' },
+        { label: 'Bangles & Bracelets', route: '/silver-jewellery/bangles', image: '/assets/images/menu/bangles.avif' },
+        { label: 'Rings',             route: '/silver-jewellery/rings',      image: '/assets/images/menu/rings.avif' },
       ],
       '/18k-jewellery': [
-        { label: 'Rings',        route: '/18k-jewellery/rings',         image: '/assets/images/menu/rings.avif' },
-        { label: 'Earrings',     route: '/18k-jewellery/earrings',      image: '/assets/images/menu/earrings.avif' },
-        { label: 'Necklaces',    route: '/18k-jewellery/necklaces',     image: '/assets/images/menu/necklaces.avif' },
-        { label: 'Pendants',     route: '/18k-jewellery/pendants',      image: '/assets/images/menu/pendants.avif' },
+        { label: 'Rings',             route: '/18k-jewellery/rings',         image: '/assets/images/menu/rings.avif' },
+        { label: 'Pendants',          route: '/18k-jewellery/pendants',      image: '/assets/images/menu/pendants.avif' },
+        { label: 'Necklaces',         route: '/18k-jewellery/necklaces',     image: '/assets/images/menu/necklaces.avif' },
+        { label: 'Earrings',          route: '/18k-jewellery/earrings',      image: '/assets/images/menu/earrings.avif' },
+        { label: 'Bangles & Bracelets', route: '/18k-jewellery/bangles',    image: '/assets/images/menu/bangles.avif' },
+        { label: 'Anklets',           route: '/18k-jewellery/anklets',       image: '/assets/images/menu/bangles.avif' },
+        { label: 'Second Stud',       route: '/18k-jewellery/earrings',      image: '/assets/images/menu/earrings.avif' },
       ],
     };
 
