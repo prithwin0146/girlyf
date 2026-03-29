@@ -217,25 +217,21 @@ import { Category, GoldRate, Product } from '@core/models';
                           @for (g of navItem.megaMenu.genders; track g.label) {
                             <a [routerLink]="navItem.route" [queryParams]="{gender: g.label}"
                               class="flex items-center gap-3 py-2.5 text-[13px] text-gray-600 hover:text-primary-900 transition-colors">
-                              <div class="w-9 h-9 rounded-full overflow-hidden border border-gray-100 shrink-0">
-                                <img [src]="g.image" [alt]="g.label" class="w-full h-full object-cover">
-                              </div>
+                              <img [src]="g.image" [alt]="g.label" class="w-8 h-auto object-contain shrink-0">
                               <span>{{ g.label }}</span>
                             </a>
                           }
                         </div>
                       }
 
-                      <!-- COL 2: BY CATEGORY — 2-col horizontal list -->
+                      <!-- COL 2: BY CATEGORY — 2-col horizontal list with natural images -->
                       <div class="flex-1 px-7 border-r border-gray-100">
                         <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-700 border-b-2 border-gold-500 pb-1.5 mb-5 inline-block">By Category</p>
-                        <div class="grid grid-cols-2 gap-x-8 gap-y-0.5">
+                        <div class="grid grid-cols-2 gap-x-8 gap-y-0">
                           @for (cat of navItem.megaMenu.categories; track cat.label) {
                             <a [routerLink]="cat.route"
-                              class="flex items-center gap-3 py-2 text-[13px] text-gray-600 hover:text-primary-900 transition-colors group/cat">
-                              <div class="w-9 h-9 rounded-full overflow-hidden border border-gray-100 shrink-0 group-hover/cat:border-gold-400 transition-colors">
-                                <img [src]="cat.image" [alt]="cat.label" class="w-full h-full object-cover">
-                              </div>
+                              class="flex items-center gap-3 py-2 text-[13px] text-gray-600 hover:text-primary-900 transition-colors">
+                              <img [src]="cat.image" [alt]="cat.label" class="w-8 h-auto object-contain shrink-0">
                               <span>{{ cat.label }}</span>
                             </a>
                           }
@@ -247,18 +243,9 @@ import { Category, GoldRate, Product } from '@core/models';
                         </div>
                       </div>
 
-                      <!-- COL 3: COLLECTIONS -->
-                      <div class="w-[150px] shrink-0 px-7 border-r border-gray-100">
-                        <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-700 border-b-2 border-gold-500 pb-1.5 mb-5 inline-block">Collections</p>
-                        @for (col of navItem.megaMenu.collections; track col.name) {
-                          <a [routerLink]="['/collections', col.slug]"
-                            class="block py-2 text-[13px] text-gray-600 hover:text-primary-900 transition-colors">{{ col.name }}</a>
-                        }
-                      </div>
-
-                      <!-- COL 4: FEATURE IMAGE — clean, no overlay (JOS style) -->
+                      <!-- COL 3: FEATURE IMAGE — clean, no overlay (JOS style) -->
                       @if (navItem.megaMenu.featureImage) {
-                        <div class="w-[260px] shrink-0 pl-7 self-stretch min-h-[210px] overflow-hidden">
+                        <div class="w-[300px] shrink-0 pl-7 self-stretch min-h-[210px] overflow-hidden">
                           <a [routerLink]="navItem.route" class="block w-full h-full">
                             <img [src]="navItem.megaMenu.featureImage" [alt]="navItem.label"
                               class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
@@ -379,7 +366,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     megaMenu?: {
       genders: { label: string; image: string }[];
       categories: { label: string; route: string; image: string }[];
-      collections: { name: string; slug: string }[];
       featureImage?: string;
     };
   }[] = [];
@@ -438,12 +424,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       { label: 'Men',   image: '/assets/images/navbar/men.avif' },
       { label: 'Kids',  image: '/assets/images/navbar/kids.avif' },
     ];
-    const collections = [
-      { name: 'Ivy', slug: 'ivy' }, { name: 'Butterfly', slug: 'butterfly' },
-      { name: 'Mirage', slug: 'mirage' }, { name: 'Orchid', slug: 'orchid' },
-      { name: 'Lumina', slug: 'lumina' }, { name: 'Ethereal', slug: 'ethereal' },
-    ];
-
     // Per-menu category icons from downloaded menu assets
     const menuCats: Record<string, { label: string; route: string; image: string }[]> = {
       '/gold-jewellery': [
@@ -506,7 +486,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       megaMenu: {
         genders,
         categories: menuCats[mt.route] ?? [],
-        collections,
         featureImage: featureImages[mt.route],
       },
     }));
@@ -520,7 +499,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
           { label: 'Gift Cards',   route: '/gift-cards',  image: '/assets/images/misc/gift-card.avif' },
           { label: 'Digi Gold',    route: '/digi-gold',   image: '/assets/images/misc/digi-gold.avif' },
         ],
-        collections,
         featureImage: featureImages['/gold-coin'],
       },
     });
