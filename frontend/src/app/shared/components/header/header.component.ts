@@ -195,7 +195,7 @@ import { Category, GoldRate, Product } from '@core/models';
       </div>
 
       <!-- ═══ ROW 3: CATEGORY NAV with JOS-style mega menus ═══ -->
-      <nav class="hidden lg:block bg-primary-900">
+      <nav class="hidden lg:block bg-primary-900 relative">
         <div class="max-w-[1400px] mx-auto px-4">
           <ul class="flex items-center justify-center">
             @for (navItem of navItems; track navItem.label) {
@@ -207,8 +207,8 @@ import { Category, GoldRate, Product } from '@core/models';
                 </a>
                 @if (navItem.megaMenu) {
                   <!-- JOS Alukkas-style mega dropdown -->
-                  <div class="fixed left-0 right-0 top-auto bg-white shadow-lg border-t border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100]">
-                    <div class="max-w-[1400px] mx-auto px-8 py-7 flex items-stretch">
+                  <div class="absolute top-full left-1/2 -translate-x-1/2 w-screen bg-white shadow-lg border-t-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-[100]">
+                    <div class="max-w-[1400px] mx-auto px-8 py-6 flex items-start">
 
                       <!-- COL 1: SHOP FOR -->
                       @if (navItem.megaMenu.genders.length) {
