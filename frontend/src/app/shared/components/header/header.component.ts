@@ -201,76 +201,67 @@ import { Category, GoldRate, Product } from '@core/models';
             @for (navItem of navItems; track navItem.label) {
               <li class="relative group">
                 <a [routerLink]="navItem.route"
-                  class="block px-3 xl:px-4 py-3 text-[11px] text-white/90 tracking-[0.08em] uppercase hover:text-white transition-colors relative group-hover:text-gold-400">
+                  class="block px-4 xl:px-5 py-3.5 text-[13px] text-white/90 tracking-wide hover:text-white transition-colors relative group-hover:text-gold-400 font-medium">
                   {{ navItem.label }}
                   <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 group-hover:w-full h-[2px] bg-gold-400 transition-all duration-300"></span>
                 </a>
                 @if (navItem.megaMenu) {
-                  <!-- Wide mega dropdown — fixed to viewport width -->
-                  <div class="fixed left-0 right-0 top-auto bg-white shadow-2xl border-t-2 border-gold-500 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100]"
-                    style="margin-top: 0;">
-                    <div class="max-w-[1400px] mx-auto px-6 py-6 flex gap-0 items-stretch">
+                  <!-- JOS Alukkas-style mega dropdown -->
+                  <div class="fixed left-0 right-0 top-auto bg-white shadow-lg border-t border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100]">
+                    <div class="max-w-[1400px] mx-auto px-8 py-7 flex items-stretch">
 
                       <!-- COL 1: SHOP FOR -->
-                      <div class="w-[160px] shrink-0 border-r border-gray-100 pr-5">
-                        <p class="text-[10px] text-primary-900 font-bold uppercase tracking-[0.15em] mb-4 border-b border-gold-300 pb-2">Shop For</p>
-                        @for (g of navItem.megaMenu.genders; track g.label) {
-                          <a [routerLink]="navItem.route" [queryParams]="{gender: g.label}"
-                            class="flex items-center gap-3 py-2 group/item hover:text-primary-900 transition-colors">
-                            <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-200 shrink-0 group-hover/item:border-gold-400 transition-colors">
-                              <img [src]="g.image" [alt]="g.label" class="w-full h-full object-cover">
-                            </div>
-                            <span class="text-[12px] text-gray-700 group-hover/item:text-primary-900 font-medium">{{ g.label }}</span>
-                          </a>
-                        }
-                      </div>
-
-                      <!-- COL 2: BY CATEGORY (with images) -->
-                      <div class="flex-1 px-6 border-r border-gray-100">
-                        <p class="text-[10px] text-primary-900 font-bold uppercase tracking-[0.15em] mb-4 border-b border-gold-300 pb-2">By Category</p>
-                        <div class="grid grid-cols-4 gap-x-4 gap-y-3">
-                          @for (cat of navItem.megaMenu.categories; track cat.label) {
-                            <a [routerLink]="cat.route" class="flex flex-col items-center text-center group/cat">
-                              <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-100 group-hover/cat:border-gold-400 transition-all duration-200 bg-brown-100">
-                                <img [src]="cat.image" [alt]="cat.label" class="w-full h-full object-cover group-hover/cat:scale-110 transition-transform duration-300">
+                      @if (navItem.megaMenu.genders.length) {
+                        <div class="w-[140px] shrink-0 pr-7 border-r border-gray-100">
+                          <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-700 border-b-2 border-gold-500 pb-1.5 mb-5 inline-block">Shop For</p>
+                          @for (g of navItem.megaMenu.genders; track g.label) {
+                            <a [routerLink]="navItem.route" [queryParams]="{gender: g.label}"
+                              class="flex items-center gap-3 py-2.5 text-[13px] text-gray-600 hover:text-primary-900 transition-colors">
+                              <div class="w-9 h-9 rounded-full overflow-hidden border border-gray-100 shrink-0">
+                                <img [src]="g.image" [alt]="g.label" class="w-full h-full object-cover">
                               </div>
-                              <span class="mt-1.5 text-[10px] text-gray-600 group-hover/cat:text-primary-900 leading-tight font-medium">{{ cat.label }}</span>
+                              <span>{{ g.label }}</span>
                             </a>
                           }
                         </div>
-                        <!-- View All link -->
-                        <div class="mt-4 pt-3 border-t border-gray-100">
-                          <a [routerLink]="navItem.route" class="inline-flex items-center gap-1 text-[11px] text-primary-900 font-bold uppercase tracking-wider hover:text-gold-600 transition-colors">
-                            VIEW ALL <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                      }
+
+                      <!-- COL 2: BY CATEGORY — 2-col horizontal list -->
+                      <div class="flex-1 px-7 border-r border-gray-100">
+                        <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-700 border-b-2 border-gold-500 pb-1.5 mb-5 inline-block">By Category</p>
+                        <div class="grid grid-cols-2 gap-x-8 gap-y-0.5">
+                          @for (cat of navItem.megaMenu.categories; track cat.label) {
+                            <a [routerLink]="cat.route"
+                              class="flex items-center gap-3 py-2 text-[13px] text-gray-600 hover:text-primary-900 transition-colors group/cat">
+                              <div class="w-9 h-9 rounded-full overflow-hidden border border-gray-100 shrink-0 group-hover/cat:border-gold-400 transition-colors">
+                                <img [src]="cat.image" [alt]="cat.label" class="w-full h-full object-cover">
+                              </div>
+                              <span>{{ cat.label }}</span>
+                            </a>
+                          }
+                        </div>
+                        <div class="mt-5 pt-3 border-t border-gray-100">
+                          <a [routerLink]="navItem.route" class="inline-flex items-center gap-1.5 text-[11px] text-primary-900 font-semibold uppercase tracking-wider hover:text-gold-600 transition-colors">
+                            View All <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                           </a>
                         </div>
                       </div>
 
-                      <!-- COL 3: BY OCCASION -->
-                      <div class="w-[160px] shrink-0 border-r border-gray-100 px-5">
-                        <p class="text-[10px] text-primary-900 font-bold uppercase tracking-[0.15em] mb-4 border-b border-gold-300 pb-2">Occasion</p>
-                        @for (occ of navItem.megaMenu.occasions; track occ.label) {
-                          <a [routerLink]="navItem.route" [queryParams]="{occasion: occ.label}"
-                            class="flex items-center gap-2 py-1.5 text-[12px] text-gray-600 hover:text-primary-900 hover:pl-1 transition-all duration-150 group/occ">
-                            <span class="text-gold-500 group-hover/occ:text-gold-600">›</span> {{ occ.label }}
-                          </a>
+                      <!-- COL 3: COLLECTIONS -->
+                      <div class="w-[150px] shrink-0 px-7 border-r border-gray-100">
+                        <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-700 border-b-2 border-gold-500 pb-1.5 mb-5 inline-block">Collections</p>
+                        @for (col of navItem.megaMenu.collections; track col.name) {
+                          <a [routerLink]="['/collections', col.slug]"
+                            class="block py-2 text-[13px] text-gray-600 hover:text-primary-900 transition-colors">{{ col.name }}</a>
                         }
                       </div>
 
-                      <!-- COL 4: EDITORIAL FEATURE BANNER -->
+                      <!-- COL 4: FEATURE IMAGE — clean, no overlay (JOS style) -->
                       @if (navItem.megaMenu.featureImage) {
-                        <div class="w-[210px] shrink-0 pl-5 self-stretch flex flex-col">
-                          <p class="text-[10px] text-primary-900 font-bold uppercase tracking-[0.15em] mb-3 border-b border-gold-300 pb-2">Featured</p>
-                          <a [routerLink]="navItem.route" class="relative overflow-hidden flex-1 min-h-[200px] block group/feat">
+                        <div class="w-[260px] shrink-0 pl-7 self-stretch min-h-[210px] overflow-hidden">
+                          <a [routerLink]="navItem.route" class="block w-full h-full">
                             <img [src]="navItem.megaMenu.featureImage" [alt]="navItem.label"
-                              class="w-full h-full object-cover absolute inset-0 group-hover/feat:scale-105 transition-transform duration-700">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent"></div>
-                            <div class="absolute bottom-0 left-0 right-0 p-4">
-                              <p class="text-white text-[11px] font-heading font-bold tracking-wide leading-tight mb-2">{{ navItem.label }}</p>
-                              <span class="inline-block text-[9px] bg-gold-500 text-primary-900 font-bold px-3 py-1.5 tracking-[0.15em] uppercase group-hover/feat:bg-gold-400 transition-colors">
-                                SHOP NOW →
-                              </span>
-                            </div>
+                              class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
                           </a>
                         </div>
                       }
@@ -280,8 +271,8 @@ import { Category, GoldRate, Product } from '@core/models';
                 }
               </li>
             }
-            <li><a routerLink="/gold-rate" class="block px-3 xl:px-4 py-3 text-[11px] text-gold-400 font-semibold tracking-[0.08em] uppercase hover:text-gold-300">Gold Rate</a></li>
-            <li><a routerLink="/our-brands" class="block px-3 xl:px-4 py-3 text-[11px] text-gold-400 font-semibold tracking-[0.08em] uppercase hover:text-gold-300">Our Brands</a></li>
+            <li><a routerLink="/gold-rate" class="block px-4 xl:px-5 py-3.5 text-[13px] text-gold-400 font-medium tracking-wide hover:text-gold-300">Gold Rate</a></li>
+            <li><a routerLink="/our-brands" class="block px-4 xl:px-5 py-3.5 text-[13px] text-gold-400 font-medium tracking-wide hover:text-gold-300">Our Brands</a></li>
           </ul>
         </div>
       </nav>
@@ -349,12 +340,6 @@ import { Category, GoldRate, Product } from '@core/models';
                     <a [routerLink]="cat.route" (click)="closeMobile()"
                       class="block px-9 py-1.5 text-xs text-gray-600 hover:text-primary-900 hover:bg-brown-200/30">{{ cat.label }}</a>
                   }
-                  <!-- Occasion links -->
-                  <p class="px-7 pt-3 pb-1 text-[10px] text-brown-600 font-bold uppercase tracking-widest">By Occasion</p>
-                  @for (occ of navItem.megaMenu.occasions; track occ.label) {
-                    <a [routerLink]="navItem.route" [queryParams]="{occasion: occ.label}" (click)="closeMobile()"
-                      class="block px-9 py-1.5 text-xs text-gray-600 hover:text-primary-900 hover:bg-brown-200/30">{{ occ.label }}</a>
-                  }
                 </div>
               }
             </div>
@@ -394,7 +379,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     megaMenu?: {
       genders: { label: string; image: string }[];
       categories: { label: string; route: string; image: string }[];
-      occasions: { label: string }[];
       collections: { name: string; slug: string }[];
       featureImage?: string;
     };
@@ -453,10 +437,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       { label: 'Women', image: '/assets/images/navbar/women.avif' },
       { label: 'Men',   image: '/assets/images/navbar/men.avif' },
       { label: 'Kids',  image: '/assets/images/navbar/kids.avif' },
-    ];
-    const occasions = [
-      { label: 'Wedding' }, { label: 'Engagement' },
-      { label: 'Daily Wear' }, { label: 'Party Wear' }, { label: 'Office Wear' },
     ];
     const collections = [
       { name: 'Ivy', slug: 'ivy' }, { name: 'Butterfly', slug: 'butterfly' },
@@ -526,7 +506,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       megaMenu: {
         genders,
         categories: menuCats[mt.route] ?? [],
-        occasions,
         collections,
         featureImage: featureImages[mt.route],
       },
@@ -541,7 +520,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
           { label: 'Gift Cards',   route: '/gift-cards',  image: '/assets/images/misc/gift-card.avif' },
           { label: 'Digi Gold',    route: '/digi-gold',   image: '/assets/images/misc/digi-gold.avif' },
         ],
-        occasions,
         collections,
         featureImage: featureImages['/gold-coin'],
       },
