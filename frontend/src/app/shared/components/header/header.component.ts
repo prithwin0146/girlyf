@@ -199,7 +199,7 @@ import { Category, GoldRate, Product } from '@core/models';
         <div class="max-w-[1400px] mx-auto px-4">
           <ul class="flex items-center justify-center">
             @for (navItem of navItems; track navItem.label) {
-              <li class="relative group">
+              <li class="group">
                 <a [routerLink]="navItem.route"
                   class="block px-4 xl:px-5 py-3.5 text-[13px] text-white/90 tracking-wide hover:text-white transition-colors relative group-hover:text-gold-400 font-medium">
                   {{ navItem.label }}
@@ -207,7 +207,7 @@ import { Category, GoldRate, Product } from '@core/models';
                 </a>
                 @if (navItem.megaMenu) {
                   <!-- JOS Alukkas-style mega dropdown -->
-                  <div class="absolute top-full left-1/2 -translate-x-1/2 w-screen bg-white shadow-lg border-t-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-[100]">
+                  <div class="absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-[100]">
                     <div class="max-w-[1400px] mx-auto px-8 py-6 flex items-start">
 
                       <!-- COL 1: SHOP FOR -->
