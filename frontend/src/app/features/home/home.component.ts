@@ -23,37 +23,44 @@ type TabId = 'featured' | 'bestsellers' | 'new';
     <!-- 1. FULL-BLEED HERO IMAGE                               -->
     <!-- ═══════════════════════════════════════════════════════ -->
     <section class="parakkat-hero">
-      <!-- Real HTML overlaid on clean background image -->
       <div class="ph-content">
+        <div class="ph-accent-line ph-anim-1"></div>
         <div class="ph-script ph-anim-2">Born to</div>
         <div class="ph-bold ph-anim-3">Sparkle.</div>
         <p class="ph-sub ph-anim-4">Every piece tells a story <strong>worth wearing.</strong></p>
-        <a routerLink="/products" class="ph-btn ph-anim-5">DISCOVER THE COLLECTION</a>
+        <a routerLink="/products" class="ph-btn ph-anim-5">
+          DISCOVER THE COLLECTION
+          <span class="ph-btn-arrow">&#8594;</span>
+        </a>
       </div>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════ -->
     <!-- 4. SHOP BY CATEGORY ← KEEP                            -->
     <!-- ═══════════════════════════════════════════════════════ -->
-    <section class="py-10 md:py-14 bg-white scroll-reveal">
+    <section class="cat-section py-10 md:py-14 bg-white scroll-reveal">
       <div class="max-w-7xl mx-auto px-4">
         <h2 class="section-title">SHOP BY CATEGORY</h2>
         <div class="gold-divider"></div>
         <p class="section-subtitle mb-8">Discover jewellery for every occasion</p>
         @if (isBrowser) {
-          <owl-carousel-o [options]="categoryOptions">
-            @for (cat of categoryCards; track cat.name) {
-              <ng-template carouselSlide>
-                <a [routerLink]="cat.link" class="block text-center group px-2">
-                  <div class="category-ring mx-auto w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-transparent group-hover:border-gold-500 transition-all duration-300 bg-brown-200">
-                    <img [src]="cat.image" [alt]="cat.name"
-                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy">
-                  </div>
-                  <p class="mt-3 text-xs font-heading font-semibold text-gray-700 group-hover:text-primary-900 uppercase tracking-wider">{{ cat.name }}</p>
-                </a>
-              </ng-template>
-            }
-          </owl-carousel-o>
+          <div class="cat-carousel-wrap">
+            <owl-carousel-o [options]="categoryOptions">
+              @for (cat of categoryCards; track cat.name; let i = $index) {
+                <ng-template carouselSlide>
+                  <a [routerLink]="cat.link" class="cat-item block text-center group px-2" [style.--i]="i">
+                    <div class="cat-ring-wrap mx-auto">
+                      <div class="category-ring w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden bg-brown-200">
+                        <img [src]="cat.image" [alt]="cat.name"
+                          class="w-full h-full object-cover" loading="lazy">
+                      </div>
+                    </div>
+                    <p class="cat-label mt-3 text-xs font-heading font-semibold text-gray-700 group-hover:text-primary-900 uppercase tracking-wider">{{ cat.name }}</p>
+                  </a>
+                </ng-template>
+              }
+            </owl-carousel-o>
+          </div>
         } @else {
           <div class="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
             @for (cat of categoryCards; track cat.name) {
@@ -536,13 +543,15 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   trustBadgesDuplicated = [...this.trustBadges, ...this.trustBadges, ...this.trustBadges];
 
   categoryCards = [
-    { name: 'Gold Earrings', image: '/assets/images/categories/earring.avif', link: '/gold-jewellery/earrings' },
-    { name: 'Gold Rings', image: '/assets/images/categories/ring.avif', link: '/gold-jewellery/rings' },
-    { name: 'Gold Necklaces', image: '/assets/images/categories/necklace.avif', link: '/gold-jewellery/necklaces' },
-    { name: 'Gold Bangles', image: '/assets/images/categories/bangle.avif', link: '/gold-jewellery/bangles' },
-    { name: 'Diamond Pendants', image: '/assets/images/categories/pendant.avif', link: '/diamond-jewellery/pendants' },
-    { name: 'Diamond Rings', image: '/assets/images/categories/diamond-ring.avif', link: '/diamond-jewellery/rings' },
-    { name: 'Mangalsutra', image: '/assets/images/categories/mangalsutra.avif', link: '/gold-jewellery/mangalsutras' },
+    { name: 'Gold Rings',       image: '/assets/images/navbar/gold/gold-rings.avif',          link: '/gold-jewellery/rings' },
+    { name: 'Gold Earrings',    image: '/assets/images/navbar/gold/gold-Earrings.avif',        link: '/gold-jewellery/earrings' },
+    { name: 'Gold Necklaces',   image: '/assets/images/navbar/gold/gold-Necklace.avif',        link: '/gold-jewellery/necklaces' },
+    { name: 'Gold Bangles',     image: '/assets/images/navbar/gold/gold-bangles.avif',         link: '/gold-jewellery/bangles' },
+    { name: 'Mangalsutra',      image: '/assets/images/navbar/gold/mangalsutra.avif',          link: '/gold-jewellery/mangalsutras' },
+    { name: 'Gold Chains',      image: '/assets/images/navbar/gold/chains.avif',               link: '/gold-jewellery/chains' },
+    { name: 'Diamond Rings',    image: '/assets/images/navbar/diamond/diamond-rings.avif',     link: '/diamond-jewellery/rings' },
+    { name: 'Diamond Pendants', image: '/assets/images/navbar/diamond/diamond-pendants.avif',  link: '/diamond-jewellery/pendants' },
+    { name: 'Diamond Earrings', image: '/assets/images/navbar/diamond/diamond-earrings.avif',  link: '/diamond-jewellery/earrings' },
   ];
 
   collections = [

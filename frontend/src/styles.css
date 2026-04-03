@@ -223,12 +223,77 @@
 /* line-clamp is defined in premium section below */
 
 /* ── Category hover ring (gold glow) ── */
-.category-ring { position: relative; }
-.category-ring::after {
-  content: ''; position: absolute; inset: -3px; border-radius: 50%;
-  border: 2px solid transparent; transition: all 0.3s ease;
+
+/* Pop-in keyframe: scale up from 0.65 with a slight spring overshoot */
+@keyframes catPopIn {
+  0%   { opacity: 0; transform: scale(0.65) translateY(12px); }
+  65%  { transform: scale(1.06) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
 }
-.category-ring:hover::after { border-color: #e9bb2c; box-shadow: 0 0 15px rgba(233,187,44,0.3); }
+/* Gold ripple that radiates outward from the ring on hover */
+@keyframes catRipple {
+  0%   { transform: scale(1);   opacity: 0.7; }
+  100% { transform: scale(1.28); opacity: 0; }
+}
+
+/* Staggered entrance — triggered when parent section gains .revealed */
+.cat-section.revealed .cat-item {
+  animation: catPopIn 0.6s cubic-bezier(0.34, 1.46, 0.64, 1) both;
+  animation-delay: calc(var(--i, 0) * 80ms + 100ms);
+}
+
+/* Ring wrapper — houses the circle + the ripple pseudo-element */
+.cat-ring-wrap {
+  position: relative;
+  display: inline-block;
+  border-radius: 50%;
+}
+/* Ripple layer */
+.cat-ring-wrap::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid #e9bb2c;
+  opacity: 0;
+  transform: scale(1);
+  pointer-events: none;
+  transition: none;
+}
+.cat-item:hover .cat-ring-wrap::after {
+  animation: catRipple 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Circle itself */
+.category-ring {
+  position: relative;
+  display: block;
+  border: 2px solid transparent;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.35s cubic-bezier(0.34, 1.46, 0.64, 1);
+  overflow: hidden;
+}
+.cat-item:hover .category-ring {
+  border-color: #e9bb2c;
+  box-shadow: 0 0 0 3px rgba(233,187,44,0.15), 0 8px 24px rgba(0,0,0,0.1);
+  transform: scale(1.06);
+}
+/* Image zoom inside ring */
+.category-ring img {
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.cat-item:hover .category-ring img {
+  transform: scale(1.12);
+}
+
+/* Label slide-up on hover */
+.cat-label {
+  display: block;
+  transition: transform 0.3s cubic-bezier(0.34, 1.46, 0.64, 1), color 0.25s ease;
+}
+.cat-item:hover .cat-label {
+  transform: translateY(-3px);
+  color: #571613;
+}
 
 /* ── Horizontal scrollbar hide ── */
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
@@ -353,6 +418,50 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
   background: #e9bb2c !important; transform: scale(1.2);
 }
 
+/* ── Category carousel — elegant ghost arrow buttons ── */
+/* Wrapper creates padding so buttons sit outside the slide content */
+.cat-carousel-wrap {
+  position: relative;
+  padding: 0 28px;
+}
+
+/* Override position: buttons align to image-circle center, not full slide height */
+.cat-carousel-wrap .owl-theme .owl-nav {
+  top: 48px;           /* half of 96px mobile circle (w-24) */
+  padding: 0;
+  margin: 0;
+}
+@media (min-width: 768px) {
+  .cat-carousel-wrap .owl-theme .owl-nav {
+    top: 56px;         /* half of 112px desktop circle (md:w-28) */
+  }
+}
+
+/* Ghost ring style — replaces the plain white circle */
+.cat-carousel-wrap .owl-theme .owl-nav [class*='owl-'] {
+  width: 38px !important;
+  height: 38px !important;
+  background: transparent !important;
+  border: 1.5px solid #c9a96e !important;
+  box-shadow: none !important;
+  transition: background 0.28s ease, border-color 0.28s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+.cat-carousel-wrap .owl-theme .owl-nav [class*='owl-'] .material-icons {
+  color: #2a1710;
+  font-size: 20px !important;
+}
+.cat-carousel-wrap .owl-theme .owl-nav [class*='owl-']:hover {
+  background: #2a1710 !important;
+  border-color: #2a1710 !important;
+  transform: scale(1.1);
+}
+.cat-carousel-wrap .owl-theme .owl-nav [class*='owl-']:hover .material-icons {
+  color: #fff;
+}
+/* Nudge buttons to sit fully outside the slide content */
+.cat-carousel-wrap .owl-theme .owl-prev { margin-left: -28px !important; }
+.cat-carousel-wrap .owl-theme .owl-next { margin-right: -28px !important; }
+
 /* ═══ MATERIAL ICON SIZING FIXES ═══ */
 mat-icon { vertical-align: middle; }
 mat-icon.text-sm { font-size: 16px; width: 16px; height: 16px; }
@@ -464,12 +573,6 @@ mat-icon.text-xl { font-size: 24px; width: 24px; height: 24px; }
   background: linear-gradient(90deg, transparent, #e9bb2c, transparent);
   margin: 0.75rem auto 1rem;
   border-radius: 1px;
-}
-
-/* ── Premium Category Ring Glow ── */
-.category-ring:hover::after {
-  border-color: #e9bb2c;
-  box-shadow: 0 0 25px rgba(233, 187, 44, 0.25), 0 0 50px rgba(233, 187, 44, 0.1);
 }
 
 /* ── Premium Input Focus ── */
@@ -698,9 +801,37 @@ img[loading="lazy"]:not([src=""]) {
 /* ══════════════════════════════════════════════════════════════════ */
 
 /* ── Parakkat-Style Split Hero ── */
+
+/* Gold accent line draws in */
+@keyframes phLineGrow {
+  from { width: 0; opacity: 0; }
+  to   { width: 52px; opacity: 1; }
+}
+/* Script text drifts in from the left */
+@keyframes phScriptIn {
+  from { opacity: 0; transform: translateX(-28px) translateY(6px); }
+  to   { opacity: 1; transform: translateX(0) translateY(0); }
+}
+/* Bold headline: rises from below with a blur-to-sharp reveal */
+@keyframes phBoldReveal {
+  from { opacity: 0; transform: translateY(28px) scaleY(0.9); filter: blur(6px); }
+  to   { opacity: 1; transform: translateY(0) scaleY(1);   filter: blur(0); }
+}
+/* Subline: gentle fade up */
 @keyframes phFadeUp {
-  from { opacity: 0; transform: translateY(40px); }
+  from { opacity: 0; transform: translateY(22px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+/* Button: bounces in from below */
+@keyframes phBtnReveal {
+  0%   { opacity: 0; transform: translateY(24px) scale(0.92); }
+  55%  { transform: translateY(-4px) scale(1.03); }
+  100% { opacity: 1; transform: translateY(0)    scale(1); }
+}
+/* Button shimmer sweep (runs once on entry, repeats on hover) */
+@keyframes phBtnShimmer {
+  from { left: -80%; }
+  to   { left: 130%; }
 }
 @keyframes phImgReveal {
   from { opacity: 0; transform: translateX(50px) scale(0.97); }
@@ -712,13 +843,13 @@ img[loading="lazy"]:not([src=""]) {
   100% { opacity: 1; transform: scale(1) rotate(0deg); }
 }
 
-/* Per-element staggered entrance */
-.ph-anim-1   { animation: phFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.10s both; }
-.ph-anim-2   { animation: phFadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both; }
-.ph-anim-3   { animation: phFadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.44s both; }
-.ph-anim-4   { animation: phFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.62s both; }
-.ph-anim-5   { animation: phFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.80s both; }
-.ph-anim-img { animation: phImgReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both; }
+/* Per-element staggered entrance — each with its own tailored keyframe */
+.ph-anim-1   { animation: phLineGrow   0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.10s both; }
+.ph-anim-2   { animation: phScriptIn   1.0s cubic-bezier(0.22, 1, 0.36, 1) 0.32s both; }
+.ph-anim-3   { animation: phBoldReveal 1.0s cubic-bezier(0.16, 1, 0.30, 1) 0.52s both; }
+.ph-anim-4   { animation: phFadeUp     0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.80s both; }
+.ph-anim-5   { animation: phBtnReveal  0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 1.00s both; }
+.ph-anim-img { animation: phImgReveal  1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both; }
 
 /* Section container */
 .parakkat-hero {
@@ -731,6 +862,7 @@ img[loading="lazy"]:not([src=""]) {
   position: relative;
   width: 100%;
   min-height: 92vw;   /* natural proportion on mobile */
+  background-color: #ffffff;
   background-image: url('/assets/images/hero/Heroimg.png');
   background-size: 100% auto;
   background-position: center top;
@@ -738,18 +870,47 @@ img[loading="lazy"]:not([src=""]) {
   display: flex;
   align-items: flex-end;
 }
+
+/* Seamless bottom fade — dissolves hero into the white sections below */
+.parakkat-hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.85) 70%, #ffffff);
+  pointer-events: none;
+  z-index: 1;
+}
 @media (min-width: 768px) {
   .parakkat-hero {
     min-height: 600px;
     background-size: cover;
     background-position: center center;
+    align-items: center;   /* vertically center the text block */
   }
 }
 
 /* Text + CTA column — sits over the left portion of the image */
 .ph-content {
+  position: relative;
+  z-index: 2;
   padding: clamp(24px, 5vw, 60px) clamp(20px, 5vw, 80px) clamp(32px, 5vw, 64px);
   max-width: 520px;
+  margin-top: -40px;  /* nudge above true center for visual balance */
+}
+@media (max-width: 767px) {
+  .ph-content { margin-top: 0; }
+}
+
+/* Decorative gold accent line — appears before the script text */
+.ph-accent-line {
+  height: 2px;
+  background: linear-gradient(90deg, #c9a96e, #e9bb2c);
+  border-radius: 2px;
+  margin-bottom: 16px;
+  /* width animated via phLineGrow keyframe */
 }
 
 /* Script line */
@@ -770,6 +931,7 @@ img[loading="lazy"]:not([src=""]) {
   line-height: 0.9;
   letter-spacing: -0.03em;
   margin-bottom: 16px;
+  transform-origin: bottom center;
 }
 
 /* Subline */
@@ -786,7 +948,8 @@ img[loading="lazy"]:not([src=""]) {
 .ph-btn {
   display: inline-flex;
   align-items: center;
-  padding: 14px 30px;
+  gap: 10px;
+  padding: 14px 32px;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.2em;
@@ -795,9 +958,37 @@ img[loading="lazy"]:not([src=""]) {
   color: #fff;
   text-decoration: none;
   font-family: 'Poppins', sans-serif;
-  transition: background 0.28s ease, transform 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.32s ease, transform 0.25s ease, box-shadow 0.3s ease;
 }
-.ph-btn:hover { background: #c9a96e; transform: translateY(-2px); }
+/* Shimmer sweep — plays once on entry delay, then on every hover */
+.ph-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  transform: skewX(-18deg);
+  animation: phBtnShimmer 0.75s ease 1.55s both;
+}
+.ph-btn:hover {
+  background: #c9a96e;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(201,169,110,0.35);
+}
+.ph-btn:hover::before {
+  animation: phBtnShimmer 0.6s ease forwards;
+}
+/* Arrow slides right on hover */
+.ph-btn-arrow {
+  display: inline-block;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-style: normal;
+}
+.ph-btn:hover .ph-btn-arrow { transform: translateX(6px); }
 
 /* ── Offer badge ── */
 .hero-offer-badge {
